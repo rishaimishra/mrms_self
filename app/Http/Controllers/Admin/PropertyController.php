@@ -34,6 +34,7 @@ use App\Models\Swimming;
 use App\Models\User;
 use App\Models\District;
 use App\Models\InaccessibleProperty;
+use App\Models\UnfinishedProperty;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -366,6 +367,12 @@ class PropertyController extends Controller
     {
         $property = InaccessibleProperty::where('id','>',0)->get();
         return view('admin.properties.inaccessiblelist',compact('property'));
+    }
+    
+    public function listUnfinishedProperties()
+    {
+        $property = UnfinishedProperty::where('id','>',0)->get();
+        return view('admin.properties.unfinishedlist',compact('property'));
     }
 
     public function deleteMeter($id)

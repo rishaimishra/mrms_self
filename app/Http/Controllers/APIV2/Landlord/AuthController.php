@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\APIV2\ApiController;
 use App\Models\UserVerification;
+use App\Models\LandlordDetail;
 use App\Notifications\MobileNumberVerification;
 use Carbon\Carbon;
 use Laravel\Passport\Passport;
@@ -34,7 +35,11 @@ class AuthController extends ApiController
             'code' => $code,
             'expired_at' => now()->addMinutes(15),
         ]);
-
+        // $user = LandlordDetail::updateOrCreate(['mobile_1' => $mobile_number, 'mobile_2' => $mobile_number], [
+        //     'code' => $code,
+        //     'expired_at' => now()->addMinutes(15),
+        // ]);
+        // dd($user);
         Passport::personalAccessTokensExpireIn(now()->addHours(1));
 
         $tokenResult = $user->createToken('Person Access Token');

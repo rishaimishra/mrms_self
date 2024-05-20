@@ -10,7 +10,16 @@ Route::get('update/disabilitydiscount', 'APIV2\General\PropertyController@update
 Route::get('get/options', 'APIV2\General\PopulateAssessmentController@populateField');
 Route::get('get/district', 'APIV2\General\DistrictController@getDistrict');
 Route::post('create/inaccessibleproperty', 'APIV2\General\PropertyController@createInAccessibleProperties');
+Route::post('create/unfinishedproperty', 'APIV2\General\PropertyController@createUnfinishedProperties');
 //Route::post('save/property', 'APIV2\General\PropertyController@save');
+Route::post('guest-user/register', 'APIV2\General\GuestUserController@create');
+Route::post('guest-user/login', 'APIV2\General\GuestUserController@login');
+Route::post('area-search/council', 'APIV2\General\GuestUserController@areaSearch');
+Route::get('area-list', 'APIV2\General\GuestUserController@areaNames');
+Route::get('get-recipts/{id}', 'APIV2\General\AppUserController@getallrecipt');
+Route::get('get-occupency-types', 'APIV2\General\AppUserController@getOcupencyType');
+Route::post('edit-occupency', 'APIV2\General\AppUserController@editOcupency');
+
 
 Route::group(
     [
@@ -59,6 +68,9 @@ Route::group(['prefix' => 'landlord', 'middleware' => 'auth:landlord-api', 'name
     Route::post('landlord/{id}', 'Landlord\PaymentController@storeLandLord');
     Route::post('propertyapprove/{id}', 'Landlord\PaymentController@storeProperty');
     Route::post('search-property', 'Landlord\PaymentController@show');
+    Route::get('payment/receipt/{id}/{year?}', 'Landlord\PaymentController@getReceipt');
+    Route::get('current-pay/receipt', 'Landlord\PaymentController@getPayReceipt');
+       
 });
 
 

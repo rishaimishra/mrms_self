@@ -91,6 +91,7 @@ class PaymentController extends Controller
        $property_tax_payable = (float)$property->assessment->getPropertyTaxPayable();
        if($property->assessment->pensioner_discount && $property->assessment->disability_discount)
        {
+        $discounted_value = $property_tax_payable * ((100-20)/100) *(20/100);
             $pensioner_discount = $property_tax_payable * (10/100);
             $disability_discount = $property_tax_payable * (10/100);
        }else if( $property->assessment->pensioner_discount && $property->assessment->disability_discount != 1)
@@ -104,6 +105,8 @@ class PaymentController extends Controller
             $disability_discount = 0;
        }
        
+       @$property->assessment->{"discounted_value"} = number_format($discounted_value,2,'.','');
+               
        $property->assessment->{"pensioner_discount"} = number_format($pensioner_discount,2,'.','');
        $property->assessment->{"disability_discount"} = number_format($disability_discount,2,'.','');
 
@@ -171,7 +174,19 @@ class PaymentController extends Controller
                    
                 }
         
-                $property->assessment->{"council_adjustments_parameters"} = implode(', ',$council_adjusment_labels);
+                // $property->assessment->{"council_adjustments_parameters"} = implode(', ',$council_adjusment_labels);
+                $property->assessment->{"council_adjustments_parameters"} = $property->assessment->water_percentage + 
+                                                                        $property->assessment->electricity_percentage +
+                                                                        $property->assessment->waste_management_percentage+
+                                                                        $property->assessment->market_percentage+
+                                                                        $property->assessment->hazardous_precentage+
+                                                                        $property->assessment->informal_settlement_percentage +
+                                                                        $property->assessment->easy_street_access_percentage+
+                                                                        $property->assessment->paved_tarred_street_percentage+
+                                                                        $property->assessment->drainage_percentage;
+                
+                $property->assessment->{"council_adjustments_parameters"} = ($property->assessment->property_rate_without_gst * $property->assessment->{"council_adjustments_parameters"})/100;
+                $property->assessment->{"council_adjustments_parameters"} = number_format($property->assessment->{"council_adjustments_parameters"},0,'',',');
 
         //$property['currentYearAssessmentAmount'] = $property->assessment->getCurrentYearAssessmentAmount();
         //$property['arrearDue'] = $property->assessment->getPastPayableDue();
@@ -180,6 +195,7 @@ class PaymentController extends Controller
         //$property['balance'] = $property->assessment->getCurrentYearTotalDue();
                
 
+         
 
         return response()->json(compact('property', 'paymentInQuarter', 'history','pensioner_image_path','disability_image_path','discounted_value','property_taxable_value'));
     }

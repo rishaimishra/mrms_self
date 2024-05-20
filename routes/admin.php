@@ -95,6 +95,14 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::post('app-user/update', 'AppUserController@update')->name('app-user.update');
         Route::get('app-user/delete', 'AppUserController@destroy')->name('app-user.delete');
         Route::post('app-user/create', 'AppUserController@store');
+        
+        //Guest user routes
+        Route::get('guest-user/create', 'GuestUserController@create')->name('guest-user.create');
+        Route::get('guest-user/list', 'GuestUserController@list')->name('guest-user.list');
+        Route::get('guest-user/show', 'GuestUserController@show')->name('guest-user.show');
+        Route::post('guest-user/update', 'GuestUserController@update')->name('guest-user.update');
+        Route::get('guest-user/delete', 'GuestUserController@destroy')->name('guest-user.delete');
+        Route::post('guest-user/create', 'GuestUserController@store');
 
         Route::get('report', 'ReportController@index')->name('report');
 
@@ -203,6 +211,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::get('report', 'ReportController@index')->name('report');
         Route::get('properties', 'PropertyController@list')->name('properties');
         Route::get('inaccessibleproperties', 'PropertyController@listInaccessibleProperties')->name('inaccessibleproperties');
+        Route::get('unfinishedproperties', 'PropertyController@listUnfinishedProperties')->name('unfinishedproperties');
         Route::get('property/details', 'PropertyController@show')->name('properties.show');
         Route::get('payment/receipt/{id}/{year?}', 'PaymentController@getReceipt')->name('payment.receipt');
         Route::get('email/payment/receipt/{id}/{year?}', 'PaymentController@emailReceipt')->name('email.payment.receipt');

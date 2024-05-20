@@ -7,6 +7,8 @@ use App\Models\Property;
 use App\Models\PropertyGeoRegistry;
 use App\Models\PropertyPayment;
 use App\Models\LandlordDetail;
+use App\Models\District;
+use App\Models\UserTitleTypes;
 use App\Notifications\PaymentSMSNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,6 +17,7 @@ use PayPal\Rest\ApiContext;
 use PayPal\Api\Amount;
 use PayPal\Api\Details;
 use PayPal\Api\Item;
+use Folklore\Image\Facades\Image;
 
 /** All Paypal Details class **/
 
@@ -25,6 +28,7 @@ use PayPal\Api\PaymentExecution;
 use PayPal\Api\RedirectUrls;
 use PayPal\Api\Transaction;
 use PayPal\Auth\OAuthTokenCredential;
+use Illuminate\Support\Facades\Storage;
 
 class PaymentController extends Controller
 {
@@ -63,9 +67,9 @@ class PaymentController extends Controller
             'payments.admin',
             'assessmentHistory'
         ])->whereHas('landlord', function ($query) use ($landlord) {
-            return $query->where('mobile_1', 'like', '%' . $landlord->mobile . '%');
+            return $query->where('mobile_1', 'like', '%' . $landlord->mobile . '%')->orWhere('mobile_2', 'like', '%' . $landlord->mobile . '%');
         })->get();
-
+        // dd($property[0]->assessmentHistory);
         $properties_discount_pensioner_images = [];
         foreach( $property as $pr)
         {
@@ -76,7 +80,7 @@ class PaymentController extends Controller
                 $property_tax_payable = (float)$pr->assessment->getPropertyTaxPayable();
                 if($pr->assessment->pensioner_discount && $pr->assessment->disability_discount)
                 {
-                    $discounted_value = $property_tax_payable * ((100-20)/100);
+                    $discounted_value = $property_tax_payable * ((100-20)/100) *(20/100);
                     $pensioner_discount = $property_tax_payable * (10/100);
                     $disability_discount = $property_tax_payable * (10/100);
                 }else if( $pr->assessment->pensioner_discount && $pr->assessment->disability_discount != 1)
@@ -92,8 +96,9 @@ class PaymentController extends Controller
                 {
                     $discounted_value = $property_tax_payable; 
                 }
-            
-                $pr->assessment->property_rate_without_gst = number_format((float)$pr->assessment->getPropertyTaxPayable(), 2, '.', '');
+                // dd($pr->assessment->discounted_value);
+                // $pr->assessment->property_rate_without_gst = number_format((float)$pr->assessment->getPropertyTaxPayable(), 2, '.', '');
+                $pr->assessment->property_rate_without_gst = number_format((float)$pr->assessment->property_rate_without_gst, 2, '.', '');
                 $pr->assessment->{"discounted_value"} = number_format($discounted_value,2,'.','');
                 $pr->assessment->{"pensioner_discount"} = number_format($pensioner_discount,2,'.','');
                 $pr->assessment->{"disability_discount"} = number_format($disability_discount,2,'.','');
@@ -101,7 +106,7 @@ class PaymentController extends Controller
                 $pr->assessment->{"property_net_assessed_vaue"} = number_format($pr->assessment->getNetPropertyAssessedValue(),0,'',',');
                 $council_adjusment_labels = array();
         
-
+                // dd($pr->assessment->water_percentage);
                 if($pr->assessment->water_percentage != 0 )
                 {
                     array_push($council_adjusment_labels,'Water Supply');
@@ -154,11 +159,20 @@ class PaymentController extends Controller
                     array_push($council_adjusment_labels,'Drainage');
                    
                 }
-        
-                $pr->assessment->{"council_adjustments_parameters"} = implode(', ',$council_adjusment_labels);
-
-
-
+                
+                // $pr->assessment->{"council_adjustments_parameters"} = implode(', ',$council_adjusment_labels);
+                $pr->assessment->{"council_adjustments_parameters"} = $pr->assessment->water_percentage + 
+                                                                        $pr->assessment->electricity_percentage +
+                                                                        $pr->assessment->waste_management_percentage+
+                                                                        $pr->assessment->market_percentage+
+                                                                        $pr->assessment->hazardous_precentage+
+                                                                        $pr->assessment->informal_settlement_percentage +
+                                                                        $pr->assessment->easy_street_access_percentage+
+                                                                        $pr->assessment->paved_tarred_street_percentage+
+                                                                        $pr->assessment->drainage_percentage;
+                
+                $pr->assessment->{"council_adjustments_parameters"} = ($pr->assessment->property_rate_without_gst * $pr->assessment->{"council_adjustments_parameters"})/100;
+                $pr->assessment->{"council_adjustments_parameters"} = number_format($pr->assessment->{"council_adjustments_parameters"},0,'',',');
                 $pensioner_image_path = PropertyPayment::where('property_id','=',$propertyId)->whereNotNull('pensioner_discount_image')->orderBy('created_at','desc')->first();
                 $disability_image_path = PropertyPayment::where('property_id','=',$propertyId)->whereNotNull('disability_discount_image')->orderBy('created_at','desc')->first();
                 $data = [
@@ -173,7 +187,7 @@ class PaymentController extends Controller
 
         }
         
-
+        // return response()->json(compact('property'));
         return response()->json(compact('property', 'paymentInQuarter', 'history','landlord','properties_discount_pensioner_images'));
     }
 
@@ -249,6 +263,81 @@ class PaymentController extends Controller
         
         return response()->json(['status' => 'success','image'=>$conveyance_document, 'address'=>$address_document],201);
 
+
+
+    }
+
+    public function getReceipt($id, $year = null)
+    {
+        $year = !$year ? date('Y') : $year;
+
+        $property = Property::with('assessment', 'occupancy', 'types', 'geoRegistry', 'user')->findOrFail($id);
+        // dd($property);
+        $assessment = $property->assessments()->whereYear('created_at', $year)->firstOrFail();
+
+        // $assessment->setPrinted();
+
+        //        $pdf = \PDF::loadView('admin.payments.receipt');
+        //        return $pdf->download('invoice.pdf');
+
+        @$paymentInQuarter = $property->getPaymentsInQuarter($year);
+        $district = District::where('name', $property->district)->first();
+        
+        
+        $pdf = \PDF::loadView('admin.payments.receipt', compact('property', 'paymentInQuarter', 'assessment', 'district'));
+        // return view('admin.payments.receipt', compact('property', 'paymentInQuarter', 'assessment', 'district'));
+
+        // Save PDF to temporary location
+        $pdfile = (Carbon::now()->format('Y-m-d-H-i-s') . '.pdf');
+        $pdfPath = public_path($pdfile);
+        $pdf->save($pdfPath);
+        
+        //  $pdfPath = Image::url($pdfPath);
+        $imageUrl =  url($pdfile);
+        //  $imageUrl = url($pdfPath);
+        // Return path to the PDF file in JSON response
+
+
+
+        return response()->json(['pdf_path' => $imageUrl]);
+        
+
+
+    }
+    
+    
+    public function getPayReceipt()
+    {
+        $id = '41839';
+        $year = '2024';
+        $year = !$year ? date('Y') : $year;
+
+        
+        $property = Property::with('assessment', 'occupancy', 'types', 'geoRegistry', 'user')->findOrFail($id);
+        // dd($property);
+        $assessment = $property->assessments()->whereYear('created_at', $year)->firstOrFail();
+
+        // $assessment->setPrinted();
+
+        //        $pdf = \PDF::loadView('admin.payments.receipt');
+        //        return $pdf->download('invoice.pdf');
+
+        @$paymentInQuarter = $property->getPaymentsInQuarter($year);
+        $district = District::where('name', $property->district)->first();
+        
+  
+        $pdf = \PDF::loadView('admin.payments.receipt', compact('property', 'paymentInQuarter', 'assessment', 'district'));
+        // return view('admin.payments.receipt', compact('property', 'paymentInQuarter', 'assessment', 'district'));
+
+        // Save PDF to temporary location
+        $pdfPath = storage_path('app/public/current-receipt.pdf');
+        $pdf->save($pdfPath);
+
+        //  $pdfPath = Image::url($pdfPath);
+         $imageUrl = url($pdfPath);
+        // Return path to the PDF file in JSON response
+        return response()->json(['pdf_path' => $imageUrl]);
+        
 
 
     }

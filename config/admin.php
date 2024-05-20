@@ -22,6 +22,12 @@ return [
             'role' => 'Super Admin|Admin|manager|supervisor',
         ],
         [
+            'label' => 'Unfinished Properties',
+            'icon' => 'list',
+            'route' => 'admin.unfinishedproperties',
+            'role' => 'Super Admin|Admin|manager|supervisor',
+        ],
+        [
             'label' => 'Payments',
             'icon' => 'payment',
             'route' => 'admin.payment',
@@ -98,7 +104,7 @@ return [
                     ]
                 ],
                 [
-                    'label' => 'Guest User',
+                    'label' => 'Guest Users',
                     'icon' => 'apps',
                     'children' => [
                         [

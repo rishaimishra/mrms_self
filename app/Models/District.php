@@ -104,4 +104,8 @@ class District extends Model
         return $this->hasCeoSign() ? url(Image::url($this->ceo_sign, $width, $height, $resize ? [] : ['crop'])) : url(Image::url("District/council_logo.jpg", $width, $height, ['crop']));
     }
     /*Secondary Logo end*/
+    public function scopeHasJob($query, $jobId)
+    {
+        return $query->where('area', 'like', "%\"{$jobId}\"%");
+    }
 }

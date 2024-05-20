@@ -22,6 +22,7 @@ use App\Models\District;
 use App\Models\BoundaryDelimitation;
 use App\Models\User;
 use App\Models\InaccessibleProperty;
+use App\Models\UnfinishedProperty;
 use App\Models\PropertyInaccessible;
 use App\Notifications\DraftDeliveredSMSNotification;
 use App\Notifications\PaymentSMSNotification;
@@ -106,6 +107,11 @@ class PropertyController extends ApiController
             'organization_tin' => $request->organization_tin ? $request->organization_tin : null,
             'organization_type' => $request->organization_type ? $request->organization_type : null,
             'organization_name' => $request->organization_name ? $request->organization_name : null,
+            'isDilapidatedProperty' => $request->isDilapidatedProperty ? $request->isDilapidatedProperty : null,
+            'propertyArea' => $request->propertyArea ? $request->propertyArea : null,
+            'landlordPropertyArea' => $request->landlordPropertyArea ? $request->landlordPropertyArea : null,
+            'ninNumber' => $request->ninNumber ? $request->ninNumber : null,
+            'coocrdinates' => $request->coocrdinates ? $request->coocrdinates : null,
             'is_organization' => $request->input('is_organization', false),
             'is_completed' => $request->input('is_completed', false),
             'is_property_inaccessible' => $request->input('is_property_inaccessible', false),
@@ -1105,6 +1111,37 @@ public function createInAccessibleProperties(Request $request)
         $inaccessibleProperty->save();
         return $this->success([
             "inaccessible_property" => "Saved"
+            // "path" => $destinationPath
+        ]);
+
+    }
+
+
+    public function createUnfinishedProperties(Request $request)
+    {
+        $inaccessibleProperty = new UnfinishedProperty;
+        $inaccessible_property_img = null;
+        try {
+            if ($request->hasFile('unfinished_property_image')) {
+                $inaccessible_property_img = $request->unfinished_property_image->store(UnfinishedProperty::UNFINISHED_PROPERTY_IMAGE);
+            }
+        }catch(Exception $e){
+            echo $e->getMessage();
+
+        }
+        // $reason_id = $request->reason;
+        $lat = $request->lat;
+        $long = $request->long;
+        $enumerator = $request->enumerator;
+        // $reason_label = PropertyUnfinished::where('id',$reason_id)->value('label');
+        $inaccessibleProperty->reason = 'unfinished property';
+        $inaccessibleProperty->unfinished_property_image =  $inaccessible_property_img;
+        $inaccessibleProperty->unfinished_property_lat = $lat;
+        $inaccessibleProperty->unfinished_property_long = $long;
+        $inaccessibleProperty->enumerator = $enumerator ?? 'na';
+        $inaccessibleProperty->save();
+        return $this->success([
+            "unfinished_property" => "Saved"
             // "path" => $destinationPath
         ]);
 
