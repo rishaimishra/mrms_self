@@ -271,7 +271,7 @@ class PropertyController extends Controller
 
 
         $data['types'] = PropertyCategory::pluck('label', 'id')->prepend('Select', '');
-        
+
         $data['categories'] = PropertyType::pluck('label', 'id')->prepend('Select', '');
         $data['windowtype'] = PropertyWindowType::pluck('label', 'id')->prepend('Select Window Type', '');
         $data['wallMaterial'] = PropertyWallMaterials::pluck('label', 'id')->prepend('Wall Material', '');
@@ -368,7 +368,7 @@ class PropertyController extends Controller
         $property = InaccessibleProperty::where('id','>',0)->get();
         return view('admin.properties.inaccessiblelist',compact('property'));
     }
-    
+
     public function listUnfinishedProperties()
     {
         $property = UnfinishedProperty::where('id','>',0)->get();
@@ -491,7 +491,7 @@ class PropertyController extends Controller
         if ($request->download_envelope) {
             $bulkDemand = new PropertyEnvpBulk();
 
-            return $bulkDemand->handle($this->properties, $request->demand_draft_year);        
+            return $bulkDemand->handle($this->properties, $request->demand_draft_year);
         }
 
         $bulkDemand = new PropertyInBulk();
@@ -603,7 +603,7 @@ class PropertyController extends Controller
     public function verifyLandlord(Request $request)
     {
 
-        
+
         if($request->has('search'))
         {
             $search = $request->search;
@@ -611,7 +611,7 @@ class PropertyController extends Controller
         }else{
             $landlords = LandlordDetail::where('verified',0)->simplePaginate(10);
         }
-        
+
         $state = 0;
         return view('admin.properties.verifylandlords', compact('landlords','state'));
 
@@ -627,7 +627,7 @@ class PropertyController extends Controller
         }else{
             $properties = Property::where('verified',0)->simplePaginate(10);
         }
-        
+
         $state = 0;
         return view('admin.properties.verifyproperties', compact('properties','state'));
 
@@ -757,7 +757,7 @@ class PropertyController extends Controller
         // If User uploads a Excel file
         if($request->bulk_lat_long_file) {
             $users = \Excel::toArray(new ExcelImport, $request->file('bulk_lat_long_file'));
-            
+
             $phones = array_map(function($iter){
                 $numbers = array();
                 foreach($iter as $key => $item){
@@ -768,7 +768,7 @@ class PropertyController extends Controller
             array_walk_recursive($phones, function ($value, $key) use (&$numbers){
                 $numbers[] = $value;
             }, $numbers);
-           
+
             for($i=0;$i<count($numbers);$i++){
                 $assessmentOfficer = User::findOrFail($request->assessment_officer);
                 $property = $assessmentOfficer->properties()->firstOrNew(['id' => null]);
@@ -785,7 +785,7 @@ class PropertyController extends Controller
 
                 $geoRegistry = $property->geoRegistry()->firstOrCreate(["property_id" => $property->id]);
                 //dd($numbers[$i]);
-                
+
 
                         $geoRegistry->fill(['dor_lat_long' => $numbers[$i]]);
                         $geoRegistry->save();
@@ -793,7 +793,7 @@ class PropertyController extends Controller
            }
         }else{
          // If User uploads a Excel file
-       
+
         $assessmentOfficer = User::findOrFail($request->assessment_officer);
         $property = $assessmentOfficer->properties()->firstOrNew(['id' => null]);
         $property->is_admin_created = 1;
@@ -808,13 +808,13 @@ class PropertyController extends Controller
         }
 
         $geoRegistry = $property->geoRegistry()->firstOrCreate(["property_id" => $property->id]);
-        
+
             $geoRegistry->fill(['dor_lat_long' => $request->dor_lat_long]);
             $geoRegistry->save();
 
-        
+
         }
-        
+
         return redirect()->back()->with('success', 'New Property Assigned Successfully!');
     }
 
@@ -1095,7 +1095,7 @@ class PropertyController extends Controller
         $data['easy_street_access_percentage'] = $easy_street_access_percentage;
         $data['paved_tarred_street_percentage'] = $paved_tarred_street_percentage;
         $data['drainage_percentage'] = $drainage_percentage;
-        
+
         $assessment->fill($data);
         $assessment->swimming()->associate($request->input('swimming_pool'));
         $assessment->save();
@@ -1136,7 +1136,7 @@ class PropertyController extends Controller
                 list($lat, $lng) = explode(',', $request->dor_lat_long);
                 $openLocationCode = \OpenLocationCode\OpenLocationCode::encode($lat, $lng);
             }
-            
+
             $geoExist = PropertyGeoRegistry::where('id', '<>', $geoRegistry->id)
             ->where('open_location_code', $openLocationCode)->first();
 
@@ -1171,7 +1171,7 @@ class PropertyController extends Controller
         if ($request->dor_lat_long && count(explode(',', $request->dor_lat_long)) === 2) {
             list($lat, $lng) = explode(',', $request->dor_lat_long);
             $geoRegistry->open_location_code = \OpenLocationCode\OpenLocationCode::encode($lat, $lng);
-        }        
+        }
 
 
         $geoRegistry->save();
@@ -1260,44 +1260,44 @@ class PropertyController extends Controller
 
     public function updatePropertyAssessmentPensionDiscount($id,Request $request)
     {
-        
+
         $detail = PropertyAssessmentDetail::where('property_id', '=', $id)->firstOrFail();
         $detail->pensioner_discount = 1;
         $detail->save();
         return redirect()->back();
-        
+
     }
 
     public function rejectPropertyAssessmentPensionDiscount($id,Request $request)
     {
-        
+
         $detail = PropertyAssessmentDetail::where('property_id', '=', $id)->firstOrFail();
         $detail->pensioner_discount = 0;
         $detail->is_rejected_pensioner = 1;
         $detail->save();
         return redirect()->back();
-        
+
     }
 
     public function updatePropertyAssessmentDisabilityDiscount($id,Request $request)
     {
-        
+
         $detail = PropertyAssessmentDetail::where('property_id', '=', $id)->firstOrFail();
         $detail->disability_discount = 1;
         $detail->save();
         return redirect()->back();
-        
+
     }
 
     public function rejectPropertyAssessmentDisabilityDiscount($id,Request $request)
     {
-        
+
         $detail = PropertyAssessmentDetail::where('property_id', '=', $id)->firstOrFail();
         $detail->disability_discount = 0;
         $detail->is_rejected_disability = 1;
         $detail->save();
         return redirect()->back();
-        
+
     }
 
 
@@ -1307,6 +1307,6 @@ class PropertyController extends Controller
     }
 
 
-   
+
 
 }

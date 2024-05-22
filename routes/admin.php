@@ -30,7 +30,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::get('middle-name', 'DashboardController@autoCompleteMiddleName')->name('middle-name');
     Route::get('tenant-first-name', 'DashboardController@autoCompleteTenantFirstName')->name('tenant-first-name');
     Route::get('tenant-last-name', 'DashboardController@autoCompleteTenantSurname')->name('tenant-last-name');
-    Route::get('tenant-middle-name', 'DashboardController@autoCompleteTenantMiddleName')->name('tenant-middle-name');    
+    Route::get('tenant-middle-name', 'DashboardController@autoCompleteTenantMiddleName')->name('tenant-middle-name');
     Route::get('postcode', 'DashboardController@autoCompletePostcode')->name('postcode');
     Route::get('name', 'DashboardController@autoCompleteUserName')->name('name');
     Route::get('compound-name', 'DashboardController@autoCompleteCompoundName')->name('compound.name');
@@ -80,7 +80,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::post('geo-registry/save', 'PropertyController@saveGeoRegistry')->name('properties.geo-registry.save');
         Route::post('landlord/send-sms', 'PropertyController@sensSmsLandlord')->name('properties.landlord.sendsms');
 
-        
+
         Route::get('system-user/create', 'AdminUserController@showUserForm')->name('system-user.create');
         Route::get('system-user/list', 'AdminUserController@list')->name('system-user.list');
         Route::get('system-user/show', 'AdminUserController@show')->name('system-user.show');
@@ -95,7 +95,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::post('app-user/update', 'AppUserController@update')->name('app-user.update');
         Route::get('app-user/delete', 'AppUserController@destroy')->name('app-user.delete');
         Route::post('app-user/create', 'AppUserController@store');
-        
+
         //Guest user routes
         Route::get('guest-user/create', 'GuestUserController@create')->name('guest-user.create');
         Route::get('guest-user/list', 'GuestUserController@list')->name('guest-user.list');
@@ -258,6 +258,6 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::resource('millrates', 'MillRateController');
     Route::resource('propertyCharacteristics', 'PropertyCharacteristicController');
     Route::resource('propertyCharacteristicValues', 'PropertyCharacteristicValueController');
-    
-   
+
+
 });

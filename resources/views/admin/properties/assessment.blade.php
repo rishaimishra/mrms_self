@@ -14,7 +14,7 @@
 
                 if($assessment->water_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => 1,
                     'label' => 'Water Supply',
                     'percentage' => '3'
@@ -25,7 +25,7 @@
                 }
                 if($assessment->electricity_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => 2,
                     'label' => 'Electricity',
                     'percentage' => '3'
@@ -35,7 +35,7 @@
                 }
                 if($assessment->waste_management_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => 3,
                     'label' => 'Waste Management Services/Points/Locations',
                     'percentage' => '3'
@@ -45,7 +45,7 @@
                 }
                 if($assessment->market_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => 4,
                     'label' => 'Market',
                     'percentage' => '3'
@@ -55,7 +55,7 @@
                 }
                 if($assessment->hazardous_precentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => 5,
                     'label' => 'Hazardous Location/Environment',
                     'percentage' => '3'
@@ -65,7 +65,7 @@
                 }
                 if($assessment->informal_settlement_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => 6,
                     'label' => 'Informal settlement',
                     'percentage' => '3'
@@ -75,7 +75,7 @@
                 }
                 if($assessment->easy_street_access_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => 7,
                     'label' => 'Easy Street Access',
                     'percentage' => '3'
@@ -85,7 +85,7 @@
                 }
                 if($assessment->paved_tarred_street_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => 8,
                     'label' => 'Paved/Tarred Road/Street',
                     'percentage' => '3'
@@ -95,7 +95,7 @@
                 }
                 if($assessment->drainage_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => 9,
                     'label' => 'Drainage',
                     'percentage' => '3'
@@ -104,10 +104,10 @@
                     array_push($council_adjusment_ids,9);
                 }
 
-                
-            
-        
-        
+
+
+
+
         $typestotal = clone $types;
         foreach($typestotal as $key=>$value)
         {
@@ -125,15 +125,15 @@
             }else {
                 $c_adjusments[$key] = $c_adjusments[$key];
             }
-           
+
             //echo $typestotal[$key];
             //echo ("key: ". $key ." value: ".$value ."\n");
 
         }
 
-        echo $assessment->valuesAdded->pluck('label')->implode(', ');
-        echo $value_added;
-        
+       // echo $assessment->valuesAdded->pluck('label')->implode(', ');
+       // echo $value_added;
+
     @endphp
     @hasanyrole('Super Admin|Admin|manager')
     <p>{{ $assessment->sanitation }}</p>
@@ -232,7 +232,7 @@
             <h6>Property breadth(Meters)</h6>
             <p id="property_breadth">{{ $assessment->is_map_set ? "Auto Map Value" :number_format((float)$assessment->breadth, 2,'.','')  ." Meters" }} </p>
         </div>
-        
+
         <div class="col-sm-3">
             <h6>Property Dimension(Sq. Meters)</h6>
             <p id="property_dimensions">{{ $assessment->square_meter ? $assessment->square_meter ." Sq. Meters":"" }} </p>
@@ -298,7 +298,7 @@
             <p> {{ optional($assessment)->gated_community ? 'Yes' : 'No' }}</p>
         </div>
 
-        
+
         <div class="col-sm-3">
             <h6>Property Assessed Value</h6>
             <p>Le {{number_format($assessment->property_rate_without_gst,0,'',',')}}</p>
@@ -315,7 +315,7 @@
         <div class="col-sm-3">
             <h6>Council Adjustments</h6>
             <p>{{implode(', ',$council_adjusment_labels)}}</p>
-        </div> 
+        </div>
     </div>
 
 
@@ -332,11 +332,11 @@
         <div class="col-sm-3">
             <h6>Mill Rate</h6>
             <p>{!! $assessment->mill_rate>0? $assessment->mill_rate: 0 !!}</p>
-        </div>  
+        </div>
         <div class="col-sm-3">
             <h6>Property Tax Payable {{ $assessment->created_at->format('Y') }}</h6>
             <p>Le {!! number_format($assessment->getPropertyTaxPayable(),0,'',',') !!}</p>
-        </div>                       
+        </div>
     </div>
 
     <div class="row">
@@ -344,21 +344,21 @@
             <h6>Pensioner Discount</h6>
            <p>
               <input type="checkbox" class="pensioner_disc_check" id="pensioner_disc_check_{{$assessment->created_at->format('Y')}}" data-year="{{$assessment->created_at->format('Y')}}" style="position:relative;left: 0px;opacity: 1;" @if($assessment->pensioner_discount == 1) checked @endif />
-              
+
               <!-- Pensioner -->
             </p>
             <p id="pensioner__discount_{{$assessment->created_at->format('Y')}}" class="discountedamount__{{$assessment->created_at->format('Y')}}">Le {!! $assessment->pensioner_discount ? number_format($assessment->getPensionerDiscount(),0,'',',') : 0 !!}</p>
-        </div> 
+        </div>
         <div class="col-sm-3">
             <h6>Disability Discount</h6>
             <p><input type="checkbox" class="disability_disc_check" id="disability_disc_check_{{$assessment->created_at->format('Y')}}" data-year="{{$assessment->created_at->format('Y')}}" style="position:relative;left: 0px;opacity: 1;" @if($assessment->disability_discount == 1) checked @endif /></p>
             <p id="disability__discount_{{$assessment->created_at->format('Y')}}" class="discountedamount__{{$assessment->created_at->format('Y')}}">Le {!! $assessment->disability_discount ? number_format($assessment->getDisabilityDiscount(),0,'',',') : 0 !!}</p>
-        </div>  
+        </div>
 
         <div class="col-sm-3">
             <h6>Discounted Rate Payable</h6>
             <p id="disability__discount_{{$assessment->created_at->format('Y')}}" class="discountedamount__{{$assessment->created_at->format('Y')}}">Le {!! $assessment->getPensionerDisabilityDiscountActual() ? number_format($assessment->getPensionerDisabilityDiscountActual(),0,'',',') : 0 !!}</p>
-        </div> 
+        </div>
         <!-- <div class="col-sm-3 discountContainer_{{$assessment->created_at->format('Y')}}" style="display: block;">
             <h6>New Property Tax Payable After Pension and Disability Discount</h6>
             <p id="pensioner_discount_{{$assessment->created_at->format('Y')}}" class="discountedamount_{{$assessment->created_at->format('Y')}}" style="display: block;">Le {!! number_format($assessment->getPensionerDiscount(),0,'',',') !!}</p>
@@ -366,7 +366,7 @@
             <!-- <p id="pensioner_disability_discount_{{$assessment->created_at->format('Y')}}" class="discountedamount_{{$assessment->created_at->format('Y')}}" style="display: block;">Le {!! number_format($assessment->getPensionerNDisabilityDiscount(),0,'',',') !!}</p>
         </div>                         -->
     </div>
-        
+
     <h6>Assessment Images</h6>
     <div id="aniimated-thumbnials" class="list-unstyled row clearfix aniimated-thumbnials">
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
@@ -457,7 +457,7 @@
             @if ($errors->has('square_meter'))
                 <label class="error">{{ $errors->first('council_group_name') }}</label>
             @endif
-            
+
         </div>
     </div>
     <div class="row">
@@ -582,7 +582,7 @@
             <h6>Net Property Assessed Value</h6>
             <p class="property_rate_without_gst_council">
                 Le {{number_format($assessment->getNetPropertyAssessedValue(),0,'',',')}}</p>
-               
+
             {!! Form::hidden('property_rate_without_gst',$assessment->property_rate_without_gst) !!}
             {!! Form::hidden('property_rate_with_gst',$assessment->property_rate_with_gst) !!}
             {!! Form::hidden('property_gst',$assessment->property_gst) !!}

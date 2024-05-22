@@ -75,7 +75,7 @@
                                         <td>{{ $amd->subject->property_id }}</td>
                                         <td>{{ $amd->subject_id  }}</td>
                                         <td class="{{$amd->description}}">{{$amd->description}}</td>
-                                        <td>{{ optional($amd->causer)->getName()() }}</td>
+                                        <td>{{ optional($amd->causer)->getName() }}</td>
                                         {{-- <th>{{$amd->properties}}</th> --}}
                                         <td>{{ $amd->created_at }}</td>
                                         <td>
