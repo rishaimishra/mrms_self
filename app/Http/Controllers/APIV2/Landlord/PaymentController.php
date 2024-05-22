@@ -80,21 +80,21 @@ class PaymentController extends Controller
                 $property_tax_payable = (float)$pr->assessment->getPropertyTaxPayable();
                 if($pr->assessment->pensioner_discount && $pr->assessment->disability_discount)
                 {
-                    $discounted_value = $property_tax_payable * ((100-20)/100) *(20/100);
+                    $discounted_value = $property_tax_payable * ((20)/100);
                     $pensioner_discount = $property_tax_payable * (10/100);
                     $disability_discount = $property_tax_payable * (10/100);
                 }else if( $pr->assessment->pensioner_discount && $pr->assessment->disability_discount != 1)
                 {
-                    $discounted_value = $property_tax_payable * ((100-10)/100);
+                    $discounted_value = $property_tax_payable * ((10)/100);
                     $pensioner_discount = $property_tax_payable * (10/100);
 
                 }else if ($pr->assessment->pensioner_discount != 1 && $pr->assessment->disability_discount)
                 {
-                    $discounted_value = $property_tax_payable * ((100-10)/100);   
+                    $discounted_value = $property_tax_payable * ((10)/100);   
                     $disability_discount = $property_tax_payable * (10/100);
                 }else
                 {
-                    $discounted_value = $property_tax_payable; 
+                    $discounted_value = 0; 
                 }
                 // dd($pr->assessment->discounted_value);
                 // $pr->assessment->property_rate_without_gst = number_format((float)$pr->assessment->getPropertyTaxPayable(), 2, '.', '');

@@ -19,7 +19,7 @@ Route::get('area-list', 'APIV2\General\GuestUserController@areaNames');
 Route::get('get-recipts/{id}', 'APIV2\General\AppUserController@getallrecipt');
 Route::get('get-occupency-types', 'APIV2\General\AppUserController@getOcupencyType');
 Route::post('edit-occupency', 'APIV2\General\AppUserController@editOcupency');
-
+Route::get('payment/pos/receipt/{id}/{payment_id}', 'APIV2\General\AppUserController@getPosReceipt');
 
 Route::group(
     [

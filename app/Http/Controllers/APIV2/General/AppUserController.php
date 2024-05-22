@@ -4,6 +4,7 @@ namespace App\Http\Controllers\APIV2\General;
 
 use App\Http\Controllers\API\ApiController;
 use App\Models\User;
+use App\Models\Property;
 use App\Models\UserTitleTypes;
 use App\Types\ApiStatusCode;
 use Illuminate\Http\Request;
@@ -42,11 +43,35 @@ class AppUserController extends ApiController
 
     }
 
+    public function getPosReceipt($id, $payment_id)
+    {
+        $property = Property::findOrFail($id);
+
+        //        $pdf = \PDF::loadView('admin.payments.receipt');
+        //        return $pdf->download('invoice.pdf');
+
+        $paymentInQuarter = $property->getPaymentsInQuarter();
+
+        $payment = $property->payments()->findOrFail($payment_id);
+
+        $property->load([
+            'assessment' => function ($query) use ($payment) {
+                $query->whereYear('created_at', $payment->created_at->format('Y'));
+            },
+            'occupancy',
+            'types',
+            'geoRegistry',
+            'landlord'
+        ]);
+
+        return view('admin.payments.pos-receipt', compact('property', 'paymentInQuarter', 'payment'));
+    }
+
     public function getallrecipt($id){
         $data=PropertyPayment::where('property_id',$id)->orderBy('id','desc')->pluck('id')->toArray();
         $unique=[];
         foreach($data as $val){
-            $url['url']="http://3.134.197.245/back-admin/payment/pos/receipt/".$id."/".$val;
+            $url['url']="http://3.134.197.245/apiv2/payment/pos/receipt/".$id."/".$val;
             $url['id']=$val;
             array_push($unique, $url);
         }

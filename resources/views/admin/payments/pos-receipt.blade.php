@@ -1,225 +1,236 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-    <title>Receipt</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
 
-    <style>
-        body img {
-            max-width: 100%;
-        }
+  <style>
+    html {
+}
 
-        body h1 {
-            font-size: 1.5em;
-        }
+body {
+  font-family: sans-serif;
+}
 
-        body .table td,
-        body .table th {
-            text-align: center;
-            vertical-align: top;
-        }
+* {
+  margin: 0;
+  padding: 0;
+}
 
-        body .table th {
-            text-transform: uppercase;
-        }
+.wrapper {
+  width: 840px;
+  height: 1188px;
+  padding: 20px 20px 20px;
+  position: relative;
+  /* border: 2px solid red; */
+}
+.wrapper:before {
+  content: "";
+  display: block;
+  background: url(./logo1.png);
+  background-size: 70%;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-repeat: no-repeat;
+  background-position: 50% 48%;
+  z-index: -1;
+  opacity: 20%;
+}
+.d-flex {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0 0 20px;
+  margin: 0 0 40px;
+  border-bottom: 1px solid #c4c4c4;
+}
 
-        .receipt {
-            padding: 10px;
-            width: 100%;
-            margin: 0 auto;
-        }
+.col-3 {
+  width: 15%;
+}
 
-        .receipt .receipt-content img {
-            height: 130px;
-        }
+.col-6 {
+  width: 70%;
+  text-align: center;
+}
 
-        .receipt .receipt-content {
-            border: 2px solid #000000;
-            padding: 10px;
-            font-size: 0.95rem;
-        }
+.h4 {
+  font-size: 22px;
+  font-weight: 900;
+  margin: 0 0 10px;
+}
 
-        .table-font-size {
-            font-size: 0.85rem;
-        }
+.h5 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #777;
+  margin: 0 0 6px;
+}
 
-        .receipt .receipt-content .total {
-            display: block;
-            align-items: center;
-            justify-content: space-between;
-        }
+.h6 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #777;
+}
 
-        .receipt .receipt-content .total h5 {
-            text-transform: uppercase;
-            padding: 10px 10px;
-            border: 2px solid #DDDDDD;
-            margin: 0 0 0 10px;
-            font-weight: 700;
-        }
+.t-logo {
+  max-width: 100%;
+  height: auto;
+  /* width: 140px; */
+}
 
-        .receipt .receipt-content .total h6 {
-            margin: 0;
-        }
+table {
+  font-size: 17px;
+  font-family: serif;
+  width: 90%;
+  margin: auto;
+}
 
-        .receipt .receipt-content .total .red {
-            color: red;
-        }
+td {
+  padding: 10px 10px 7px;
+  font-weight: 600;
+  color: #626262;
+}
 
-        .page-break {
-            page-break-after: always;
-        }
+.blue-bg {
+  background: #116cca;
+  color: #fff;
+  padding: 7px 10px 7px;
+}
+
+table tr td:first-child {
+  width: 220px;
+}
+.text-grey {
+  color: grey;
+  padding: 0 0 0 20px;
+}
+.bb-date {
+  margin: 0 0 0 150px;
+}
 
 
-        .receipt-second {
-            padding: 10px 0;
-        }
+@media only screen and (max-width:600px){.wrapper{width:auto;height:auto}.d-flex{}.h4{font-size:12px}.h5{font-size:10px}.h6{font-size:10px}.bb-date{margin:0}td{font-size:8px;padding:5px 4px 5px}table tr td:first-child{width:100px}table{width:100%}}
 
-        .underline {
-            text-decoration: underline;
-        }
-
-        .font-weight-700 {
-            font-weight: 600;
-        }
-
-        .custom-font-size {
-            font-size: 1.2rem;
-        }
-
-        .custom-red {
-            color: red;
-        }
-
-        .custom-width {
-
-        }
-
-        @media print {
-            .print_row {
-                visibility: hidden;
-            }
-        }
-
-        @page {
-
-            margin: 10px;
-        }
-
-        .print_row.btn {
-            float: right;
-            position: absolute;
-            top: 87px;
-            right: 15px;
-            padding: 18px;
-            border: 1px solid #ccc;
-            border-radius: 0px;
-            background: #eee;
-            font-size: 24px;
-            font-weight: 600;
-            box-shadow: 0px 2px 2px #ccc;
-        }
-
-        td {
-            font-size: 10px !important;
-        }
-
-    </style>
-    <script>
-        function myFunction() {
-            //window.print();
-            var divToPrint = document.getElementById("receipt-content");
-            newWin = window.open("");
-            newWin.document.write(divToPrint.outerHTML);
-            newWin.print();
-            newWin.close();
-        }
-    </script>
+  </style>
 </head>
+
 <body>
-
-<div class="receipt">
-    <div class="">
-        <div class="receipt-content" id='receipt-content'>
-            <div class="custom-width">
-
-
-                <div class="custom-width" style="font-family: arial; font-size: 11px">
-                    <p style="text-align: center; font-family: arial; font-size: 18px">RECEIPT - {{ $property->assessment->created_at->format('Y') }}</p>
-                    <p style="text-align: center; font-family: arial; font-size: 18px">WARDC</span> <span
-                            style="font-weight: 600;">Municipal Rate</span></p>
-
-                    <p style="text-align: center; font-family: arial; font-size: 14px">TRANSACTION NO. <span
-                            style="color: red">{{sprintf("%007d", $payment->id)}}</span></p>
-
-                    <p style="text-align: center; font-family: arial; font-size: 14px">Date : </span> <span
-                            style="font-weight: 600;">{{ $payment->created_at->toDayDateTimeString() }}</span></p>
-
-                    <table class="font-weight-bold table-font-size">
-                        <tr>
-                            <td style="font-size: 12px; padding-bottom: 8px">OWNER : </td>
-                            <td style="font-size: 12px;">{{$property->is_organization ?  $property->organization_name : $property->landlord->first_name.' '.$property->landlord->middle_name.' '.$property->landlord->surname}}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 12px;padding-bottom: 8px">PROPERTY DIGITAL ADDRESS:</td>
-                            <td style="font-size: 12px;color: red;padding-bottom: 8px">{{$property->geoRegistry->getDigitalAddress()}}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 12px;padding-bottom: 8px">TRANSACTION ID:</td>
-                            <td style="font-size: 12px;">{{$property->getPrintableId()}}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 12px;padding-bottom: 8px">WARD:</td>
-                            <td style="font-size: 12px;">{{$property->ward}}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 12px;padding-bottom: 8px">CONSTITUENCY:</td>
-                            <td style="font-size: 12px;">{{$property->constituency}}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 12px;padding-bottom: 8px">DISTRICT:</td>
-                            <td style="font-size: 12px;">{{$property->district}}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 12px;padding-bottom: 8px">PROVINCE:</td>
-                            <td style="font-size: 12px;">{{$property->province}}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 12px;padding-bottom: 8px">AMOUNT DUE:</td>
-                            <td style="font-size: 12px;">
-                                Le {{$payment->totalAssessment()}}</td>
-                        </tr>
-{{--                        <tr>--}}
-{{--                            <td style="font-size: 12px;padding-bottom: 8px">AMOUNT DUE:</td>--}}
-{{--                            <td style="font-size: 12px;">--}}
-{{--                                Le {{ number_format($property->assessment->getCurrentInstallmentDueAmount() + $payment->amount)  }}</td>--}}
-{{--                        </tr>--}}
-                        <tr>
-                            <td style="font-size: 12px;padding-bottom: 8px">AMOUNT PAID:</td>
-                            <td style="font-size: 12px;">Le {{($payment->amountPaid())}}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 12px;padding-bottom: 8px">BALANCE:</td>
-                            <td style="font-size: 12px;">
-                                Le {{ number_format(max($payment->balance, 0)) }}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">Thank you for your patronage</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
+  <div class="wrapper">
+    <div class="d-flex row">
+      <div class="col-3">
+        <img class="t-logo" src="./logo1.png" alt="logo 1" />
+      </div>
+      <div class="col-6">
+        <div class="h4">MUNICIPAL RATE MANAGEMENT SYSTEM</div>
+        <div class="h5">PROPERTY RATE PAYMENT TRANSACTION RECEIPT</div>
+        <div class="h6">{{$property->district}}</div>
+      </div>
+      <div class="col-3">
+        <img class="t-logo" src="./logo1.png" alt="logo 1" />
+      </div>
     </div>
-</div>
 
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <div class="blue-bg">RECEIPT NUMBER:</div>
+          </td>
+          <td class="text-grey">{{sprintf("%007d", $payment->id)}} </td>
+          <td>
+            <div class="blue-bg  bb-date">DATE:</div>
+          </td>
+          <td class="text-grey">{{ $payment->created_at->toDayDateTimeString() }}</td>
+        </tr>
+        <tr><td></td></tr>
+        <tr>
+          <td>Property ID:</td>
+          <td colspan="3">{{$property->getPrintableId()}}</td>
+        </tr>
+        <tr>
+          <td>Landlord Owner Name:</td>
+          <td colspan="3">{{$property->is_organization ?  $property->organization_name : $property->landlord->first_name.' '.$property->landlord->middle_name.' '.$property->landlord->surname}}</td>
+        </tr>
+        <tr>
+          <td>Payment Category:</td>
+          <td colspan="3">PROPERTY RATE</td>
+        </tr>
+        <tr>
+          <td>Transaction Status:</td>
+          <td colspan="3">{{$payment->is_complete ? 'success' : 'pending' }}</td>
+        </tr>
+        <tr>
+          <td>Rate Payable 2024:</td>
+          <td colspan="3">{{number_format((float)$property->assessment->getPropertyTaxPayable(),2,'.','')}}</td>
+     
+        </tr>
 
-<div class="print_row btn"><a onclick="myFunction()">Print this page</a></div>
+        @php
+        $property_tax_payable = (float)$property->assessment->getPropertyTaxPayable();
+        if ($property->assessment->pensioner_discount == 1) {
+            $pensioner_discount = $property_tax_payable * (10/100);
+        }
+        if ($property->assessment->disability_discount == 1) {
+            $disability_discount = $property_tax_payable * (10/100);
+        }
 
+       
+        // dd($pensioner_discount, $disability_discount);
 
+        $discounted_rate_payable = ($property->assessment->getPropertyTaxPayable()) - $pensioner_discount - $disability_discount;
+        if($property->assessment->pensioner_discount && $property->assessment->disability_discount)
+                {
+                    $discounted_value = $property_tax_payable * ((20)/100);
+                    $pensioner_discount = $property_tax_payable * (10/100);
+                    $disability_discount = $property_tax_payable * (10/100);
+                }else if( $property->assessment->pensioner_discount && $property->assessment->disability_discount != 1)
+                {
+                    $discounted_value = $property_tax_payable * ((10)/100);
+                    $pensioner_discount = $property_tax_payable * (10/100);
 
+                }else if ($property->assessment->pensioner_discount != 1 && $property->assessment->disability_discount)
+                {
+                    $discounted_value = $property_tax_payable * ((10)/100);   
+                    $disability_discount = $property_tax_payable * (10/100);
+                }else
+                {
+                    $discounted_value = 0; 
+                }
+        @endphp
+
+        <tr>
+          <td>Discount(s) Applicable:</td>
+          <td colspan="3">NLe {{number_format((float)$discounted_value,2,'.','')}}</td>
+        </tr>
+        <tr>
+           
+          <td>Discounted Rate Payable:</td>
+          <td colspan="3">{{number_format((float)$discounted_rate_payable,2,'.','')}}</td>
+        </tr>
+        <tr>
+          <td>Amount Due 2024:</td>
+          <td colspan="3">NLe {{$payment->totalAssessment()}}</td>
+        </tr>
+        <tr>
+          <td>Amount Paid:</td>
+          <td colspan="3">NLe {{($payment->amountPaid())}}</td>
+        </tr>
+        <tr>
+          <td>Balance Due:</td>
+          <td colspan="3">NLe {{ number_format(max($payment->balance, 0)) }}</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
 </body>
+
 </html>
