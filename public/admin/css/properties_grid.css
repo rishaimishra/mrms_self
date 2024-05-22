@@ -1,0 +1,22 @@
+.content .laravel-grid .header.bg-cyan {
+    overflow: hidden;
+}
+
+.content .laravel-grid  .input-group {
+    display: flex;
+}
+
+.content .laravel-grid  .input-group input {
+    border: 1px solid #eee;
+    padding: 10px;
+    height: 40px;
+}
+
+
+.content .laravel-grid  .input-group .btn {
+    height: 40px;
+    background-color: #1f91f3 !important;
+    color: #fff;
+    padding: 0 10px;
+    line-height: 40px;
+}

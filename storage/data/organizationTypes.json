@@ -1,0 +1,34 @@
+[
+    {
+        "label": "Government",
+        "value": "Government"
+    },
+    {
+        "label": "NGO",
+        "value": "NGO"
+    },
+    {
+        "label": "Business",
+        "value": "Business"
+    },
+    {
+        "label": "School",
+        "value": "School"
+    },
+    {
+        "label": "Religious",
+        "value": "Religious"
+    },
+    {
+        "label": "Diplomatic Mission",
+        "value": "Diplomatic Mission"
+    },
+    {
+        "label": "Hospital",
+        "value": "Hospital"
+    },
+    {
+        "label": "Other",
+        "value": "Other"
+    }
+]

@@ -1,0 +1,66 @@
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 50px;
+      background: #e9e9e9;
+    }
+
+    /* -- Assessment History Table --  */
+    .main-div {
+      width: 100%;
+      overflow-x: scroll;
+      background: #fff;
+      box-shadow: rgb(149 157 165 / 20%) 0px 8px 24px;
+    }
+
+    .table {
+      width: 100%;
+      overflow-x: scroll;
+      background: #fff;
+    }
+
+    .heading {
+      background: #ff9800;
+      padding: 0.5rem;
+      width: 100%;
+    }
+
+    .heading p {
+      margin: 0;
+      color: #fff;
+    }
+
+    .table thead tr th {
+      white-space: pre;
+    }
+
+    /* -- Landlord Details --  */
+    .grand-div {
+      width: 100%;
+      background: #fff;
+      box-shadow: rgb(149 157 165 / 20%) 0px 8px 24px;
+    }
+
+    .landlord-details {
+      padding: 0.5rem;
+    }
+
+    .landlord-details h5 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+
+    .landlord-details span {
+      text-transform: capitalize;
+    }
+
+    .landlord-details {}
+
+    .landlord-details {}
+  
