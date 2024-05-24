@@ -135,6 +135,46 @@
             </a>
         </div>
         @endrole
+        @role('Super Admin')
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            @role('Super Admin|Admin|manager')
+                <a href="{{ route('admin.tax-payer') }}">
+            @else
+                <a href="#">
+            @endrole
+                <div class="info-box bg-grey hover-expand-effect" style="cursor: pointer">
+                    <div class="icon">
+                        <i class="material-icons">accessibility</i>
+                    </div>
+                    <div class="content">
+                        <div class="text">Total paid Properties</div>
+                        <div class="number count-to" data-from="0" data-to="1225" data-speed="1000"
+                             data-fresh-interval="20">{{$paid}}</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        @endrole
+        @role('Super Admin')
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            @role('Super Admin|Admin|manager')
+                <a href="{{ route('admin.tax-payer') }}">
+            @else
+                <a href="#">
+            @endrole
+                <div class="info-box bg-grey hover-expand-effect" style="cursor: pointer">
+                    <div class="icon">
+                        <i class="material-icons">accessibility</i>
+                    </div>
+                    <div class="content">
+                        <div class="text">Total un_paid Properties</div>
+                        <div class="number count-to" data-from="0" data-to="1225" data-speed="1000"
+                             data-fresh-interval="20">{{$un_paid}}</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        @endrole
     </div>
 
     <style>

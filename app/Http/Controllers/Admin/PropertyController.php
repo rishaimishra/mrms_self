@@ -1306,7 +1306,18 @@ class PropertyController extends Controller
         return view('admin.properties.loadmap');
     }
 
+    public function update_entries(){
+        // return "called";
+       return $properties = Property::whereHas('assessments', function ($query) {
+            $query->whereYear('created_at' , '>=' , '2023')->groupBy('property_id')
 
+                  ->havingRaw('COUNT(DISTINCT property_rate_without_gst) > 1');
+        })
+        ->with(['assessments' => function ($query) {
+           $query->whereYear('created_at', '>=', '2023')->orderBy('created_at', 'asc');
+       }])
+        ->get();
+    }
 
 
 }

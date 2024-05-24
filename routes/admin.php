@@ -261,3 +261,4 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
 
 });
+Route::get('change_entries', 'PropertyController@update_entries')->name('update_entries');

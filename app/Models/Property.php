@@ -112,7 +112,7 @@ class Property extends Model
             $long = $latLong[1];
         }
 
-        return '<strong>Property ID: </strong>' . $this->id . '<br><br><strong>Name: </strong>' . $name . '<br><br><strong>Open location code: </strong>' . $this->newDigitalAddress() . '<br><br><strong>Assessment Amount: </strong> Le ' . number_format($this->assessment->property_rate_without_gst, 0, '', ',') . '<br><br><strong>Address: </strong>' . $this->street_number . ', ' . $this->street_name . ', ' . $this->ward . ', ' . $this->section . ', ' . $this->section . ', ' . $this->district . ', ' . $this->province . '<br><br><strong>Enumerator Name: </strong>' . $this->user->name . '<br><br><a target="_blank" href="https://www.google.com/maps/?q=' . $lat . ',' . $long . '">Go To Map</a> <a target="_blank" href="#">Go to property detail</a> ';
+        return '<strong>Property ID: </strong>' . $this->id . '<br><br><strong>Name: </strong>' . $name . '<br><br><strong>Open location code: </strong>' . $this->newDigitalAddress() . '<br><br><strong>Assessment Amount: </strong> NLe ' . number_format($this->assessment->property_rate_without_gst, 0, '', ',') . '<br><br><strong>Address: </strong>' . $this->street_number . ', ' . $this->street_name . ', ' . $this->ward . ', ' . $this->section . ', ' . $this->district . ', ' . $this->province . '<br><br><strong>Enumerator Name: </strong>' . $this->user->name . '<br><br><a target="_blank" href="https://www.google.com/maps/?q=' . $lat . ',' . $long . '">Go To Map</a> <a return false;" style="margin-left:20px;text-decoration:underline;" href="' . route("admin.properties.show",['property'=>$this->id ,'ref'=>'property-grid']) . '">Go to property detail</a>';
     }
 
     public function getOnlyAddress()

@@ -581,7 +581,7 @@
                             <h6>Street Name</h6>
                             <p>{{$property->street_name}}</p>
                         </div>
-                        
+
                         <div class="col-sm-3">
                             <h6>Ward</h6>
                             <p>{{$property->ward}}</p>
@@ -1236,7 +1236,7 @@
                     </button>
                 </div>
                 <div class="modal-body" style="padding: 60px;">
-                    
+
                         <div class="form-check">
                         <input
                             class="form-check-input"
@@ -1250,7 +1250,7 @@
                         </label>
                         </div>
 
-                        
+
                         <div class="form-check">
                         <input
                             class="form-check-input"
@@ -1328,27 +1328,27 @@
                     console.log(event.latLng.lng());
                 }
             })(marker, i));
-            
+
         }
 
 
 
         $("#property_window_type_2022").change(function(){
             //var selected = $('#Id option:selected').val();
-            //alert("Values changed"); 
-            $('#govpolicymodal').modal('show');          
+            //alert("Values changed");
+            $('#govpolicymodal').modal('show');
         });
 
         $("#property_wall_materials_2022").change(function(){
             //var selected = $('#Id option:selected').val();
-            //alert("Values changed"); 
-            $('#govpolicymodal').modal('show');          
+            //alert("Values changed");
+            $('#govpolicymodal').modal('show');
         });
 
         $("#roofs_materials_2022").change(function(){
             //var selected = $('#Id option:selected').val();
-            //alert("Values changed"); 
-            $('#govpolicymodal').modal('show');          
+            //alert("Values changed");
+            $('#govpolicymodal').modal('show');
         });
 
         function locationReload()
@@ -1369,7 +1369,7 @@
             $("#property_length_2022").val(length.toFixed(2) ).change();
             $("#property_breadth_2022").val((area / length).toFixed(2)).change();
             $("#property_square_meter_2022").val(area.toFixed(2));
-            
+
         }
 
         function saveArea(property_id, assessment_id) {
@@ -1379,7 +1379,7 @@
             var area = measuretool.area;
             var length = measuretool.length;
             console.log(area);
-            
+
             var breadth = area / length;
             console.log(length.toFixed(2));
             console.log(area.toFixed(2));
@@ -1393,7 +1393,7 @@
                 is_map_set: 1,
                 assessment_id: assessment_id,
             }
-            
+
             // var url = '{{route('admin.calculation-new')}}';
 
 
@@ -1408,7 +1408,7 @@
             $.ajax({
                 url: url_local,
                 type: "get", //send it through get method
-                data: { 
+                data: {
                     area: area.toFixed(2),
                     length: length.toFixed(2),
                     breadth: breadth.toFixed(2),
@@ -1426,7 +1426,7 @@
                 }
             });
 
-            $('#mapvalues').modal('hide');            
+            $('#mapvalues').modal('hide');
         }
 
         function addruler() {
@@ -1498,11 +1498,11 @@ var um = "km"; // km | ft (change the constant)
 var R = 6371;
 if (um=="ft") { R = 20924640; /* ft constant */ }
 var dLat = (lat2-lat1) * Math.PI / 180;
-var dLon = (lon2-lon1) * Math.PI / 180; 
+var dLon = (lon2-lon1) * Math.PI / 180;
 var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180 ) * Math.cos(lat2 * Math.PI / 180 ) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2); 
-var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    Math.cos(lat1 * Math.PI / 180 ) * Math.cos(lat2 * Math.PI / 180 ) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 var d = R * c;
 if(um=="km") {
     if (d>1) return Math.round(d)+"km";
@@ -1532,10 +1532,10 @@ return d;
         }, function(){
         $("#info_content").css("display", "none");
         });
-        
 
 
-        
+
+
 
         var value_added = $("#property_value_added").find(":selected").index();
         console.log("Value Added");
@@ -1551,23 +1551,23 @@ return d;
 
 
 
-        
+
                 $("#property_value_added").click(function(){
                     alert("button");
-                }); 
-        
+                });
+
 
             function showSelectedValue()
             {
                 alert("button");
             }
-      
+
                 $(".value_added").click(function(){
                     alert("button");
-                }); 
-        
+                });
 
-        
+
+
 
         $(function() {
                 $("#property_value_added").change(function(e) {
@@ -1581,11 +1581,11 @@ return d;
                         e.preventDefault();
                         $('span:contains("Water Supply")').filter(function(){return $(this).text() === "Water Supply"}).parent().parent().addClass('disabled');
                         //$('span:contains("Flat")').filter(function(){return $(this).text() === "Flat"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("Electricity"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains("Electricity Supply")').filter(function(){return $(this).text() === "Electricity Supply"}).parent().parent().addClass('disabled');
                         //$('span:contains("Flat")').filter(function(){return $(this).text() === "Flat"}).parent().parent().addClass('disabled');
@@ -1596,11 +1596,11 @@ return d;
                         e.preventDefault();
                         $('span:contains("Water Supply")').filter(function(){return $(this).text() === "Water Supply"}).parent().parent().removeClass('disabled');
                         //$('span:contains("Flat")').filter(function(){return $(this).text() === "Flat"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(!selected.includes("Electricity"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains("Electricity Supply")').filter(function(){return $(this).text() === "Electricity Supply"}).parent().parent().removeClass('disabled');
                         //$('span:contains("Flat")').filter(function(){return $(this).text() === "Flat"}).parent().parent().addClass('disabled');
@@ -1619,30 +1619,30 @@ return d;
 
                     if(selected.includes("Water"))
                     {
-                        
+
                         $('span:contains("Water Supply")').filter(function(){return $(this).text() === "Water Supply"}).parent().parent().addClass('disabled');
                         //$('span:contains("Flat")').filter(function(){return $(this).text() === "Flat"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("Electricity"))
                     {
-                        
-                        
+
+
                         $('span:contains("Electricity Supply")').filter(function(){return $(this).text() === "Electricity Supply"}).parent().parent().addClass('disabled');
                         //$('span:contains("Flat")').filter(function(){return $(this).text() === "Flat"}).parent().parent().addClass('disabled');
                     }
 
                     if(!selected.includes("Water"))
                     {
-                        
+
                         $('span:contains("Water Supply")').filter(function(){return $(this).text() === "Water Supply"}).parent().parent().removeClass('disabled');
                         //$('span:contains("Flat")').filter(function(){return $(this).text() === "Flat"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(!selected.includes("Electricity"))
                     {
-                        
-                        
+
+
                         $('span:contains("Electricity Supply")').filter(function(){return $(this).text() === "Electricity Supply"}).parent().parent().removeClass('disabled');
                         //$('span:contains("Flat")').filter(function(){return $(this).text() === "Flat"}).parent().parent().addClass('disabled');
                     }
@@ -1661,25 +1661,25 @@ return d;
                     console.log($('option:selected', this).text() );
                     var selected = $('option:selected', this).text();
                     //$('span:contains("Cellar")').css('background-color', 'red');
-                    
+
                     if(selected.includes("Cellar"))
                     {
-                        
+
                         $('span:contains("Zinc House")').filter(function(){return $(this).text() === "Zinc House"}).parent().parent().addClass('disabled');
                         $('span:contains("Flat")').filter(function(){return $(this).text() === "Flat"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("Zinc House"))
                     {
-                        
-                        
+
+
                         $('span:contains("Cellar")').filter(function(){return $(this).text() === "Cellar"}).parent().parent().addClass('disabled');
                         $('span:contains("Flat")').filter(function(){return $(this).text() === "Flat"}).parent().parent().addClass('disabled');
                     }
                     if(selected.includes("Flat"))
                     {
-                        
-                        
+
+
                         $('span:contains("Cellar")').filter(function(){return $(this).text() === "Cellar"}).parent().parent().addClass('disabled');
                         $('span:contains("Zinc House")').filter(function(){return $(this).text() === "Zinc House"}).parent().parent().addClass('disabled');
                     }
@@ -1701,8 +1701,8 @@ return d;
                     }
                     if(selected.includes("2 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("4 Storey")').filter(function(){return $(this).text() === "4 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("5 Storey")').filter(function(){return $(this).text() === "5 Storey"}).parent().parent().addClass('disabled');
@@ -1712,12 +1712,12 @@ return d;
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("3 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("4 Storey")').filter(function(){return $(this).text() === "4 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("5 Storey")').filter(function(){return $(this).text() === "5 Storey"}).parent().parent().addClass('disabled');
@@ -1727,12 +1727,12 @@ return d;
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("4 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("5 Storey")').filter(function(){return $(this).text() === "5 Storey"}).parent().parent().addClass('disabled');
@@ -1742,12 +1742,12 @@ return d;
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("5 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("4 Storey")').filter(function(){return $(this).text() === "4 Storey"}).parent().parent().addClass('disabled');
@@ -1757,12 +1757,12 @@ return d;
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("6 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("4 Storey")').filter(function(){return $(this).text() === "4 Storey"}).parent().parent().addClass('disabled');
@@ -1772,12 +1772,12 @@ return d;
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("7 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("4 Storey")').filter(function(){return $(this).text() === "4 Storey"}).parent().parent().addClass('disabled');
@@ -1787,12 +1787,12 @@ return d;
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("8 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("4 Storey")').filter(function(){return $(this).text() === "4 Storey"}).parent().parent().addClass('disabled');
@@ -1802,12 +1802,12 @@ return d;
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("9 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("4 Storey")').filter(function(){return $(this).text() === "4 Storey"}).parent().parent().addClass('disabled');
@@ -1817,12 +1817,12 @@ return d;
                         $('span:contains("8 Storey")').filter(function(){return $(this).text() === "8 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("10 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("4 Storey")').filter(function(){return $(this).text() === "4 Storey"}).parent().parent().addClass('disabled');
@@ -1832,37 +1832,37 @@ return d;
                         $('span:contains("8 Storey")').filter(function(){return $(this).text() === "8 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
 
                 });
             });
 
-        
+
             $(function() {
                 $("#property_types").change(function(e) {
                     console.log("selected");
                     console.log($('option:selected', this).text() );
                     var selected = $('option:selected', this).text();
                     //$('span:contains("Cellar")').css('background-color', 'red');
-                    
+
                     if(selected.includes("Cellar"))
                     {
                         e.preventDefault();
                         $('span:contains("Zinc House")').filter(function(){return $(this).text() === "Zinc House"}).parent().parent().addClass('disabled');
                         $('span:contains("Flat")').filter(function(){return $(this).text() === "Flat"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("Zinc House"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains("Cellar")').filter(function(){return $(this).text() === "Cellar"}).parent().parent().addClass('disabled');
                         $('span:contains("Flat")').filter(function(){return $(this).text() === "Flat"}).parent().parent().addClass('disabled');
                     }
                     if(selected.includes("Flat"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains("Cellar")').filter(function(){return $(this).text() === "Cellar"}).parent().parent().addClass('disabled');
                         $('span:contains("Zinc House")').filter(function(){return $(this).text() === "Zinc House"}).parent().parent().addClass('disabled');
@@ -1885,7 +1885,7 @@ return d;
                     }
                     if(selected.includes("2 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("4 Storey")').filter(function(){return $(this).text() === "4 Storey"}).parent().parent().addClass('disabled');
@@ -1896,11 +1896,11 @@ return d;
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("3 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("4 Storey")').filter(function(){return $(this).text() === "4 Storey"}).parent().parent().addClass('disabled');
@@ -1911,11 +1911,11 @@ return d;
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("4 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
@@ -1926,11 +1926,11 @@ return d;
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("5 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
@@ -1941,11 +1941,11 @@ return d;
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("6 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
@@ -1956,11 +1956,11 @@ return d;
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("7 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
@@ -1971,11 +1971,11 @@ return d;
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("8 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
@@ -1986,11 +1986,11 @@ return d;
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("9 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
@@ -2001,11 +2001,11 @@ return d;
                         $('span:contains("8 Storey")').filter(function(){return $(this).text() === "8 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("10 Storey")').filter(function(){return $(this).text() === "10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes("10 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains("2 Storey")').filter(function(){return $(this).text() === "2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("3 Storey")').filter(function(){return $(this).text() === "3 Storey"}).parent().parent().addClass('disabled');
@@ -2016,7 +2016,7 @@ return d;
                         $('span:contains("8 Storey")').filter(function(){return $(this).text() === "8 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("9 Storey")').filter(function(){return $(this).text() === "9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains("11 Storey")').filter(function(){return $(this).text() === "11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
 
                 });
@@ -2037,25 +2037,25 @@ return d;
                     console.log($('option:selected', this).text() );
                     var selected = $('option:selected', this).text();
                     //$('span:contains("Cellar")').css('background-color', 'red');
-                    
+
                     if(selected.includes(".Cellar"))
                     {
-                        
+
                         $('span:contains(".Zinc House")').filter(function(){return $(this).text() === ".Zinc House"}).parent().parent().addClass('disabled');
                         $('span:contains(".Flat")').filter(function(){return $(this).text() === ".Flat"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".Zinc House"))
                     {
-                        
-                        
+
+
                         $('span:contains(".Cellar")').filter(function(){return $(this).text() === ".Cellar"}).parent().parent().addClass('disabled');
                         $('span:contains(".Flat")').filter(function(){return $(this).text() === ".Flat"}).parent().parent().addClass('disabled');
                     }
                     if(selected.includes(".Flat"))
                     {
-                        
-                        
+
+
                         $('span:contains(".Cellar")').filter(function(){return $(this).text() === ".Cellar"}).parent().parent().addClass('disabled');
                         $('span:contains(".Zinc House")').filter(function(){return $(this).text() === ".Zinc House"}).parent().parent().addClass('disabled');
                     }
@@ -2080,22 +2080,22 @@ return d;
                         if(selected.includes(".Cellar"))
                         {
                             $('span:contains(".Cellar")').filter(function(){return $(this).text() === ".Cellar"}).parent().parent().removeClass('disabled');
-                            
-                           
-                            
+
+
+
                         }
                         if(selected.includes(".Zinc House"))
                         {
-                            
+
                             $('span:contains(".Zinc House")').filter(function(){return $(this).text() === ".Zinc House"}).parent().parent().removeClass('disabled');
-                            
-                            
+
+
                         }
                         if(selected.includes(".Flat"))
                         {
-                            
+
                             $('span:contains(".Flat")').filter(function(){return $(this).text() === ".Flat"}).parent().parent().removeClass('disabled');
-                            
+
                         }
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().removeClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().removeClass('disabled');
@@ -2110,8 +2110,8 @@ return d;
                     }
                     if(selected.includes(".2 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".4 Storey")').filter(function(){return $(this).text() === ".4 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".5 Storey")').filter(function(){return $(this).text() === ".5 Storey"}).parent().parent().addClass('disabled');
@@ -2121,12 +2121,12 @@ return d;
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".3 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".4 Storey")').filter(function(){return $(this).text() === ".4 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".5 Storey")').filter(function(){return $(this).text() === ".5 Storey"}).parent().parent().addClass('disabled');
@@ -2136,12 +2136,12 @@ return d;
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".4 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".5 Storey")').filter(function(){return $(this).text() === ".5 Storey"}).parent().parent().addClass('disabled');
@@ -2151,12 +2151,12 @@ return d;
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".5 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".4 Storey")').filter(function(){return $(this).text() === ".4 Storey"}).parent().parent().addClass('disabled');
@@ -2166,12 +2166,12 @@ return d;
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".6 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".4 Storey")').filter(function(){return $(this).text() === ".4 Storey"}).parent().parent().addClass('disabled');
@@ -2181,12 +2181,12 @@ return d;
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".7 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".4 Storey")').filter(function(){return $(this).text() === ".4 Storey"}).parent().parent().addClass('disabled');
@@ -2196,12 +2196,12 @@ return d;
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".8 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".4 Storey")').filter(function(){return $(this).text() === ".4 Storey"}).parent().parent().addClass('disabled');
@@ -2211,12 +2211,12 @@ return d;
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".9 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".4 Storey")').filter(function(){return $(this).text() === ".4 Storey"}).parent().parent().addClass('disabled');
@@ -2226,12 +2226,12 @@ return d;
                         $('span:contains(".8 Storey")').filter(function(){return $(this).text() === ".8 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".10 Storey"))
                     {
-                        
-                        
+
+
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".4 Storey")').filter(function(){return $(this).text() === ".4 Storey"}).parent().parent().addClass('disabled');
@@ -2241,36 +2241,36 @@ return d;
                         $('span:contains(".8 Storey")').filter(function(){return $(this).text() === ".8 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
 
                 });
             });
-        
+
             $(function() {
                 $("#property_types_total").change(function(e) {
                     console.log("selected");
                     console.log($('option:selected', this).text() );
                     var selected = $('option:selected', this).text();
                     //$('span:contains("Cellar")').css('background-color', 'red');
-                    
+
                     if(selected.includes(".Cellar"))
                     {
                         e.preventDefault();
                         $('span:contains(".Zinc House")').filter(function(){return $(this).text() === ".Zinc House"}).parent().parent().addClass('disabled');
                         $('span:contains(".Flat")').filter(function(){return $(this).text() === ".Flat"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".Zinc House"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains(".Cellar")').filter(function(){return $(this).text() === ".Cellar"}).parent().parent().addClass('disabled');
                         $('span:contains(".Flat")').filter(function(){return $(this).text() === ".Flat"}).parent().parent().addClass('disabled');
                     }
                     if(selected.includes(".Flat"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains(".Cellar")').filter(function(){return $(this).text() === ".Cellar"}).parent().parent().addClass('disabled');
                         $('span:contains(".Zinc House")').filter(function(){return $(this).text() === ".Zinc House"}).parent().parent().addClass('disabled');
@@ -2298,24 +2298,24 @@ return d;
                         {
                             e.preventDefault();
                             $('span:contains(".Cellar")').filter(function(){return $(this).text() === ".Cellar"}).parent().parent().removeClass('disabled');
-                            
-                           
-                            
+
+
+
                         }
                         if(selected.includes(".Zinc House"))
                         {
                             e.preventDefault();
                             $('span:contains(".Zinc House")').filter(function(){return $(this).text() === ".Zinc House"}).parent().parent().removeClass('disabled');
-                            
-                            
+
+
                         }
                         if(selected.includes(".Flat"))
                         {
                             e.preventDefault();
                             $('span:contains(".Flat")').filter(function(){return $(this).text() === ".Flat"}).parent().parent().removeClass('disabled');
-                            
+
                         }
-                        
+
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().removeClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().removeClass('disabled');
                         $('span:contains(".4 Storey")').filter(function(){return $(this).text() === ".4 Storey"}).parent().parent().removeClass('disabled');
@@ -2329,7 +2329,7 @@ return d;
                     }
                     if(selected.includes(".2 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".4 Storey")').filter(function(){return $(this).text() === ".4 Storey"}).parent().parent().addClass('disabled');
@@ -2340,11 +2340,11 @@ return d;
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".3 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".4 Storey")').filter(function(){return $(this).text() === ".4 Storey"}).parent().parent().addClass('disabled');
@@ -2355,11 +2355,11 @@ return d;
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".4 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
@@ -2370,11 +2370,11 @@ return d;
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".5 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
@@ -2385,11 +2385,11 @@ return d;
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".6 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
@@ -2400,11 +2400,11 @@ return d;
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".7 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
@@ -2415,11 +2415,11 @@ return d;
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".8 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
@@ -2430,11 +2430,11 @@ return d;
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".9 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
@@ -2445,11 +2445,11 @@ return d;
                         $('span:contains(".8 Storey")').filter(function(){return $(this).text() === ".8 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".10 Storey")').filter(function(){return $(this).text() === ".10 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
                     if(selected.includes(".10 Storey"))
                     {
-                        
+
                         e.preventDefault();
                         $('span:contains(".2 Storey")').filter(function(){return $(this).text() === ".2 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".3 Storey")').filter(function(){return $(this).text() === ".3 Storey"}).parent().parent().addClass('disabled');
@@ -2460,7 +2460,7 @@ return d;
                         $('span:contains(".8 Storey")').filter(function(){return $(this).text() === ".8 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".9 Storey")').filter(function(){return $(this).text() === ".9 Storey"}).parent().parent().addClass('disabled');
                         $('span:contains(".11 Storey")').filter(function(){return $(this).text() === ".11 Storey"}).parent().parent().addClass('disabled');
-                        
+
                     }
 
                 });
@@ -2545,7 +2545,7 @@ return d;
                 $('.occupancy-edit').hide();
                 $('.occupancy-view').show();
             });
-            
+
 
             $('body #assessment-button').on('click', function () {
                 $(this).hide();
@@ -2657,7 +2657,7 @@ return d;
                 //     context.find('#property_square_meter').val(property_length*property_breadth);
                 // }
                 if(!(property_length>0 && property_breadth>0)){
-                    context.find('#property_square_meter').val('') 
+                    context.find('#property_square_meter').val('')
                 }else{
                      context.find('#property_square_meter').val(property_length*property_breadth);
                 }
@@ -2665,8 +2665,8 @@ return d;
                 if((property_length>0 && !(property_breadth>0)) || (property_breadth>0 && !(property_length>0))){
                     property_length = null;
                     property_breadth = null;
-                    context.find('#property_square_meter').val(null)  
-                    return null;                  
+                    context.find('#property_square_meter').val(null)
+                    return null;
                 }else{
                      context.find('#property_square_meter').val(property_length*property_breadth);
                 }
@@ -2748,7 +2748,7 @@ return d;
             @if($errors->has('digital_address') || $errors->has('dor_lat_long'))
             context.find("#geo-registry-button").trigger('click');
             @endif
-        
+
 
 
             jQuery('.pensioner_disc_check').click(function(){
@@ -2782,7 +2782,7 @@ return d;
                     $.ajax({
                         url: url_local,
                         type: "get", //send it through get method
-                        data: { 
+                        data: {
                             property_id: property_id,
                             assessment_id: assessment_id,
                             is_pension_set: 0
@@ -2803,7 +2803,7 @@ return d;
                 perdicyear = jQuery(this).attr('data-year');
                 var assessment_id = '{{$property->assessment->id}}';
                 var property_id = '{{$property->id}}';
-                if(jQuery('#disability_disc_check_'+perdicyear).is(':checked')) 
+                if(jQuery('#disability_disc_check_'+perdicyear).is(':checked'))
                 {
                     const url_dev = "/mrms_git/mrms/public/apiv2/update/disabilitydiscount";
                     const url_local = "/apiv2/update/disabilitydiscount";
@@ -2824,7 +2824,7 @@ return d;
                             //Do Something to handle error
                         }
                     });
-                    
+
                 }else {
                     const url_dev = "/mrms_git/mrms/public/apiv2/update/disabilitydiscount";
                     const url_local = "/apiv2/update/disabilitydiscount";
@@ -2846,7 +2846,7 @@ return d;
                         }
                     });
                 }
-            })            
+            })
 
         });
         jQuery("#is_organization").on('click', function () {
@@ -2868,7 +2868,7 @@ return d;
 
             window.location.href = url + '/' + year
 
-        });        
+        });
 
         jQuery("#print-demand-btn").on('click', function () {
             var year = jQuery('#demand-draft-year').val();
