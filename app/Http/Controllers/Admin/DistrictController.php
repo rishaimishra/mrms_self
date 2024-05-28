@@ -7,6 +7,7 @@ use App\Grids\DistrictsGrid;
 use App\Models\AdminUser;
 use App\Models\District;
 use App\Models\Property;
+use App\Models\User;
 use App\Rules\Name;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -21,11 +22,12 @@ class DistrictController extends Controller
      */
     public function index(Request $request)
     {
+         $ids= User::get()->pluck('assign_district_id')->toArray();
         $query = District::query();
         if (request()->user()->hasRole('Super Admin')) {
-            $query = $query->where('id',13);
+            $query = $query->whereIn('id',$ids);
         } else {
-            $query = $query->where('id', request()->user()->assign_district_id);
+            $query = $query->whereIn('id', $ids);
         }
         //dd(District::where('id',13)->get());
         return (new DistrictsGrid())

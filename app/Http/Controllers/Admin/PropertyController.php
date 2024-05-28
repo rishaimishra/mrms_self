@@ -402,14 +402,23 @@ class PropertyController extends Controller
                 } else {
                     continue;
                 }
-
-                if ($property->is_admin_created == 1) {
-                    $icon = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+                if ($property->assessment->getCurrentYearTotalDue() - $property->assessment->getCurrentYearTotalPayment() != 0) {
+                    $icon = "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png";
                 } else if ($property->assessment->getCurrentYearTotalDue() - $property->assessment->getCurrentYearTotalPayment() == 0) {
-                    $icon = "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
-                } else {
-                    $icon = "http://maps.google.com/mapfiles/ms/icons/red-dot.png";
+                    $icon = "https://maps.google.com/mapfiles/ms/icons/green-dot.png";
+                } else if(isset($property->user->assign_district_id)){
+                    $icon = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
                 }
+                else{
+                    $icon = "http://maps.google.com/mapfiles/ms/icons/pink-dot.png";
+                }
+                // if ($property->is_admin_created == 1) {
+                //     $icon = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+                // } else if ($property->assessment->getCurrentYearTotalDue() - $property->assessment->getCurrentYearTotalPayment() == 0) {
+                //     $icon = "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
+                // } else {
+                //     $icon = "http://maps.google.com/mapfiles/ms/icons/red-dot.png";
+                // }
 
                 // if ($property->is_admin_created == 1) {
                 //     $icon = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";

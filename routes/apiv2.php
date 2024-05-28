@@ -70,7 +70,7 @@ Route::group(['prefix' => 'landlord', 'middleware' => 'auth:landlord-api', 'name
     Route::post('search-property', 'Landlord\PaymentController@show');
     Route::get('payment/receipt/{id}/{year?}', 'Landlord\PaymentController@getReceipt');
     Route::get('current-pay/receipt', 'Landlord\PaymentController@getPayReceipt');
-       
+
 });
 
 

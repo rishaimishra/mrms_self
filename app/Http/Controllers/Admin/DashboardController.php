@@ -40,7 +40,7 @@ class DashboardController extends AdminController
                 $query->whereYear('created_at', now()->format('Y'))->whereNull('demand_note_delivered_at');
             })->where('is_completed', 0)->count();
 
-           return $data['paid'] = Property::with('assessment')->whereHas('payments', function ($query) use ($request) {
+            $data['paid'] = Property::with('assessment')->whereHas('payments', function ($query) use ($request) {
                 $query->whereYear('created_at', now()->format('Y'))->whereColumn('assessment', 'amount');
             })->count();
 
