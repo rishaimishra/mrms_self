@@ -1328,5 +1328,64 @@ class PropertyController extends Controller
         ->get();
     }
 
+    public function delete_selected_prop(){
+        $propertyIds =[154,
+        527,
+        940,
+        1109,
+        1110,
+        2900,
+        3050,
+        3876,
+        4507,
+        7903,
+        7922,
+        9286,
+        9387,
+        10774,
+        11461,
+        11600,
+        15524,
+        41839,
+        41840,
+        41844];
 
+        if (empty($propertyIds)) {
+            return ['error' => 'No property IDs provided'];
+        }
+            $propertiesToDelete = Property::whereNotIn('id', $propertyIds)->pluck('id');
+
+
+        DB::beginTransaction();
+
+        try {
+            foreach ($propertiesToDelete as $propertyId) {
+                $property = Property::find($propertyId);
+
+                if (!$property) {
+                    continue;
+                }
+
+                // Delete associated assessment data
+                $property->assessment()->delete();
+
+                // get associated payment data
+                $property->payments()->delete();
+
+                // get related landlords, occupancies, and registry
+                // $property->landlord()->get();
+                // $property->occupancies()->get();
+                // $property->registry()->get();
+
+                // get property itself
+                $property->delete();
+            }
+
+            DB::commit();
+            return ['success' => 'Properties and associated data successfully deleted'];
+        } catch (\Exception $e) {
+            DB::rollback();
+            return ['error' => 'Failed to delete properties and associated data', 'message' => $e->getMessage()];
+        }
+    }
 }
