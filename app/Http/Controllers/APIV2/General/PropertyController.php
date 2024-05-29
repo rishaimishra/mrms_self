@@ -49,7 +49,7 @@ class PropertyController extends ApiController
         $assessment_images = new PropertyAssessmentDetail();
         \Illuminate\Support\Facades\Log::debug($request->all());
         $this->propertyId = $request->input('property_id');
-        
+
         if ($this->propertyId && $property = Property::find($this->propertyId)) {
             $assessment_images = $property->assessment()->first();
         }elseif($property = Property::where('random_id', $request->random_id)->where('random_id', '<>', '')->first()){
@@ -89,7 +89,7 @@ class PropertyController extends ApiController
 
         // exit;
 
-        
+
 
         $property->fill([
             'assessment_area' => $request->assessment_area,
@@ -118,7 +118,7 @@ class PropertyController extends ApiController
             'is_draft_delivered' => $request->input('is_draft_delivered', false),
             'delivered_name' => $request->input('delivered_name'),
             'delivered_number' => $request->input('delivered_number'),
-               
+
             // 'window_type_value' =>($request->window_type_condition)? $request->window_type_condition['value'] : null,
             'random_id' => $request->input('random_id'),
 
@@ -252,12 +252,12 @@ class PropertyController extends ApiController
             }
         }
         if(is_array($request->adjustment_ids)){
-            $adjustmentPercentage = AdjustmentValue::where('group_name', $groupName)->whereIn('adjustment_id', $request->adjustment_ids)->pluck('percentage')->toArray(); 
+            $adjustmentPercentage = AdjustmentValue::where('group_name', $groupName)->whereIn('adjustment_id', $request->adjustment_ids)->pluck('percentage')->toArray();
         }
 
 
         $totalAdjustmentPercent = array_sum($adjustmentPercentage);
-        
+
         //$totalAdjustmentPercent = array_sum($request->adjustment_percentage);
 
         $district = District::where('name', $request->property_district)->first() ;
@@ -276,9 +276,9 @@ class PropertyController extends ApiController
 
 
         $assessment_data = [
-            'property_wall_materials' => $request->assessment_wall_materials_id,
-            'roofs_materials' => $request->assessment_roofs_materials_id,
-            'property_window_type' => $request->assessment_window_type_id,
+            'property_wall_materials' => ($request->wall_material)? $request->wall_material[0]['id'] : null,
+            'roofs_materials' => ($request->roof_material)? $request->roof_material[0]['id'] : null,
+            'property_window_type' => ($request->window_type)? $request->window_type[0]['id'] : null,
             'property_dimension' => $request->assessment_dimension_id,
             'length' => $request->assessment_length,
             'breadth' => $request->assessment_breadth,
@@ -297,18 +297,18 @@ class PropertyController extends ApiController
             'group_name' => $mill_rate_group_name,
             'mill_rate' => $millRate,
 
-            'wall_material_percentage' =>($request->wallPer)? $request->wallPer : 0,
-            'wall_material_type' =>($request->wallType)? $request->wallType : 'A',
+            'wall_material_percentage' =>($request->wall_material)? $request->wall_material[0]['percentage'] : 0,
+            'wall_material_type' =>($request->wall_material)? $request->wall_material[0]['type'] : 'A',
 
-            'roof_material_percentage' =>($request->roofPer)? $request->roofPer : 0,
-            'roof_material_type' =>($request->roofType)? $request->roofType : 'A',
+            'roof_material_percentage' =>($request->roof_material)? $request->roof_material[0]['percentage'] : 0,
+            'roof_material_type' =>($request->roof_material)? $request->roof_material[0]['type'] : 'A',
 
-            'value_added_percentage' =>($request->valuePer)? $request->valuePer : 0,
-            'value_added_type' =>($request->valueType)? $request->valueType : 'A',
+            'value_added_percentage' =>($request->value_added)? $request->value_added[0]['percentage'] : 0,
+            'value_added_type' =>($request->value_added)? $request->value_added[0]['type'] : 'A',
 
-            'window_type_percentage' =>($request->windowPer)? $request->windowPer : 0,
-            'window_type_type' =>($request->windowType)? $request->windowType : 'A',
-            
+            'window_type_percentage' =>($request->window_type)? $request->window_type[0]['percentage'] : 0,
+            'window_type_type' =>($request->window_type)? $request->window_type[0]['type'] : 'A',
+
             'water_percentage' => $water_percentage,
             'electricity_percentage' => $electrical_percentage,
             'waste_management_percentage'=> $waster_precentage,
@@ -320,6 +320,8 @@ class PropertyController extends ApiController
             'paved_tarred_street_percentage'=> $paved_tarred_street_percentage,
             'sanitation' => $request->sanitation
         ];
+        // return $request->roof_material;
+        // return $assessment_data;
 
         if ($request->hasFile('assessment_images_1')) {
             if ($assessment_images->hasImageOne()) {
@@ -452,7 +454,7 @@ class PropertyController extends ApiController
         $getProperty = $property->with('landlord', 'occupancy', 'assessment', 'geoRegistry', 'registryMeters', 'occupancies', 'categories', 'propertyInaccessible')->where('id', $property->id)->get();
 
                     $adjustments = [
-            
+
                 [ 'id' => '1',
                  'name' => 'Water Supply',
                  'percentage' => '3',
@@ -481,9 +483,9 @@ class PropertyController extends ApiController
                     'percentage'=> '5',
                     'group_name'=> '"A"'
                 ]
-     
+
              ];
-        
+
         return $this->success([
             'property_id' => $property->id,
             'sink' => 1,
@@ -647,7 +649,7 @@ class PropertyController extends ApiController
                 list($lat, $lng) = explode(',', $request->dor_lat_long);
                 $openLocationCode = \OpenLocationCode\OpenLocationCode::encode($lat, $lng);
             }
-            
+
             if($this->propertyId){
                 $propertyExist = Property::where('id', '<>', $this->propertyId)
                 ->whereHas('geoRegistry', function($q) use ($openLocationCode){
@@ -660,7 +662,7 @@ class PropertyController extends ApiController
                     ->where('open_location_code','<>','');;
                 })->first();
             }
-            
+
             if ($propertyExist) {
                 //$validator->errors()->add('open_location_code', 'This digital address is already exist');
             }
@@ -677,7 +679,7 @@ class PropertyController extends ApiController
             ->get();
 
                         $adjustments = [
-            
+
                 [ 'id' => '1',
                  'name' => 'Water Supply',
                  'percentage' => '3',
@@ -706,18 +708,18 @@ class PropertyController extends ApiController
                     'percentage'=> '5',
                     'group_name'=> '"A"'
                 ]
-     
+
              ];
-             
+
              $parr = [];
              foreach($property as $p)
              {
                 $adjustments = [];
-                
+
 
                 if($p->assessment->water_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => '1',
                     'name' => 'Water Supply',
                     'percentage' => '3',
@@ -726,7 +728,7 @@ class PropertyController extends ApiController
                 }
                 if($p->assessment->electricity_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => '2',
                     'name' => 'Electricity',
                     'percentage' => '3',
@@ -735,7 +737,7 @@ class PropertyController extends ApiController
                 }
                 if($p->assessment->waste_management_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => '3',
                     'name' => 'Waste Management Services/Points/Locations',
                     'percentage' => '5',
@@ -744,7 +746,7 @@ class PropertyController extends ApiController
                 }
                 if($p->assessment->market_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => '4',
                     'name' => 'Market',
                     'percentage' => '3',
@@ -753,7 +755,7 @@ class PropertyController extends ApiController
                 }
                 if($p->assessment->hazardous_precentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => '5',
                     'name' => 'Hazardous Location/Environment',
                     'percentage' => '15',
@@ -762,7 +764,7 @@ class PropertyController extends ApiController
                 }
                 if($p->assessment->informal_settlement_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => '6',
                     'name' => 'Informal settlement',
                     'percentage' => '21',
@@ -771,7 +773,7 @@ class PropertyController extends ApiController
                 }
                 if($p->assessment->easy_street_access_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => '7',
                     'name' => 'Easy Street Access',
                     'percentage' => '7',
@@ -780,7 +782,7 @@ class PropertyController extends ApiController
                 }
                 if($p->assessment->paved_tarred_street_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => '8',
                     'name' => 'Paved/Tarred Road/Street',
                     'percentage' => '3',
@@ -789,17 +791,17 @@ class PropertyController extends ApiController
                 }
                 if($p->assessment->drainage_percentage != 0 )
                 {
-                    array_push($adjustments, 
+                    array_push($adjustments,
                     [ 'id' => '9',
                     'name' => 'Drainage',
                     'percentage' => '3',
                     'group_name' => '"A"'
                     ]);
                 }
-                
+
                 array_add($p, 'values_adjustment', $adjustments);
              }
-             
+
         return $this->success([
             'property' => $property,
             'values_adjustment' => $adjustments
@@ -946,7 +948,7 @@ class PropertyController extends ApiController
             }
             $valueAdded = array_diff($request->assessment_value_added_id, $valueAdded);
         }
-        
+
         if(isset($request->assessment_window_type_id) and $request->assessment_window_type_id != null){
             $window_val = PropertyWindowType::select('value')->find($request->assessment_window_type_id);
         }
@@ -1031,7 +1033,7 @@ class PropertyController extends ApiController
         //$step3 = $property_dimension['value'];
         $step0 = $property_dimension;
         $step6 = 0;
-        
+
 
         $gated_community = $request->gated_community ? getSystemConfig(SystemConfig::OPTION_GATED_COMMUNITY) : 1;
 
@@ -1054,7 +1056,7 @@ class PropertyController extends ApiController
         $totalPercentage = array_sum([$wallMaterialPercentage, $roofMaterialPercentage, $valueAddedPercentage, $windowTypePercentage]);
         //If property characteristic exist
         if($totalPercentage){
-            $result['rateWithoutGST'] = $result['rateWithoutGST'] + ($result['rateWithoutGST'] * ($totalPercentage/100));  
+            $result['rateWithoutGST'] = $result['rateWithoutGST'] + ($result['rateWithoutGST'] * ($totalPercentage/100));
         }
 
          //dd($result['rateWithoutGST']);
@@ -1063,7 +1065,7 @@ class PropertyController extends ApiController
         if(is_array($request->adjustment_ids) && count($request->adjustment_ids)){
             $adjustmentPercentage = AdjustmentValue::where('group_name', $groupName)->whereIn('adjustment_id', $request->adjustment_ids)->pluck('percentage')->toArray();
 
-            $result['rateWithoutGST'] = $result['rateWithoutGST'] * ((100-array_sum($adjustmentPercentage))/100);            
+            $result['rateWithoutGST'] = $result['rateWithoutGST'] * ((100-array_sum($adjustmentPercentage))/100);
         }
 
 
@@ -1151,7 +1153,7 @@ public function createInAccessibleProperties(Request $request)
     public function updatePropertyAssessmentDetail(Request $request)
     {
 
-       
+
         $property_id = $request->property_id;
         $length = $request->length;
         $breadth = $request->breadth;
@@ -1174,7 +1176,7 @@ public function createInAccessibleProperties(Request $request)
             "detail" => $detail
             // "path" => $destinationPath
         ]);
-        
+
     }
 
 
@@ -1185,13 +1187,13 @@ public function createInAccessibleProperties(Request $request)
         $detail = PropertyAssessmentDetail::where('id', '=', $request->assessment_id)->firstOrFail();
         $detail->pensioner_discount = $is_pension_set;
         $detail->save();
-        
+
 
         return $this->success([
             "detail" => $detail
             // "path" => $destinationPath
         ]);
-        
+
     }
 
     public function updatePropertyAssessmentDisabilityDiscount(Request $request)
@@ -1201,16 +1203,16 @@ public function createInAccessibleProperties(Request $request)
         $detail = PropertyAssessmentDetail::where('id', '=', $request->assessment_id)->firstOrFail();
         $detail->disability_discount = $is_disability_set;
         $detail->save();
-        
+
 
         return $this->success([
             "detail" => $detail
             // "path" => $destinationPath
         ]);
-        
+
     }
-    
-    
+
+
     public function pldcCouncilAdjustment(Request $request)
     {
         $ward = $request->ward;
@@ -1261,10 +1263,10 @@ public function createInAccessibleProperties(Request $request)
             }
 
             if(is_array($request->adjustment_ids)){
-                $adjustmentPercentage = AdjustmentValue::where('group_name', $groupName)->whereIn('adjustment_id', $request->adjustment_ids)->pluck('percentage')->toArray(); 
+                $adjustmentPercentage = AdjustmentValue::where('group_name', $groupName)->whereIn('adjustment_id', $request->adjustment_ids)->pluck('percentage')->toArray();
             }
-    
-    
+
+
             $totalAdjustmentPercent = array_sum($adjustmentPercentage);
 
             $assessment_data = [
@@ -1283,16 +1285,16 @@ public function createInAccessibleProperties(Request $request)
             $assessment->fill($assessment_data);
             $assessment->save();
         }
-        
 
-        
+
+
         return $this->success([
             "stat" => $property[0]->assessment()->first()
         ]);
-        
+
     }
-    
-    
+
+
     public function setPropSanitation(Request $request)
     {
         $ward = $request->ward;
@@ -1300,7 +1302,7 @@ public function createInAccessibleProperties(Request $request)
 
         $property = Property::where('ward', $ward)->get();
 
-        
+
         foreach($property as $p)
         {
             $sanitation = 2;
@@ -1321,45 +1323,45 @@ public function createInAccessibleProperties(Request $request)
 
             $assessment->fill($assessment_data);
             $assessment->save();
-            
-        }
-        
 
-        
+        }
+
+
+
         return $this->success([
             "stat" => $property[0]->assessment()->first()
         ]);
 
-        
+
     }
-    
+
     public function updateEnumerator(Request $request)
     {
         $from_ward = $request->from_ward;
         $to_ward = $request->to_ward;
         $from_enumerator = $request->from_enumerator;
         $to_enumerator = $request->to_enumerator;
-        
+
 
         $property = Property::whereBetween('ward', [$from_ward,$to_ward])->where('user_id',$from_enumerator)->get();
 
-        
+
         foreach($property as $p)
         {
             $p->user_id = $to_enumerator;
             $p->save();
         }
-        
 
-        
+
+
         return $this->success([
             "stat" => $property[0]
         ]);
 
     }
-    
-    
-    
+
+
+
     public function deleteProperty(Request $request)
     {
         // $property = Property::where('district','Port Loko District Council')->take(7)->get();
@@ -1398,7 +1400,7 @@ public function createInAccessibleProperties(Request $request)
         $raw = \DB::select('SELECT id FROM properties where district <> "Western Area Rural District"');
         $ids = array();
         foreach($raw as $pr){
-            $ids[] = $pr->id; 
+            $ids[] = $pr->id;
         }
 
         // foreach($ids as $id) {
@@ -1426,12 +1428,12 @@ public function createInAccessibleProperties(Request $request)
     public function getCount(Request $request) {
 
         $raw = \DB::select('SELECT id FROM properties where district <> "Western Area Rural District"');
-        $property = Property::where('district','<>','Western Area Rural District')->count();   
+        $property = Property::where('district','<>','Western Area Rural District')->count();
         $ids = array();
         foreach($raw as $pr){
-            $ids[] = $pr->id; 
+            $ids[] = $pr->id;
         }
-        
+
         return $this->success([
             "count" => count($ids),
             "stat" => $ids
