@@ -29,9 +29,9 @@ class PopulateAssessmentController extends ApiController
     {
 
         $result['property_categories']      = PropertyCategory::select('id', 'label', 'value')->where('is_active', 1)->get();
-        $result['property_wall_materials']  = PropertyWallMaterials::select('id', 'label', 'value')->where('is_active', 1)->get();
-        $result['property_roofs_materials'] = PropertyRoofsMaterials::select('id', 'label', 'value')->where('is_active', 1)->get();
-        $result['property_value_added']     = PropertyValueAdded::select('id', 'label', 'value')->where('is_active', 1)->get();
+        $result['property_wall_materials']  = PropertyWallMaterials::select('id', 'label', 'value','good_value','avg_value','bad_value')->where('is_active', 1)->get();
+        $result['property_roofs_materials'] = PropertyRoofsMaterials::select('id', 'label', 'value','good_value','avg_value','bad_value')->where('is_active', 1)->get();
+        $result['property_value_added']     = PropertyValueAdded::select('id', 'label', 'value','good_value','avg_value','bad_value')->where('is_active', 1)->get();
         $result['property_types']           = PropertyType::select('id', 'label', 'value')->where('is_active', 1)->get();
         $result['property_dimension']       = PropertyDimension::select('id', 'label', 'value')->where('is_active', 1)->get();
         $result['property_use']             = PropertyUse::select('id', 'label', 'value')->where('is_active', 1)->get();
@@ -42,7 +42,7 @@ class PopulateAssessmentController extends ApiController
         $result['sigma_pay_url']            = getSystemConfig(SystemConfig::SIGMA_PAY_URL);
         $result['property_inaccessible']    = PropertyInaccessible::select('id as value', 'label')->where('is_active', 1)->get();
         $result['district']                 = District::select('*', 'sq_meter_value as value')->get();
-        $result['property_window_types']    = PropertyWindowType::select('id','label','value')->get();
+        $result['property_window_types']    = PropertyWindowType::select('id','label','value','good_value','value','bad_value')->get();
         $result['user_title_types']         = UserTitleTypes::select('id','label')->get();
 
         $adjustments        = \DB::table('adjustment_values')

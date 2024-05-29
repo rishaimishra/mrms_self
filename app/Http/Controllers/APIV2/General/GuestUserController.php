@@ -100,8 +100,14 @@ class GuestUserController extends Controller
         $searchValue = $request->search;
         // dd($searchValue);
         $filteredUsers = District::hasJob($searchValue)->get();
+        // dd($filteredUsers);
+
         // Return the filtered names in JSON format
-      
+        foreach ($filteredUsers as $district) {
+           
+            $district['primary_logo'] = $district->getPrimaryLogoUrl();
+              
+        }
         return response()->json(['result'=>$filteredUsers], 201);
         // return response()->json($filteredUsers);
     }
