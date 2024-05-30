@@ -318,7 +318,7 @@ class PropertyController extends ApiController
             'informal_settlement_percentage'=> $informal_settlement_percentage,
             'easy_street_access_percentage'=> $easy_street_access_percentage,
             'paved_tarred_street_percentage'=> $paved_tarred_street_percentage,
-            'sanitation' => $request->sanitation
+            'sanitation' => ($request->sanitation)? $request->sanitation[0]['type'] : 'A'
         ];
         // return $request->roof_material;
         // return $assessment_data;
@@ -918,8 +918,10 @@ class PropertyController extends ApiController
 
     public function calculateNewRate($request)
     {
+        $cost_of_one_town = 250000;
         $property_category = 0;
-        $rate_square_meter = 2750.00;
+        // $rate_square_meter = 2750.00;
+        $rate_square_meter = 3750;
         $wall_material = 0;
         $roof_material = 0;
         $value_added_val = 0;
@@ -933,6 +935,10 @@ class PropertyController extends ApiController
         $mastValue = 0;
         $valueAdded = [8, 9];
         $property_categories = [];
+        $floor_area=1722;
+
+        $result['value_per_square_one_town'] = round($cost_of_one_town / $rate_square_meter,1);
+        $result['floor_area_value'] = $floor_area *  $result['value_per_square_one_town'];
 
         if (isset($request->assessment_value_added_id) && is_array($request->assessment_value_added_id)) {
             foreach ($valueAdded as $value) {
