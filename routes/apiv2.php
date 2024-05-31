@@ -32,7 +32,7 @@ Route::group(
         Route::get('get/meta', 'General\PopulateAssessmentController@getMeta');
         Route::post('save/property', 'General\PropertyController@save');
         Route::get('get/incomplete-property', 'General\PropertyController@getIncompleteProperty');
-        Route::post('update/property', 'General\PropertyController@update');
+        Route::post('update/property', 'General\PropertyController@update_property');
         Route::post('update/user-profile', 'General\AppUserController@editProfile');
         Route::get('get/my/district', 'General\PropertyController@getMyDistrict');
     }
