@@ -215,7 +215,7 @@
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     <input type="text" class="form-control" value="{{ old('sq_meter_value',$district->sq_meter_value) }}" name="sq_meter_value" required>
-                                    <label class="form-label">Sq. Meter Value<span class="red">*</span></label>
+                                    <label class="form-label">Cost of 1 Town Lot in Category (NLe)<span class="red">*</span></label>
 
                                 </div>
                                 @if ($errors->has('sq_meter_value'))

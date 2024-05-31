@@ -5,10 +5,15 @@ namespace App\Http\Controllers\APIV2\General;
 use App\Http\Controllers\API\ApiController;
 use App\Models\User;
 use App\Models\Property;
+use App\Models\PropertyAssessmentDetail;
 use App\Models\UserTitleTypes;
+use App\Models\District;
 use App\Types\ApiStatusCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+use DB;
 
 use App\Models\PropertyPayment;
 
@@ -63,8 +68,9 @@ class AppUserController extends ApiController
             'geoRegistry',
             'landlord'
         ]);
+        $district = District::where('name', $property->district)->first();
 
-        return view('admin.payments.pos-receipt', compact('property', 'paymentInQuarter', 'payment'));
+        return view('admin.payments.pos-receipt', compact('property', 'paymentInQuarter', 'payment','district'));
     }
 
     public function getallrecipt($id){
@@ -73,6 +79,39 @@ class AppUserController extends ApiController
         foreach($data as $val){
             $url['url']="http://3.134.197.245/apiv2/payment/pos/receipt/".$id."/".$val;
             $url['id']=$val;
+
+
+            $property = Property::findOrFail($id);
+            // dd($property);
+            
+            $paymentInQuarter = $property->getPaymentsInQuarter();
+            $payment = $property->payments()->findOrFail($val);
+            $property->load([
+                'assessment' => function ($query) use ($payment) {
+                    $query->whereYear('created_at', $payment->created_at->format('Y'));
+                },
+                'occupancy',
+                'types',
+                'geoRegistry',
+                'landlord'
+            ]);
+            $district = District::where('name', $property->district)->first();
+            $pdf = \PDF::loadView('admin.payments.pos-receipt_pdf', compact('property', 'paymentInQuarter', 'payment', 'district'));
+            // return view('admin.payments.pos-receipt', compact('property', 'paymentInQuarter', 'payment','district'));
+            // Save PDF to a temporary location
+            // Save PDF to temporary location
+            
+            $pdfile = (Carbon::now()->format('Y-m-d-H-i-s') . '.pdf');
+          
+            $pdfPath = public_path($pdfile);
+            $pdf->save($pdfPath);
+           
+            //  $pdfPath = Image::url($pdfPath);
+            $imageUrl =  url($pdfile);
+            // Add the PDF URL to the $url array
+            $url['pdf_url'] = $imageUrl;
+
+
             array_push($unique, $url);
         }
 
@@ -103,6 +142,29 @@ class AppUserController extends ApiController
              return $this->success([
                "success" => "updated"
              ]);   
+     }
+
+     public function ImageProperty(){
+        // dd(111);
+        // DB::enableQueryLog();
+        $products =  PropertyAssessmentDetail::paginate(20000); // Adjust the number as needed
+        return view('table', compact('products'));
+        // $sql = Str::replaceArray('?', $query->getBindings(), $query->toSql());
+        // dd($sql);
+        $propertyData = [];
+
+        foreach ($propertyList as $property) {
+            
+            $propertyData[] = [
+                'id' => $property->property_id,
+                'image' => $property->getImageAnyUrl()
+            ];
+        }
+
+        return $this->success([
+            'result' => $propertyData
+        ]);
+
      }
 
 }

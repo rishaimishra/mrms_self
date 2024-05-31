@@ -308,7 +308,7 @@ class PropertyAssessmentDetail extends Model
         }elseif($this->hasImageTwo()){
             return url(Image::url($this->assessment_images_2, $width, $height, $resize ? [] : ['crop']));
         }else{
-            return url(Image::url("District/council_logo.jpg", $width, $height, ['crop']));
+                return url(Image::url("District/council_logo.jpg", $width, $height, ['crop']));
         }
     }
 
@@ -533,7 +533,14 @@ class PropertyAssessmentDetail extends Model
             }
             return $this->getTotalPayable() - $this->getCurrentYearTotalPayment() + $this->getCurrentYearAssessmentAmount();
         }else {
-            return $this->getCurrentYearAssessmentAmount() - $this->getCurrentYearTotalPayment();
+
+            // amount due modification
+              
+                $discounted_rate_payable = $this->getPropertyTaxPayable() -  $this->pensioner_discount -$this->disability_discount ;
+
+
+            return $discounted_rate_payable - $this->getCurrentYearTotalPayment();
+            
         }
         
     }
