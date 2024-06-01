@@ -68,7 +68,7 @@
                                 @foreach($activity as $amd)
 
                                     <tr>
-                                        <td>{{ optional($amd->causer)->getName()() }}</td>
+                                        <td>{{ optional($amd->causer)->getName() }}</td>
                                         <td class="{{$amd->description}}">{{$amd->description}}</td>
                                         <td>{{ $amd->created_at }}</td>
                                     </tr>

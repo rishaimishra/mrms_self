@@ -40,6 +40,10 @@ class DashboardController extends AdminController
                 $query->whereYear('created_at', now()->format('Y'))->whereNull('demand_note_delivered_at');
             })->where('is_completed', 0)->count();
 
+            $data['paid'] = Property::with('assessment')->whereHas('payments', function ($query) use ($request) {
+                $query->whereYear('created_at', now()->format('Y'))->whereColumn('assessment', 'amount');
+            })->count();
+
             $data['app_user'] = User::all()->count();
 
             $data['unique_property_owners'] = LandlordDetail::whereHas('property')->groupBy('mobile_1')
@@ -47,6 +51,12 @@ class DashboardController extends AdminController
                 ->select()
                 ->addSelect(\DB::raw('COUNT(properties.id) as properties_count'))
                 ->whereNotNull('mobile_1')->get()->count();
+                $data['paid'] = Property::with('assessment')->whereHas('payments', function ($query) use ($request) {
+                    $query->whereYear('created_at', now()->format('Y'))->whereColumn('assessment', 'amount');
+                })->count();
+                 $data['un_paid'] = Property::with('assessment')->whereHas('payments', function ($query) use ($request) {
+                    $query->whereYear('created_at', now()->format('Y'))->whereColumn('assessment','!=', 'amount');
+                })->count();
         } else {
             $data['total'] = Property::where('district', request()->user()->assign_district)->count();
 

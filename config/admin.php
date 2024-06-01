@@ -67,7 +67,7 @@ return [
                     'route' => 'admin.verify.property'
                 ]
             ]
-        ],        
+        ],
         [
             'label' => 'Users',
             'icon' => 'perm_identity',
@@ -140,9 +140,9 @@ return [
                     'label' => 'Mill Rates',
                     'route' => 'admin.millrates.index',
 
-                ],                
+                ],
             ]
-        ], 
+        ],
         [
             'label' => 'Assessment Parameter Conditions',
             'icon' => 'apps',
@@ -157,9 +157,9 @@ return [
                     'label' => 'Characteristic Values',
                     'route' => 'admin.propertyCharacteristicValues.index',
 
-                ],               
+                ],
             ]
-        ],                
+        ],
         [
             'label' => 'Assessment Parameters',
             'icon' => 'assessment',
@@ -313,67 +313,67 @@ return [
                     'route' => 'admin.audit.property.landlord',
 
                 ],
-                [
-                    'label' => 'Property Occupancy Trail',
-                    'route' => 'admin.audit.property.occupancy',
+                // [
+                //     'label' => 'Property Occupancy Trail',
+                //     'route' => 'admin.audit.property.occupancy',
 
-                ],
-                [
-                    'label' => 'Property Occupancy Detail Trail',
-                    'route' => 'admin.audit.property.occupancyDetail',
+                // ],
+                // [
+                //     'label' => 'Property Occupancy Detail Trail',
+                //     'route' => 'admin.audit.property.occupancyDetail',
 
-                ],
-                [
-                    'label' => 'Property Geo Registry Trail',
-                    'route' => 'admin.audit.property.geoRegistry',
+                // ],
+                // [
+                //     'label' => 'Property Geo Registry Trail',
+                //     'route' => 'admin.audit.property.geoRegistry',
 
-                ],
-                [
-                    'label' => 'Property Registry Meter Trail',
-                    'route' => 'admin.audit.property.registryMeter',
+                // ],
+                // [
+                //     'label' => 'Property Registry Meter Trail',
+                //     'route' => 'admin.audit.property.registryMeter',
 
-                ],
-                [
-                    'label' => 'Property Categories Trail',
-                    'route' => 'admin.audit.assessment.property.categories',
+                // ],
+                // [
+                //     'label' => 'Property Categories Trail',
+                //     'route' => 'admin.audit.assessment.property.categories',
 
-                ],
-                [
-                    'label' => 'Property Types Trail',
-                    'route' => 'admin.audit.assessment.property.types',
-                ],
-                [
-                    'label' => 'Property Wall Material Trail',
-                    'route' => 'admin.audit.assessment.wall.material',
-                ],
-                [
-                    'label' => 'Property Roof Material Trail',
-                    'route' => 'admin.audit.assessment.roof.material',
-                ],
-                [
-                    'label' => 'Property Dimensions Trail',
-                    'route' => 'admin.audit.assessment.property.dimensions',
-                ],
-                [
-                    'label' => 'Property Value Added Trail',
-                    'route' => 'admin.audit.assessment.value.added',
-                ],
-                [
-                    'label' => 'Property Use Trail',
-                    'route' => 'admin.audit.assessment.property.use',
-                ],
-                [
-                    'label' => 'Property Zone Trail',
-                    'route' => 'admin.audit.assessment.property.zones',
-                ],
-                [
-                    'label' => 'Property Swimming Pool Trail',
-                    'route' => 'admin.audit.assessment.property.swimmingpool',
-                ],
-                [
-                    'label' => 'Property Inaccessible Trail',
-                    'route' => 'admin.audit.assessment.property.inaccessible',
-                ],
+                // ],
+                // [
+                //     'label' => 'Property Types Trail',
+                //     'route' => 'admin.audit.assessment.property.types',
+                // ],
+                // [
+                //     'label' => 'Property Wall Material Trail',
+                //     'route' => 'admin.audit.assessment.wall.material',
+                // ],
+                // [
+                //     'label' => 'Property Roof Material Trail',
+                //     'route' => 'admin.audit.assessment.roof.material',
+                // ],
+                // [
+                //     'label' => 'Property Dimensions Trail',
+                //     'route' => 'admin.audit.assessment.property.dimensions',
+                // ],
+                // [
+                //     'label' => 'Property Value Added Trail',
+                //     'route' => 'admin.audit.assessment.value.added',
+                // ],
+                // [
+                //     'label' => 'Property Use Trail',
+                //     'route' => 'admin.audit.assessment.property.use',
+                // ],
+                // [
+                //     'label' => 'Property Zone Trail',
+                //     'route' => 'admin.audit.assessment.property.zones',
+                // ],
+                // [
+                //     'label' => 'Property Swimming Pool Trail',
+                //     'route' => 'admin.audit.assessment.property.swimmingpool',
+                // ],
+                // [
+                //     'label' => 'Property Inaccessible Trail',
+                //     'route' => 'admin.audit.assessment.property.inaccessible',
+                // ],
             ]
         ],
         [
@@ -381,6 +381,44 @@ return [
             'icon' => 'textsms',
             'route' => 'admin.notification.index',
             'role' => 'Super Admin',
+        ],
+        [
+            'label' => 'Notices',
+            'icon' => 'textsms',
+            'route' => '',
+            'role' => 'Super Admin',
+            'children' => [
+                [
+                    'label' => 'Council warning 1 - None Payment',
+                    'route' => '',
+
+                ],
+                [
+                    'label' => 'Council warning 2 - None Payment',
+                    'route' => '',
+
+                ],
+                [
+                    'label' => 'Council warning 3 - None Payment',
+                    'route' => '',
+
+                ],
+                [
+                    'label' => 'Landlord Notice - None Payment',
+                    'route' => '',
+
+                ],
+                [
+                    'label' => 'Tenant Notice - None Payment',
+                    'route' => '',
+
+                ],
+                [
+                    'label' => 'Legal  Retainer Notice Payment',
+                    'route' => '',
+
+                ],
+            ]
         ],
     ]
 ];

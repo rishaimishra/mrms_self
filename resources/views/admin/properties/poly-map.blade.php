@@ -27,7 +27,6 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDuA1HA0cE6VXwO48-VNstt7x00yz5H6tE"></script>
     <script>
         var locations = {!! $points !!};
-
         var map = new google.maps.Map(document.getElementById('map'), {
             zoom: 16,
             center: new google.maps.LatLng({{ $center }}),

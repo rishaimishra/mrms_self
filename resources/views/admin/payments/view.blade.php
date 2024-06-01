@@ -82,7 +82,7 @@
 
 
 
-    
+
 
 
 
@@ -113,39 +113,39 @@
                                             @endif
                                             </td>
 
-                                            
+
                                             <td>
                                             @if(!empty($property->payments[$property->payments->count() -1]->pensioner_discount_image_path) && !($property->assessment->is_rejected_pensioner))
                                                 <img style="z-index:100;" class="zoom" src="{{ !empty($property->payments[$property->payments->count() -1]->pensioner_discount_image_path) ? $property->payments[$property->payments->count() -1]->pensioner_discount_image_path : '---' }}" alt="" width="200" height="100">
                                             @endif
                                             </td>
-                                            
+
                                             <tr>
-                                            
-                                                
+
+
                                                 <td>
                                                 @if(!empty($property->payments[$property->payments->count() -1]->disability_discount_image_path) && !($property->assessment->disability_discount) && !($property->assessment->is_rejected_disability) )
                                                     <a href="{{ route('admin.disability.approve', $property->id) }}" class="btn btn-large btn-success">Approve</a>
                                                     <a href="{{ route('admin.disability.reject', $property->id) }}" class="btn btn-large btn-danger">Reject</a>
                                                 @endif
                                                 </td>
-                                                
 
-                                                
+
+
                                                 <td>
                                                 @if(!empty($property->payments[$property->payments->count() -1]->pensioner_discount_image_path) && !($property->assessment->pensioner_discount) && !($property->assessment->is_rejected_pensioner) )
                                                     <a href="{{ route('admin.pensioner.approve', $property->id) }}" class="btn btn-large btn-success">Approve</a>
                                                     <a href="{{ route('admin.pensioner.reject', $property->id) }}" class="btn btn-large btn-danger">Reject</a>
                                                 @endif
                                                 </td>
-                                               
-                                            
+
+
                                             </tr>
 
-                                            
+
                                         </tr>
-                                        
-                                    
+
+
                                     </tbody>
                                 </table>
                             </div>
@@ -456,7 +456,7 @@
                                                                                          class="material-icons">delete</i></a> -->
 
                                                </td>
-                                               
+
                                                @endhasanyrole
                                             {{--<th>
                                                 <a class="btn btn-primary btn-xs"
@@ -472,7 +472,7 @@
                                                         style="font-size: 14px;"
                                                         class="material-icons">print</i>Print</a>
                                             </th>--}}
-                                            
+
                                     @endforeach
                                     </tbody>
                                 </table>
@@ -530,7 +530,7 @@
 
 
 
-            
+
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="card">
