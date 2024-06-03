@@ -136,7 +136,7 @@
 
     @endphp
     @hasanyrole('Super Admin|Admin|manager')
-    <p>{{ $assessment->sanitation }}</p>
+    {{-- <p>{{ $assessment->sanitation }}</p> --}}
     <div class="pull-right">
         <button type="button" id="assessment-button" class="btn btn-primary">
             Edit

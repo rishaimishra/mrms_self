@@ -25,7 +25,8 @@ class DistrictController extends Controller
          $ids= User::get()->pluck('assign_district_id')->toArray();
         $query = District::query();
         if (request()->user()->hasRole('Super Admin')) {
-            $query = $query->whereIn('id',$ids);
+            // $query = $query->whereIn('id',$ids);
+            $query = $query;
         } else {
             $query = $query->whereIn('id', $ids);
         }
