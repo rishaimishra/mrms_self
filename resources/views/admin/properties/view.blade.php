@@ -627,7 +627,7 @@
                         </div>
 
 
-                        <div class="col-sm-3">
+                        {{--  <div class="col-sm-3">
                             <h6>Demand Note Delivered</h6>
                             <p>{{ $property->is_draft_delivered ? 'Yes' : 'No' }}</p>
                         </div>
@@ -660,7 +660,7 @@
                                 </div>
 
                             @endif
-                        @endif
+                        @endif  --}}
 
                     </div>
                 </div>
@@ -969,7 +969,7 @@
 
                     </div>
                     <div class="body geo-registry-view">
-                        <div class="row">
+                        {{--  <div class="row">
                             <div class="col-sm-3">
                                 <h6>Point 1</h6>
                                 <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point1)}}</p>
@@ -986,9 +986,9 @@
                                 <h6>Point 4</h6>
                                 <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point4)}}</p>
                             </div>
-                        </div>
+                        </div>  --}}
                         <div class="row">
-                            <div class="col-sm-3">
+                            {{--  <div class="col-sm-3">
                                 <h6>Point 5</h6>
                                 <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point5)}}</p>
                             </div>
@@ -1003,7 +1003,7 @@
                             <div class="col-sm-3">
                                 <h6>Point 8</h6>
                                 <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point8)}}</p>
-                            </div>
+                            </div>  --}}
                             <div class="clearfix"></div>
                             <div class="col-sm-3">
                                 <h6>Dor Lat Long</h6>
