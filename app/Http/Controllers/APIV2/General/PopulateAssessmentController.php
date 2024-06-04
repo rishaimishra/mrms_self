@@ -36,7 +36,7 @@ class PopulateAssessmentController extends ApiController
         $result['property_dimension']       = PropertyDimension::select('id', 'label', 'value')->where('is_active', 1)->get();
         $result['property_use']             = PropertyUse::select('id', 'label', 'value')->where('is_active', 1)->get();
         $result['property_zones']           = PropertyZones::select('id', 'label', 'value')->where('is_active', 1)->get();
-        $result['swimming_pools']           = Swimming::select('id', 'label', 'value')->where('is_active', 1)->get();
+        $result['swimming_pools']           = Swimming::select('id', 'label', 'value')->where('is_active', 1)->orderby('order_id')->get();
         $result['property_sanitation']      = PropertySanitationType::select('id', 'label', 'value')->where('is_active', 1)->get();
         $result['gated_community']          = getSystemConfig(SystemConfig::OPTION_GATED_COMMUNITY);
         $result['sigma_pay_url']            = getSystemConfig(SystemConfig::SIGMA_PAY_URL);
