@@ -34,7 +34,7 @@ class PopulateAssessmentController extends ApiController
         $result['property_value_added']     = PropertyValueAdded::select('id', 'label', 'value','good_value','avg_value','bad_value')->where('is_active', 1)->get();
         $result['property_types']           = PropertyType::select('id', 'label', 'value')->where('is_active', 1)->get();
         $result['property_dimension']       = PropertyDimension::select('id', 'label', 'value')->where('is_active', 1)->get();
-        $result['property_use']             = PropertyUse::select('id', 'label', 'value')->where('is_active', 1)->get();
+        $result['property_use']             = PropertyUse::select('id', 'label', 'value')->where('is_active', 1)->orderby('order_id')->get();
         $result['property_zones']           = PropertyZones::select('id', 'label', 'value')->where('is_active', 1)->get();
         $result['swimming_pools']           = Swimming::select('id', 'label', 'value')->where('is_active', 1)->orderby('order_id')->get();
         $result['property_sanitation']      = PropertySanitationType::select('id', 'label', 'value')->where('is_active', 1)->orderby('order_id')->get();
