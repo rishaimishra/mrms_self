@@ -18,7 +18,7 @@ class DashboardController extends AdminController
 {
     public function __invoke(Request $request)
     {
-
+        // return "dashboard";
         if (request()->user()->hasRole('Super Admin')) {
             $data['total'] = Property::with('districts')->whereHas('districts', function($query) {
                 $query->where('id',13);
@@ -45,12 +45,32 @@ class DashboardController extends AdminController
             })->count();
 
             $data['app_user'] = User::all()->count();
+            // Step 1: Get all landlords with their properties
+                $landlords_with_properties = LandlordDetail::whereHas('property')
+                ->join('properties', 'properties.id', '=', 'landlord_details.property_id')
+                ->whereNotNull('landlord_details.mobile_1')
+                ->select('landlord_details.id', 'landlord_details.mobile_1', 'properties.id as property_id')
+                ->get();
 
-            $data['unique_property_owners'] = LandlordDetail::whereHas('property')->groupBy('mobile_1')
-                ->join('properties', 'properties.id', 'landlord_details.property_id')
-                ->select()
-                ->addSelect(\DB::raw('COUNT(properties.id) as properties_count'))
-                ->whereNotNull('mobile_1')->get()->count();
+                // Step 2: Group by mobile_1 and count the properties for each landlord
+                $landlords_grouped = $landlords_with_properties->groupBy('mobile_1')
+                ->map(function ($group) {
+                    return [
+                        'landlord_id' => $group->first()->id,
+                        'properties_count' => $group->count(),
+                    ];
+                });
+
+                // Step 3: Count the unique landlords with at least one property
+                $unique_property_owners_count = $landlords_grouped->count();
+
+                // Assign the count to the data array
+                $data['unique_property_owners'] = $unique_property_owners_count;
+            // $data['unique_property_owners'] = LandlordDetail::whereHas('property')->groupBy('mobile_1')
+            //     ->join('properties', 'properties.id', 'landlord_details.property_id')
+            //     ->select()
+            //     ->addSelect(\DB::raw('COUNT(properties.id) as properties_count'))
+            //     ->whereNotNull('mobile_1')->get()->count();
                 $data['paid'] = Property::with('assessment')->whereHas('payments', function ($query) use ($request) {
                     $query->whereYear('created_at', now()->format('Y'))->whereColumn('assessment', 'amount');
                 })->count();
@@ -78,11 +98,32 @@ class DashboardController extends AdminController
 
             $data['app_user'] = User::where('assign_district', request()->user()->assign_district)->count();
 
-            $data['unique_property_owners'] = LandlordDetail::whereHas('property')->groupBy('mobile_1')
-                ->join('properties', 'properties.id', 'landlord_details.property_id')
-                ->select()
-                ->addSelect(\DB::raw('COUNT(properties.id) as properties_count'))
-                ->whereNotNull('mobile_1')->get()->count();
+            // $data['unique_property_owners'] = LandlordDetail::whereHas('property')->groupBy('mobile_1')
+            //     ->join('properties', 'properties.id', 'landlord_details.property_id')
+            //     ->select()
+            //     ->addSelect(\DB::raw('COUNT(properties.id) as properties_count'))
+            //     ->whereNotNull('mobile_1')->get()->count();
+            // Step 1: Get all landlords with their properties
+                    $landlords_with_properties = LandlordDetail::whereHas('property')
+                    ->join('properties', 'properties.id', '=', 'landlord_details.property_id')
+                    ->whereNotNull('landlord_details.mobile_1')
+                    ->select('landlord_details.id', 'landlord_details.mobile_1', 'properties.id as property_id')
+                    ->get();
+
+                    // Step 2: Group by mobile_1 and count the properties for each landlord
+                    $landlords_grouped = $landlords_with_properties->groupBy('mobile_1')
+                    ->map(function ($group) {
+                        return [
+                            'landlord_id' => $group->first()->id,
+                            'properties_count' => $group->count(),
+                        ];
+                    });
+
+                    // Step 3: Count the unique landlords with at least one property
+                    $unique_property_owners_count = $landlords_grouped->count();
+
+                    // Assign the count to the data array
+                    $data['unique_property_owners'] = $unique_property_owners_count;
         }
 
 

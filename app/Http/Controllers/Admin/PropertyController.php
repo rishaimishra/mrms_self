@@ -67,7 +67,8 @@ class PropertyController extends Controller
             'occupancies',
             'propertyInaccessible',
             'payments',
-            'districts'
+            'districts',
+            'assessmentHistory'
         ])
             ->whereHas('assessment', function ($query) use ($request) {
 
@@ -337,7 +338,7 @@ class PropertyController extends Controller
         }
 
         if ($request->bulk_demand && $request->bulk_demand == 2 && $this->properties->count() > 0) {
-
+            
             $coordinates = $this->getMapCoordinates();
             $points = $coordinates[0];
             $center = $coordinates[1];
@@ -396,16 +397,18 @@ class PropertyController extends Controller
 
         if ($properties->count()) {
             foreach ($properties as $key => $property) {
-
+                
                 if (optional($property->geoRegistry)->dor_lat_long) {
                     $point = explode(', ', $property->geoRegistry->dor_lat_long);
                 } else {
                     continue;
                 }
-                if ($property->assessment->getCurrentYearTotalDue() >0) {
+                if ($property->assessment->getCurrentYearTotalDue() > 0) {
                     $icon = "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png";
-                } else if ($property->assessment->getCurrentYearTotalDue() == 0 || $property->assessment->getCurrentYearTotalDue() < 0) {
+                } else if ($property->assessment->getCurrentYearTotalDue() < 0) {
                     $icon = "https://maps.google.com/mapfiles/ms/icons/green-dot.png";
+                } else if ($property->assessment->getCurrentYearTotalDue() == 0) {
+                    $icon = "https://maps.google.com/mapfiles/ms/icons/orange-dot.png";
                 } else if(isset($property->user->assign_district_id)){
                     $icon = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
                 }
@@ -579,7 +582,7 @@ class PropertyController extends Controller
     {
         $year = !$year ? date('Y') : $year;
 
-        $property = Property::with('assessment', 'occupancy', 'types', 'geoRegistry', 'user')->findOrFail($id);
+       return $property = Property::with('assessment', 'occupancy', 'types', 'geoRegistry', 'user')->findOrFail($id);
         $assessment = $property->assessments()->whereYear('created_at', $year)->firstOrFail();
 
         //        $pdf = \PDF::loadView('admin.payments.receipt');

@@ -136,7 +136,7 @@
 
     @endphp
     @hasanyrole('Super Admin|Admin|manager')
-    <p>{{ $assessment->sanitation }}</p>
+    {{-- <p>{{ $assessment->sanitation }}</p> --}}
     <div class="pull-right">
         <button type="button" id="assessment-button" class="btn btn-primary">
             Edit
@@ -160,7 +160,7 @@
     Last Payment: {{ $lastPayment ? $lastPayment->created_at->toDayDateTimeString() : 'Never' }} <br/>
 </p>
 
-{{--  <h4 class="card-inside-title">Demand Note Delivery</h4>
+<h4 class="card-inside-title">Demand Note Delivery</h4>
 <p>{{ $assessment->isDelivered() ? 'Delivered' : 'Not Delivered' }}</p>
 
 @if($assessment->isDelivered())
@@ -178,7 +178,7 @@
     <a href="{{ $assessment->getRecipientPhoto(600,600) }}" data-sub-html="">
         <img style="max-width: 100px" class="img-responsive thumbnail" src="{{ $assessment->getRecipientPhoto(600,600) }}">
     </a>
-@endif  --}}
+@endif
 
 <h4 class="card-inside-title">Assessment Details</h4>
 
@@ -202,15 +202,22 @@
         </div>
         <div class="col-sm-3">
             <h6>Wall Materials</h6>
-            <p>{{ optional(App\Models\PropertyWallMaterials::find($assessment->property_wall_materials))->label}}</p>
+            <p>
+                {{ optional(App\Models\PropertyWallMaterials::find($assessment->property_wall_materials))->label }}
+                ({{ $assessment->wall_material_type }})
+            </p>
         </div>
         <div class="col-sm-3">
             <h6>Roofs Materials</h6>
-            <p>{{ optional(App\Models\PropertyRoofsMaterials::find($assessment->roofs_materials))->label}}</p>
+            <p>{{ optional(App\Models\PropertyRoofsMaterials::find($assessment->roofs_materials))->label}}
+                ({{ $assessment->roof_material_type }})
+            </p>
         </div>
         <div class="col-sm-3">
             <h6>Window Type Materials</h6>
-            <p>{{ optional(App\Models\PropertyWindowType::find($assessment->property_window_type))->label}}</p>
+            <p>{{ optional(App\Models\PropertyWindowType::find($assessment->property_window_type))->label}}
+                ({{ $assessment->window_type_type }})
+            </p>
         </div>
         <div class="col-sm-3">
             <h6>Property Sanitation</h6>

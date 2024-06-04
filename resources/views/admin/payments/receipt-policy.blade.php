@@ -21,15 +21,15 @@
             <tbody>
                             <tr>
                                 <td>
-                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060; text-align: right; font-size: 10px; width:15%; color:#303030;" scope="col"> ASSESSMENT</th>
+                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060; text-align: right; font-size: 10px; width:20%; color:#303030;" scope="col"> ASSESSMENT</th>
                                 </td>
-                                <td style="border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px; width:15%; color:#303030;">PARAMETERS</td>
+                                <td style="border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px; width:20%; color:#303030;">PARAMETERS</td>
                                 <td>
-                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060;text-align: right; font-size: 10px; width:20%; color:#303030;" scope="col">COUNCIL</th>
+                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060;text-align: right; font-size: 10px; width:15%; color:#303030;" scope="col">COUNCIL</th>
                                 </td>
-                                <td style="border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px; width:20%; color:#303030;">ADJUSTMENTS</td>
+                                <td style="border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px; width:15%; color:#303030;">ADJUSTMENTS</td>
                                 <td>
-                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060; border-right:1px solid  #606060;  font-size: 10px;width:30%; color:#303030;" colspan="2" scope="col">TAXABLE PROPERTY VALUE (LE)</th>
+                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060; border-right:1px solid  #606060;  font-size: 10px;width:30%; color:#303030;" colspan="2" scope="col">Estimated PROPERTY VALUE (LE)</th>
                                 </td>
                                 <!-- <td style="border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px;width:15%; color:#303030;">VALUE (LE)</td> -->
                             </tr>
@@ -44,8 +44,8 @@
                                 </td>
                                 <td style="border:1px solid  #606060; font-weight: bold;color:#303030;">DEDUCTIONS</td>
                                 <td>
-                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060; border-right:1px solid  #606060; border-bottom:1px solid  #606060;" colspan="2"  scope="col">LE {!! number_format($assessment->geTaxablePropertyValue()) !!}</th>
-                                    <!-- <th style="border-top:1px solid  #606060; border-right:1px solid  #606060; border-bottom:1px solid  #606060; text-align: left;"  scope="col">{!! number_format($assessment->geTaxablePropertyValue()) !!}</th> -->
+                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060; border-right:1px solid  #606060; border-bottom:1px solid  #606060;" colspan="2"  scope="col">LE {!! number_format($assessment->getNetPropertyAssessedValue()*12*27*1.18, 2, '.',',') !!}</th>
+                                    <!-- <th style="border-top:1px solid  #606060; border-right:1px solid  #606060; border-bottom:1px solid  #606060; text-align: left;"  scope="col">{!! number_format($assessment->getNetPropertyAssessedValue()*12*27*1.18, 2, '.',',') !!}</th> -->
                                 </td>
                                 <!-- <td style="border-top:1px solid  #606060; border-right:1px solid  #606060; border-bottom:1px solid  #606060; font-weight: bold;text-align: left;"></td> -->
                             </tr>
@@ -74,7 +74,7 @@
                                         $type  =  $assessment->categories->pluck('label')->count() > 0 ? strtoupper($assessment->categories->pluck('label')[$index]) : '';
                                         $type_val =  $assessment->categories->pluck('value')->count() > 0 ? $assessment->categories->pluck('value')[$index] : '';
                                     @endphp
-                                    {{ $type }} {{ $type_val }}
+                                    {{ $type }} ({{ $type_val }})
                                 </td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Water Supply</th>
@@ -118,7 +118,9 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Habitable Floor</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{{ strtoupper($assessment->types->pluck('label')->implode(', ')) }}, {{ $assessment->types->pluck('value')->sum() }}</td>
+                                <td style="border:1px solid #606060; color: #484848;">
+                                    {{ strtoupper($assessment->types->pluck('label')->implode(', ')) }}, ({{ $assessment->types->pluck('value')->sum() }})
+                                </td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Market</th>
                                 </td>
@@ -206,7 +208,10 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Zone</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(optional(App\Models\PropertyZones::find($assessment->zone))->label) }} {{ strtoupper(optional(App\Models\PropertyZones::find($assessment->zone))->value) }}</td>
+                                <td style="border:1px solid #606060; color: #484848;">
+                                    {{ strtoupper(optional(App\Models\PropertyZones::find($assessment->zone))->label) }}
+                                    ({{ strtoupper(optional(App\Models\PropertyZones::find($assessment->zone))->value) }})
+                                </td>
                                 <td>
                                     <th style="border:0px solid #606060;text-align: left;" scope="col"></th>
                                 </td>
@@ -220,7 +225,10 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Property Use</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->label) }} {{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->value) }}</td>
+                                <td style="border:1px solid #606060; color: #484848;">
+                                    {{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->label) }}
+                                    ({{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->value) }})
+                                </td>
                                 <td>
                                     <th style="border:0px solid #606060;text-align: left;" scope="col"></th>
                                 </td>
@@ -263,7 +271,10 @@
                             <td>
                                 <th style="border:1px solid #606060;text-align: left;" scope="col">Sanitation</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(    optional(App\Models\PropertySanitationType::find($assessment->sanitation))->label == 'Not Applicable' ? 'NA' : optional(App\Models\PropertySanitationType::find($assessment->sanitation))->label  ) }} {{ strtoupper(optional(App\Models\PropertySanitationType::find($assessment->sanitation))->value) }}</td>
+                                <td style="border:1px solid #606060; color: #484848;">
+                                    {{ strtoupper(optional($sanitation = App\Models\PropertySanitationType::find($assessment->sanitation))->label) == 'NOT APPLICABLE' ? 'NA' : strtoupper(optional($sanitation)->label) }}
+                                    ({{ strtoupper(optional($sanitation)->value) }})
+                                </td>
                                 <td>
                                     <th style="border:0px solid #606060;text-align: left;" scope="col"></th>
                                 </td>
@@ -296,7 +307,7 @@
                 <tbody>
                     <tr>
                                     
-                        <th style="border:1px solid #ccc; text-align: center;background-color:#ccc; color: #000;font-size: 12px;" scope="col">RATE PAYABLE = (TAXABLE PROPERTY VALUE * MILL RATE)/1000</th>
+                        <th style="border:1px solid #ccc; text-align: center;background-color:#ccc; color: #000;font-size: 12px;" scope="col">RATE PAYABLE = (Estimated PROPERTY VALUE * MILL RATE)/1000</th>
                                     
                     </tr>
                                 

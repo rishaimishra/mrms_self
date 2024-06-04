@@ -114,9 +114,11 @@
                             </td>
                             <td style="border:1px solid lightgray;">{{ strtoupper($assessment->types->pluck('label')->implode(', ')) }} {{$assessment->types->pluck('value')->sum()}}</td>
                             <td style="border:1px solid lightgray;">{{ strtoupper(number_format(optional($assessment)->square_meter, 2,'.','')) }} {{ (optional($assessment)->square_meter) ? ' SQ METERS' : '' }}</td>
-                            <td style="border:1px solid lightgray;">{{ strtoupper(optional(optional($assessment)->wallMaterial)->label) }}</td>
-                            <td style="border:1px solid lightgray;">{{ strtoupper(optional(optional($assessment)->roofMaterial)->label) }}</td>
-                            <td style="border:1px solid lightgray; ">{{ strtoupper(optional(optional($assessment)->windowType)->label) }}</td>
+                            <td style="border:1px solid lightgray;">
+                                {{ strtoupper(optional(optional($assessment)->wallMaterial)->label) . ' (' . optional($assessment)->wall_material_type . ')' }}
+                            </td>
+                            <td style="border:1px solid lightgray;">{{ strtoupper(optional(optional($assessment)->roofMaterial)->label) . ' (' . optional($assessment)->roof_material_type . ')' }}</td>
+                            <td style="border:1px solid lightgray; ">{{ strtoupper(optional(optional($assessment)->windowType)->label) . ' (' . optional($assessment)->roof_material_type . ')' }}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -145,7 +147,7 @@
                             <th style="border:1px solid #ccc;" scope="col">PROPERTY ASSESSED VALUE</th>
                             <th style="border:1px solid #ccc;" scope="col">COUNCIL ADJUSTMENTS</th>
                             <th style="border:1px solid #ccc;" scope="col">NET PROPERTY ASSESSED VALUE</th>
-                            <th style="border:1px solid #ccc;" scope="col">TAXABLE PROPERTY VALUE</th>
+                            {{--  <th style="border:1px solid #ccc;" scope="col">TAXABLE PROPERTY VALUE</th>  --}}
                             <th style="border:1px solid #ccc;" scope="col">MILL RATE</th>
                         </tr>
                         </thead>
@@ -154,7 +156,7 @@
                             <td style="border:1px solid lightgray;">{!! number_format($assessment->getCurrentYearAssessmentAmount()) !!}</td>
                             <td style="border:1px solid lightgray;">{!! number_format($assessment->getCouncilAdjustments()) !!}</td>
                             <td style="border:1px solid lightgray;">{!! number_format($assessment->getNetPropertyAssessedValue(), 4,'.',',') !!}</td>
-                            <td style="border:1px solid lightgray;">{!! number_format($assessment->getNetPropertyAssessedValue()*12*27*1.18, 2, '.',',') !!}</td>
+                            {{--  <td style="border:1px solid lightgray;">{!! number_format($assessment->getNetPropertyAssessedValue()*12*27*1.18, 2, '.',',') !!}</td>  --}}
                             <td style="border:1px solid lightgray;">{!! $assessment->mill_rate > 0? $assessment->mill_rate: 0 !!}</td>
                         </tr>
                         </tbody>
@@ -168,8 +170,8 @@
                             <th style="border:1px solid #ccc;" scope="col">PENALTY</th>
                             <th style="border:1px solid #ccc;" scope="col">1st INSTALMENT<br/>DUE 31-03-{{ $assessment->created_at->year }}</th>
                             <th style="border:1px solid #ccc;" scope="col">2nd INSTALMENT<br/>DUE 30-06-{{ $assessment->created_at->year }}</th>
-                            <th style="border:1px solid #ccc;" scope="col">3rd INSTALMENT<br/>DUE 30-09-{{ $assessment->created_at->year }}</th>
-                            <th style="border:1px solid #ccc;" scope="col">4th INSTALMENT<br/>DUE 31-12-{{ $assessment->created_at->year }}</th>
+                            {{--  <th style="border:1px solid #ccc;" scope="col">3rd INSTALMENT<br/>DUE 30-09-{{ $assessment->created_at->year }}</th>
+                            <th style="border:1px solid #ccc;" scope="col">4th INSTALMENT<br/>DUE 31-12-{{ $assessment->created_at->year }}</th>  --}}
                             <th style="border:1px solid #ccc;" scope="col">TOTAL AMOUNT DUE 31-12-{{ $assessment->created_at->year }}</th>
                         </tr>
                         </thead>
@@ -180,8 +182,8 @@
                             <td style="border:1px solid lightgray;">{!! number_format($assessment->getPenalty()) !!}</td>
                             <td style="border:1px solid lightgray;">{!! isset($paymentInQuarter[1]) ?  number_format($paymentInQuarter[1]) : '-' !!}</td>
                             <td style="border:1px solid lightgray;">{!! isset($paymentInQuarter[2]) ?  number_format($paymentInQuarter[2]) : '-' !!}</td>
-                            <td style="border:1px solid lightgray;">{!! isset($paymentInQuarter[3]) ?  number_format($paymentInQuarter[3]) : '-' !!}</td>
-                            <td style="border:1px solid lightgray;">{!! isset($paymentInQuarter[4]) ?  number_format($paymentInQuarter[4]) : '-' !!}</td>
+                            {{--  <td style="border:1px solid lightgray;">{!! isset($paymentInQuarter[3]) ?  number_format($paymentInQuarter[3]) : '-' !!}</td>
+                            <td style="border:1px solid lightgray;">{!! isset($paymentInQuarter[4]) ?  number_format($paymentInQuarter[4]) : '-' !!}</td>  --}}
                             <td style="border:1px solid lightgray; color:#000000; background-color:#E0E0E0;">{!! number_format($assessment->getPropertyTaxPayable() + $assessment->getPastPayableDue() + $assessment->getPenalty() - $paymentInQuarter[1] - $paymentInQuarter[2] - $paymentInQuarter[3] - $paymentInQuarter[4] ) !!}</td>
                         </tr>
                         </tbody>
