@@ -51,7 +51,7 @@ class DraftDeliveredSMSNotification extends Notification
 
 
         return (new TwilioSmsMessage())
-            ->content("Dear Property Owner, Your WARDC Property Rate Demand Note for {$this->year} has been delivered to {$this->name}");
+            ->content("Dear Property Owner, Your Property Rate Demand Note for {$this->year} has been delivered to {$this->name}");
     }
 
     public function canReceiveAlphanumericSender()

@@ -19,10 +19,11 @@
             <div class="col-6">
                 <div class="h4">MUNICIPAL RATE MANAGEMENT SYSTEM</div>
                 <div class="h5">PROPERTY RATE PAYMENT TRANSACTION RECEIPT</div>
-                <div class="h6">{{ $property->district }}</div>
+                <div class="h6">{{ $property->district  }}</div>
             </div>
             <div class="col-3">
-                <img class="t-logo" src="{{ $district->getPrimaryLogoUrl() }}" alt="Image" />
+                <img class="t-logo" src="{{ asset('images/logo23.png') }}" alt="Image" />
+                {{--  <img class="t-logo" src="{{ $district->getPrimaryLogoUrl() }}" alt="Image" />  --}}
                 {{-- <img class="t-logo" src="./logo1.png" alt="logo 1" /> --}}
             </div>
         </div>

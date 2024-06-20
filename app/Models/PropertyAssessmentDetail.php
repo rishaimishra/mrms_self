@@ -74,7 +74,13 @@ class PropertyAssessmentDetail extends Model
         'council_group_name',
         'sanitation',
         'is_rejected_pensioner',
-        'is_rejected_disability'
+        'is_rejected_disability',
+        'net_property_assessed_value',
+        'taxable_property_value',
+        'property_assessed_value',
+        'property_tax_payable_2024',
+        'discounted_rate_payable',
+        'council_adjustments'
     ];
 
     protected $appends = [
@@ -106,6 +112,21 @@ class PropertyAssessmentDetail extends Model
         'last_printed_at',
         'demand_note_delivered_at'
     ];
+    public function getCostofOneTownAttribute(){
+        return 250000;
+    }
+    public function getOneTownLotAttribute(){
+        return 3750;
+    }
+    public function getFloorAreaPlottedOnMapAttribute(){
+        return 1722;
+    }
+    public function getValuePerSquareFeetAttribute(){
+        return $this->getCostofOneTownAttribute() / $this->getOneTownLotAttribute();
+    }
+    public function getfloorAreaValueAttribute(){
+        return $this->getValuePerSquareFeetAttribute() * $this->getFloorAreaPlottedOnMapAttribute();
+    }
     public function getWallMaterialAttribute()
     {
             // Extract the three columns and create an object
@@ -373,7 +394,7 @@ class PropertyAssessmentDetail extends Model
 
     public function getPropertyTaxPayable()
     {
-        return ($this->mill_rate * $this->geTaxablePropertyValue()) / 1000;
+        return ($this->mill_rate * $this->getNetPropertyAssessedValue()) / 1000;
     }
 
     public function getPensionerDiscount()
@@ -565,10 +586,10 @@ class PropertyAssessmentDetail extends Model
             }
             return $this->getTotalPayable() - $this->getCurrentYearTotalPayment() + $this->getCurrentYearAssessmentAmount();
         }else {
-
+            
             // amount due modification
               
-                $discounted_rate_payable = $this->getPropertyTaxPayable() -  $this->pensioner_discount -$this->disability_discount ;
+                $discounted_rate_payable = $this->getPropertyTaxPayable() -  $this->pensioner_discount - $this->disability_discount ;
 
 
             return $discounted_rate_payable - $this->getCurrentYearTotalPayment();

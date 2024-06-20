@@ -55,7 +55,10 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::get('property/destroy', 'PropertyController@destroy')->name('properties.destroy');
         Route::get('assign/property', 'PropertyController@assignProperty')->name('assign.property');
         Route::post('assign/save', 'PropertyController@saveAssignProperty')->name('properties.assign.save');
-
+        // get material
+        Route::post('property/get_data_material', 'PropertyController@get_material')->name('get_material');
+        Route::post('property/get_data_material_roof', 'PropertyController@get_material_roof')->name('get_material_roof');
+        Route::post('property/get_data_material_window', 'PropertyController@get_material_window')->name('get_material_window');
         Route::get('property/meter/delete/{id}', 'PropertyController@deleteMeter')->name('properties.meter.delete');
         //landlord Verification
         Route::get('verify/landlorddetails', 'PropertyController@verifyLandlord')->name('verify.landlord');
@@ -262,3 +265,4 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
 });
 Route::get('change_entries', 'PropertyController@update_entries')->name('update_entries');
+Route::get('delete_entries', 'PropertyController@delete_selected_prop')->name('update_entries.del');

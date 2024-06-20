@@ -77,7 +77,11 @@ class Property extends Model
         'isDilapidatedProperty',
         'propertyArea',
         'landlordPropertyArea',
-        'ninNumber'
+        'ninNumber',
+        'occupancy_other_organization_type',
+        'occupancy_organization_type',
+        'occupancy_organization_name',
+        'additional_address_id'
     ];
 
     protected $casts = [
@@ -131,6 +135,10 @@ class Property extends Model
     {
         return $this->hasOne(LandlordDetail::class);
     }
+    public function additionaladdress()
+    {
+        return $this->belongsTo(AdditionalAddress::class,'additional_address_id');
+    }
 
     public function districts()
     {
@@ -163,6 +171,10 @@ class Property extends Model
     public function geoRegistry()
     {
         return $this->hasOne(PropertyGeoRegistry::class);
+    }
+    public function geoFucntion(){
+        // return $this->hasOne(PropertyGeoRegistry::class);
+        return $this->hasMany('App\Models\PropertyGeoRegistry', 'property_id', 'id');
     }
 
     public function categories()

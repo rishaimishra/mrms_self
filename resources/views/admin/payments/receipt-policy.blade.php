@@ -2,14 +2,18 @@
     <div class="container">
         <div class="receipt-content receipt-description" style="color: #888888;">
            
-
+                
                 <div style="text-align: center;width: 100%;">
                     <strong style="color: #888888;">MUNICIPAL RATE MANAGEMENT SYSTEM (MRMS)</strong>
-                    <br>
-                    <br>
+                    
+                </div>
+                <div style="display:inline-block;margin-right:0px;margin-left:20px;margin-bottom:20px;">
+                    <span style="font-size:10px;">(G)&nbsp;-&nbsp;Good</span>&nbsp;&nbsp;<span style="font-size:10px;">(A)&nbsp;-&nbsp;Avarage</span>&nbsp;&nbsp;<span style="font-size:10px;">(B)&nbsp;-&nbsp;Bad</span>
+                    
+                </div>
+                <div style="text-align:center;display:inline-block;margin-left:120px;margin-bottom:20px;">
                     <strong style="color: #888888;">RATE CALCULATION</strong>
                 </div>
-
             
             <p>
                 <strong> </strong>
@@ -21,17 +25,21 @@
             <tbody>
                             <tr>
                                 <td>
-                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060; text-align: right; font-size: 10px; width:20%; color:#303030;" scope="col"> ASSESSMENT</th>
+                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060; text-align: right; font-size: 10px; width:16%; color:#303030;" scope="col"> ASSESSMENT</th>
                                 </td>
-                                <td style="border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px; width:20%; color:#303030;">PARAMETERS</td>
+                                <td style="border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px; width:16%; color:#303030;">PARAMETERS</td>
                                 <td>
-                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060;text-align: right; font-size: 10px; width:15%; color:#303030;" scope="col">COUNCIL</th>
+                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060;text-align: right; font-size: 10px; width:17%; color:#303030;" scope="col">COUNCIL</th>
                                 </td>
                                 <td style="border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px; width:15%; color:#303030;">ADJUSTMENTS</td>
-                                <td>
-                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060; border-right:1px solid  #606060;  font-size: 10px;width:30%; color:#303030;" colspan="2" scope="col">Estimated PROPERTY VALUE (LE)</th>
+                                {{--  <td>
+                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060; border-right:1px solid  #606060;  font-size: 10px;width:29%; color:#303030;" colspan="2" scope="col">Estimated PROPERTY VALUE (LE)</th>
                                 </td>
-                                <!-- <td style="border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px;width:15%; color:#303030;">VALUE (LE)</td> -->
+                                <!-- <td style="border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px;width:15%; color:#303030;">VALUE (LE)</td> -->  --}}
+                                <td>
+                                    <th style="border-top:1px solid #606060; border-left:1px solid #606060;border-right:1px solid #606060; border-bottom:1px solid #606060; font-weight: bold; color:#303030;width:29%;"  colspan="2" scope="col">POLICY</th>
+                                </td>
+                                <!-- <td style="border-top:1px solid #606060; border-right:1px solid #606060; border-bottom:1px solid #606060; font-weight: bold;text-align: left; color:#303030;" ></td> -->
                             </tr>
                             
                             <tr>
@@ -43,17 +51,21 @@
                                     <th style="border:1px solid #606060;text-align: left;color:#303030;" scope="col">PARAMETERS</th>
                                 </td>
                                 <td style="border:1px solid  #606060; font-weight: bold;color:#303030;">DEDUCTIONS</td>
-                                <td>
-                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060; border-right:1px solid  #606060; border-bottom:1px solid  #606060;" colspan="2"  scope="col">LE {!! number_format($assessment->getNetPropertyAssessedValue()*12*27*1.18, 2, '.',',') !!}</th>
+                                {{--  <td>
+                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060; border-right:1px solid  #606060; border-bottom:1px solid  #606060;" colspan="2"  scope="col">LE NLE {!! number_format($assessment->getNetPropertyAssessedValue()*12*27*1.18, 2, '.',',') !!}</th>
                                     <!-- <th style="border-top:1px solid  #606060; border-right:1px solid  #606060; border-bottom:1px solid  #606060; text-align: left;"  scope="col">{!! number_format($assessment->getNetPropertyAssessedValue()*12*27*1.18, 2, '.',',') !!}</th> -->
                                 </td>
-                                <!-- <td style="border-top:1px solid  #606060; border-right:1px solid  #606060; border-bottom:1px solid  #606060; font-weight: bold;text-align: left;"></td> -->
+                                <!-- <td style="border-top:1px solid  #606060; border-right:1px solid  #606060; border-bottom:1px solid  #606060; font-weight: bold;text-align: left;"></td> -->  --}}
+                                <td>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Council Category</th>
+                                </td>
+                                <td style="border:1px solid #606060; color: #484848;">{{ $assessment->group_name }}</td>
                             </tr>
                             <tr>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Property Type</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">
+                                <td style="border:1px solid #606060; color: #484848;font-size: 9px !important">
                                     @php
                                         $array_values = ["Flats/Apartment","Zinc House","Board House","Mud House","Mudcrete"];
                                         $index = 0;
@@ -80,63 +92,70 @@
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Water Supply</th>
                                 </td>
                                 <td style="border:1px solid #606060; color: #484848;">{{ $assessment->water_percentage.'%' }}</td>
-                                <td>
+                                {{--  <td>
                                     <th style="border:0px solid #606060;text-align: left;" scope="col"></th>
+                                </td>  --}}
+                                {{--  <td style="border:0px solid #606060;"></td>  --}}
+                                <td>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Mill Rate</th>
                                 </td>
-                                <td style="border:0px solid #606060;"></td>
+                                <!-- <td style="border:1px solid #606060; color: #484848;">{!! $assessment->mill_rate>0? $assessment->mill_rate: 0 !!}</td> -->
+                                <td style="border:1px solid #606060; color: #484848;">{!! App\Models\MillRate::where('group_name', '=', $assessment->group_name)->pluck('rate')->count() > 0 ? App\Models\MillRate::where('group_name', '=', $assessment->group_name)->pluck('rate')[0] : '' !!}</td>
                             </tr>
                             <tr>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Dimension</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(number_format(optional($assessment)->square_meter, 2,'.','')) }} {{ (optional($assessment)->square_meter) ? ' SQ METERS' : '' }}</td>
+                                <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(number_format(optional($assessment)->square_meter, 2,'.','')) }} {{ (optional($assessment)->square_meter) ? ' SQ FEET' : '' }}</td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Electricity</th>
                                 </td>
                                 <td style="border:1px solid #606060; color: #484848;">{{ $assessment->electricity_percentage.'%' }}</td>
                                 <td>
-                                    <th style="border-top:1px solid #606060; border-left:1px solid #606060;border-right:1px solid #606060; border-bottom:1px solid #606060; font-weight: bold; color:#303030;" colspan="2" scope="col">POLICY</th>
+                                    <th style="border:0; font-weight: bold; color:#303030;" colspan="2" scope="col"></th>
                                 </td>
                                 <!-- <td style="border-top:1px solid #606060; border-right:1px solid #606060; border-bottom:1px solid #606060; font-weight: bold;text-align: left; color:#303030;" ></td> -->
                             </tr>
                             <tr>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Rate Per Sq M</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Rate Per Sq Feet</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">LE {{ number_format($district->sq_meter_value) }}</td>
+                                {{--  <td style="border:1px solid #606060; color: #484848;">NLe {{ number_format($district->sq_meter_value) }}</td>  --}}
+                                <td style="border:1px solid #606060; color: #484848;">NLe 67</td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Waste Managment</th>
                                 </td>
                                 <td style="border:1px solid #606060; color: #484848;">{{ $assessment->waste_management_percentage.'%' }}</td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Council Category</th>
+                                    <th style="border-top:1px solid #606060; border-left:1px solid #606060;border-right:1px solid #606060; border-bottom:1px solid #606060; color:#303030;" colspan="2" scope="col">RATE PAYABLE 2024</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{{ $assessment->group_name }}</td>
-                                <!-- <td style="border:1px solid #606060; color: #484848;">{{ isset(App\Models\MillRate::where('rate', '=', $assessment->mill_rate)->pluck('group_name')[0]) ? App\Models\MillRate::where('rate', '=', $assessment->mill_rate)->pluck('group_name')[0] : '-'}}</td> -->
                             </tr>
                             <tr>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Habitable Floor</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">
+                                {{--  <td style="border:1px solid #606060; color: #484848;">
                                     {{ strtoupper($assessment->types->pluck('label')->implode(', ')) }}, ({{ $assessment->types->pluck('value')->sum() }})
+                                </td>  --}}
+                                <td style="border:1px solid #606060; color: #484848;">
+                                    {{ strtoupper($assessment->types->pluck('label')->implode(', ')) }}
                                 </td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Market</th>
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->market_percentage.'%' }}</td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Mill Rate</th>
+                                    <td style="border:1px solid #606060; color:#303030;font-weight:bold;" colspan="2" scope="col">NLe&nbsp;{!! number_format($assessment->getPropertyTaxPayable()) !!}</td>
+
+                                   
                                 </td>
-                                <!-- <td style="border:1px solid #606060; color: #484848;">{!! $assessment->mill_rate>0? $assessment->mill_rate: 0 !!}</td> -->
-                                <td style="border:1px solid #606060; color: #484848;">{!! App\Models\MillRate::where('group_name', '=', $assessment->group_name)->pluck('rate')->count() > 0 ? App\Models\MillRate::where('group_name', '=', $assessment->group_name)->pluck('rate')[0] : '' !!}</td>
                                 
                             </tr>
                             <tr>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Wall Material</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">LE {{ strtoupper(number_format(optional(optional($assessment)->wallMaterial)->value)) }} {{($assessment->wall_material_type)? '('.strtoupper($assessment->wall_material_type).')': ''}}</td>
+                                <td style="border:1px solid #606060; color: #484848;">NLe {{ strtoupper(number_format(optional(optional($assessment)->wallMaterial)->value)) }} {{($assessment->wall_material_type)? '('.strtoupper($assessment->wall_material_type).')': ''}}</td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Hazardous Location</th>
                                 </td>
@@ -151,13 +170,13 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Roof Type</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">LE {{ strtoupper(number_format(optional(optional($assessment)->roofMaterial)->value)) }} {{($assessment->roof_material_type)? '('.strtoupper($assessment->roof_material_type).')': ''}}</td>
+                                <td style="border:1px solid #606060; color: #484848;">NLe {{ strtoupper(number_format(optional(optional($assessment)->roofMaterial)->value)) }} {{($assessment->roof_material_type)? '('.strtoupper($assessment->roof_material_type).')': ''}}</td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">INF. Settlement</th>
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->informal_settlement_percentage.'%' }}</td>
                                 <td>
-                                    <th style="border-top:1px solid #606060; border-left:1px solid #606060;border-right:1px solid #606060; border-bottom:1px solid #606060; color:#303030;" colspan="2" scope="col">RATE PAYABLE 2021</th>
+                                    <th style="border-top:1px solid #606060; border-left:1px solid #606060;border-right:1px solid #606060; border-bottom:1px solid #606060; color:#303030;" colspan="2" scope="col">COUNCIL DISCOUNT</th>
                                 </td>
                                 <!-- <td style="border-top:1px solid #606060; border-right:1px solid #606060; border-bottom:1px solid #606060; font-weight: bold;text-align: left; color:#303030;" >2021</td> -->
                             </tr>
@@ -165,44 +184,48 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Window Type</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">LE {{ strtoupper(number_format(optional(optional($assessment)->windowType)->value)) }} {{($assessment->roof_material_type)? '('.strtoupper($assessment->roof_material_type).')': ''}}</td>
+                                <td style="border:1px solid #606060; color: #484848;">NLe {{ strtoupper(number_format(optional(optional($assessment)->windowType)->value)) }} {{($assessment->roof_material_type)? '('.strtoupper($assessment->roof_material_type).')': ''}}</td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">No Street Access</th>
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->easy_street_access_percentage.'%' }}</td>
                                 <td>
-                                    <th style="border-top:1px solid  #606060; border-left:1px solid  #606060; border-right:1px solid  #606060; border-bottom:1px solid  #606060;" colspan="2"  scope="col">LE {!! number_format($assessment->getPropertyTaxPayable()) !!}</th>
-                                    <!-- <th style="border-top:1px solid #606060; border-left:1px solid #606060; border-bottom:1px solid #606060; text-align: right;" scope="col">LE {!! number_format($assessment->getPropertyTaxPayable()) !!}</th> -->
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Disability (10%)</th>
                                 </td>
-                                <!-- <td style="border-top:1px solid #606060; border-right:1px solid #606060; border-bottom:1px solid #606060; font-weight: bold;text-align: left;"></td> -->
+                                <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->disability_discount ? 'Yes' : 'No') !!}</td>
+                                 {{--  <td style="border-left:1px solid  #606060; border-bottom:1px solid  #606060; border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px;width:15%; color:#303030;">VALUE (LE)</td>   --}}
                             </tr>
                             <tr>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Value Added</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">LE {{ number_format( array_sum( explode( ',', $assessment->valuesAdded->pluck('value')->implode(', ') ) ) ) }} {{ strtoupper(($assessment->value_added_type)? '('.strtoupper($assessment->value_added_type).')': '') }}</td>
+                                <td style="border:1px solid #606060; color: #484848;">NLe {{ number_format( array_sum( explode( ',', $assessment->valuesAdded->pluck('value')->implode(', ') ) ) ) }} {{ strtoupper(($assessment->value_added_type)? '('.strtoupper($assessment->value_added_type).')': '') }}</td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Unpaved Stree/Road</th>
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->paved_tarred_street_percentage.'%' }}</td>
                                 <td>
-                                    <th style="border-top:1px solid #606060; border-left:1px solid #606060;border-right:1px solid #606060; border-bottom:1px solid #606060; color:#303030;" colspan="2" scope="col">COUNCIL DISCOUNT</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Pensioners (10%)</th>
                                 </td>
-                                <!-- <td style="border-top:1px solid #606060; border-right:1px solid #606060; border-bottom:1px solid #606060; font-weight: bold;text-align: left;color:#303030;">DISCOUNT</td> -->
+                                <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->pensioner_discount ? 'Yes' : 'No') !!}</td>
                             </tr>
                             <tr>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Swimming Pool</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;"> {!! strtoupper(optional(optional($assessment)->swimming)->label ? optional(optional($assessment)->swimming)->label : 'NO' ) !!} {!! strtoupper(optional(optional($assessment)->swimming)->value ? optional(optional($assessment)->swimming)->value: 0 ) !!} </td>
+                                <td style="border:1px solid #606060; color: #484848;">
+                                    {!! strtoupper(optional(optional($assessment)->swimming)->label ? optional(optional($assessment)->swimming)->label : 'NO') !!}
+                                    ({!! strtoupper(optional(optional($assessment)->swimming)->value ? optional(optional($assessment)->swimming)->value : 0) !!})
+                                </td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Drainage</th>
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->drainage_percentage.'%' }}</td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Disability (10%)</th>
+                                    <th style="border:0; color:#303030;" colspan="2" scope="col"></th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->disability_discount ? 'Yes' : 'No') !!}</td>
+                                <!-- <td style="border-top:1px solid #606060; border-right:1px solid #606060; border-bottom:1px solid #606060; font-weight: bold;text-align: left;color:#303030;">DISCOUNT</td> -->
+                               
                             </tr>
                             <tr>
                                 <td>
@@ -217,9 +240,10 @@
                                 </td>
                                 <td style="border:0px solid #606060;"></td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Pensioners (10%)</th>
+                                    <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">DISCOUNTED RATE</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->pensioner_discount ? 'Yes' : 'No') !!}</td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getPensionerDisabilityDiscountActual())!!}</td>
+              
                             </tr>
                             <tr>
                                 <td>
@@ -234,9 +258,9 @@
                                 </td>
                                 <td style="border:0px solid #606060; color: #484848;"></td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">80 Years + (10%)</th>
+                                    <th style="border:0;text-align: left;" scope="col"></th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">NO</td>
+                                <td style="border:0;color: #484848;"></td>
                             </tr>
                             <tr>
                                 <td>
@@ -246,11 +270,12 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">TOTAL DEDUCTABLE</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;">LE {!! number_format($assessment->getCouncilAdjustments()) !!}</td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getCouncilAdjustments()) !!}</td>
                                 <td>
-                                    <th style="border:0px solid #606060;text-align: left;" scope="col"></th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">ARREARS</th>
                                 </td>
-                                <td style="border:0px solid #606060;">-</td>
+                                <td style="border:1px solid #606060; color:#303030;">NLe {!! number_format($assessment->getPastPayableDue()) !!}</td>
+                              
                             </tr>
                             <tr>
                                 <td>
@@ -263,9 +288,9 @@
                                 </td>
                                 <td style="border:0px solid #606060;"></td>
                                 <td>
-                                    <th style="border:0px solid #606060;text-align: left;" scope="col"></th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">PENALTY</th>
                                 </td>
-                                <td style="border:0px solid #606060;"></td>
+                                <td style="border:1px solid #606060; color:#303030;">NLe {!! number_format($assessment->getPenalty()) !!}</td>
                             </tr>
                             <tr>
                             <td>
@@ -280,23 +305,23 @@
                                 </td>
                                 <td style="border:0px solid #606060;"></td>
                                 <td>
-                                    <th style="border:0px solid #606060;text-align: left;" scope="col"></th>
+                                    <th style="border:0px solid #606060;text-align: left; color:#303030;" scope="col"></th>
                                 </td>
-                                <td style="border:0px solid #606060;">-</td>
+                                <td style="border:0px solid #606060; color:#303030;"></td>
                             </tr>
                             <tr>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">ASSESSED VALUE</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;">LE {!! number_format($assessment->getCurrentYearAssessmentAmount()) !!}</td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getCurrentYearAssessmentAmount()) !!}</td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">NET ASSESSED VALUE</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;">LE {!! number_format($assessment->getNetPropertyAssessedValue()) !!}</td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getNetPropertyAssessedValue()) !!}</td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">DISCOUNT ADJUSTED RATE PAYABLE 2021</th>
+                                    <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">TOTAL DUE 2024</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;">LE {!! number_format($assessment->getPensionerDisabilityDiscountActual())!!}</td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getCurrentYearTotalDue()) !!}</td>
                             </tr>
                             
                         </tbody>
@@ -307,7 +332,7 @@
                 <tbody>
                     <tr>
                                     
-                        <th style="border:1px solid #ccc; text-align: center;background-color:#ccc; color: #000;font-size: 12px;" scope="col">RATE PAYABLE = (Estimated PROPERTY VALUE * MILL RATE)/1000</th>
+                        <th style="border:1px solid #ccc; text-align: center;background-color:#ccc; color: #000;font-size: 12px;" scope="col">RATE PAYABLE = (ASSESSED VALUE (NET) * MILL RATE)/1000</th>
                                     
                     </tr>
                                 

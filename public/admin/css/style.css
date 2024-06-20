@@ -8206,8 +8206,3 @@ div.laravel-grid {
     display: flex;
     flex-wrap: wrap;
 }
-
-[type="checkbox"]:not(:checked), [type="checkbox"]:checked {
-    position: unset;
-    opacity: 1;
-}

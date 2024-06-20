@@ -49,9 +49,10 @@ class PaymentSMSNotification extends Notification
     public function toTwilio($notifiable)
     {
         $amount = $this->payment->amount;
+        $amount = number_format($amount, 0, '', ',');
 
         return (new TwilioSmsMessage())
-            ->content("Dear Property Owner thank you for making payment of Le {$amount} for your WARDC property rate.");
+            ->content("Dear Property Owner thank you for making payment of NLe {$amount} for your property rate.");
     }
 
     public function canReceiveAlphanumericSender()

@@ -134,6 +134,7 @@ class DistrictController extends Controller
         }
 
         if ($request->hasFile('chif_administrator_sign')) {
+            // return District::IMAGE_PATH;
             $district->chif_administrator_sign = $request->chif_administrator_sign->store(District::IMAGE_PATH);
         }
 

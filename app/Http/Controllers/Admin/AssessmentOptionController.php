@@ -7,7 +7,7 @@ use App\Grids\PropertyDimensionsGrid;
 use App\Grids\PropertyInaccessiblesGrid;
 use App\Grids\PropertyRoofsMaterialsGrid;
 use App\Grids\PropertyTypesGrid;
-use App\Grids\PropertyUsesGrid;
+use App\Grids\PropertyUseGrid;
 use App\Grids\PropertyValueAddedsGrid;
 use App\Grids\PropertyWallMaterialsGrid;
 use App\Grids\PropertyZonesGrid;
@@ -369,10 +369,10 @@ class AssessmentOptionController extends Controller
 
     // For Property Use CURD
 
-    public function propertyUse(PropertyUsesGrid $propertyUsesGrid, Request $request)
+    public function propertyUse(PropertyUseGrid $propertyUseGrid, Request $request)
     {
-        return $propertyUsesGrid
-            ->create(['query' => PropertyUse::query(), 'request' => $request])
+        return $propertyUseGrid
+            ->create(['query' => PropertyUse::query()->orderBy('order_id', 'asc'), 'request' => $request])
             ->renderOn('admin.assessment-options.use.list');
     }
     public function propertyUseCreate(Request $request)

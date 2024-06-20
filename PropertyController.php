@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 use App\Grids\LandLordVerifyGrid;
 use App\Exports\PropertyExport;
-use App\Imports\ExcelImport;
 use App\Grids\PropertiesGrid;
 use App\Http\Controllers\Controller;
 use App\Jobs\PropertyInBulk;
@@ -49,8 +48,6 @@ class PropertyController extends Controller
 
     public function list(PropertiesGrid $usersGrid, Request $request)
     {
-        // return "sdf";
-        // dd($request->all());
         $organizationTypes = collect(json_decode(file_get_contents(storage_path('data/organizationTypes.json')), true))->pluck('label', 'value');
 
 
@@ -95,10 +92,10 @@ class PropertyController extends Controller
                     $query->where('gated_community', $request->gated_community);
                 }
 
+            })
+            ->whereHas('districts', function($query) {
+                $query->where('id',13);
             });
-            // ->whereHas('districts', function($query) {
-            //     $query->where('id',13);
-            // });
         if (request()->user()->hasRole('Super Admin')) {
         } else {
             $this->properties->where('district', request()->user()->assign_district);
@@ -279,8 +276,8 @@ class PropertyController extends Controller
 
         $data['categories'] = PropertyType::pluck('label', 'id')->prepend('Select', '');
         $data['windowtype'] = PropertyWindowType::pluck('label', 'id')->prepend('Select Window Type', '');
-        $data['wallMaterial'] = PropertyWallMaterials::pluck('label', 'id')->prepend('Wall Material', '')->prepend('Select wall material', '');
-        $data['roofMaterial'] = PropertyRoofsMaterials::pluck('label', 'id')->prepend('Roof Material', '')->prepend('Select roof material', '');
+        $data['wallMaterial'] = PropertyWallMaterials::pluck('label', 'id')->prepend('Wall Material', '');
+        $data['roofMaterial'] = PropertyRoofsMaterials::pluck('label', 'id')->prepend('Roof Material', '');
         $data['propertyDimension'] = PropertyDimension::pluck('label', 'id')->prepend('Dimensions', '');
         $data['valueAdded'] = PropertyValueAdded::where('is_active', true)->pluck('label', 'id')->prepend('Value Added', '');
         $data['town'] = BoundaryDelimitation::distinct()->orderBy('section')->pluck('section', 'section')->prepend('Select Town', '');;
@@ -304,9 +301,9 @@ class PropertyController extends Controller
 
         $data['property_inaccessibles'] = PropertyInaccessible::where('is_active', 1)->pluck('label', 'id')->prepend('Select Property Inaccessible');
 
-        $data['street_names'] = Property::distinct('street_name')->orderBy('street_name')->pluck('street_name', 'street_name')->sort()->prepend('Select street name', '');
-        $data['street_numbers'] = Property::distinct('street_number')->orderBy('street_number')->pluck('street_number', 'street_number')->sort()->prepend('Select street number', '');
-        $data['postcodes'] = Property::distinct('postcode')->orderBy('postcode')->pluck('postcode', 'postcode')->sort()->prepend('Select post code', '');
+        $data['street_names'] = Property::distinct('street_name')->orderBy('street_name')->pluck('street_name', 'street_name');
+        $data['street_numbers'] = Property::distinct('street_number')->orderBy('street_number')->pluck('street_number', 'street_number');
+        $data['postcodes'] = Property::distinct('postcode')->orderBy('postcode')->pluck('postcode', 'postcode');
         $data['organizationTypes'] = $organizationTypes;
 
         //return view('admin.payments.bulk-receipt')->with(['properties' => $this->properties->latest()->get()]);
@@ -359,7 +356,7 @@ class PropertyController extends Controller
             $this->properties = $this->properties->orderBy('is_completed', $request->sort_dir)->orderBy('is_draft_delivered', $request->sort_dir);
         }
         // $data['list_user'] = User::pluck('name', 'name')->toArray();
-        // dd($this->properties->get());
+        //dd($this->properties->toSql());
         return $usersGrid
             ->create(['query' => $this->properties, 'request' => $request])
             ->withoutSearchForm()
@@ -614,7 +611,7 @@ class PropertyController extends Controller
 
         $data['title'] = 'Details';
         $data['request'] = $request;
-        $data['assessmentOfficer'] = $assessmentUser = User::where('ward','!=', 'NA')->pluck('name', 'id')->prepend('Select Officer', '');
+        $data['assessmentOfficer'] = $assessmentUser = User::pluck('name', 'id')->prepend('Select Officer', '');
 
         return view('admin.properties.assign', $data);
     }
@@ -1131,7 +1128,6 @@ class PropertyController extends Controller
         $data['taxable_property_value']=$request->taxbale_property_value;
         $data['property_tax_payable_2024']=$request->property_tax_payable_2024;
         $data['discounted_rate_payable']=$request->discounted_rate_payable;
-        $data['council_adjustments']=$request->council_adjustments;
         $assessment->fill($data);
         $assessment->swimming()->associate($request->input('swimming_pool'));
         $assessment->save();
@@ -1367,8 +1363,8 @@ class PropertyController extends Controller
             return ['error' => 'No property IDs provided'];
         }
     
-        $propertiesToDelete = Property::get();
-        $propertiesToDelete = Property::whereNotIn('id', $propertyIds)->get();
+      return  $propertiesToDelete = Property::get();
+      return  $propertiesToDelete = Property::whereNotIn('id', $propertyIds)->get();
     
         DB::beginTransaction();
     

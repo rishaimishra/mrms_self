@@ -78,7 +78,7 @@ class District extends Model
     /* chif administrator sign Start */
     public function hasChifAdministratorSign()
     {
-        return $this->chif_administrator_sign && file_exists($this->getSecondaryLogo());
+        return $this->chif_administrator_sign && file_exists($this->getChifAdministratorSign());
     }
     public function getChifAdministratorSign()
     {

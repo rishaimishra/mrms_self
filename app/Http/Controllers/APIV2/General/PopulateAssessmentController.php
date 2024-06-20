@@ -42,24 +42,28 @@ class PopulateAssessmentController extends ApiController
         $result['sigma_pay_url']            = getSystemConfig(SystemConfig::SIGMA_PAY_URL);
         $result['property_inaccessible']    = PropertyInaccessible::select('id as value', 'label')->where('is_active', 1)->get();
         $result['district']                 = District::select('*', 'sq_meter_value as value')->get();
-        $result['property_window_types']    = PropertyWindowType::select('id','label','value','good_value','value','bad_value')->get();
+        $result['property_window_types']    = PropertyWindowType::select('id','label','value','good_value','value','bad_value','avg_value',)->get();
         $result['user_title_types']         = UserTitleTypes::select('id','label')->get();
 
-        $adjustments        = \DB::table('adjustment_values')
-            ->leftJoin('adjustments', 'adjustment_values.adjustment_id', '=', 'adjustments.id')
-            ->select('adjustments.id','adjustments.name', 'adjustment_values.group_name', 'adjustment_values.percentage')
-            ->get();
-        $adjustmentValues  = [];  
+        $adjustmentValues = \DB::table('adjustment_values')
+        ->leftJoin('adjustments', 'adjustment_values.adjustment_id', '=', 'adjustments.id')
+        ->select('adjustments.id', 'adjustments.name', 'adjustment_values.group_name', 'adjustment_values.percentage')
+        ->where('adjustment_values.group_name', 'A')
+        ->get();
 
-        for($i=0; $i<count($adjustments); $i++){
-            $data = [];
-            $data['id'] = $adjustments[$i]->id;
-            $data['name'] = $adjustments[$i]->name;
-            $data['percentage'] = $adjustments[$i]->percentage;
-            $data['group_name'] = $adjustments[$i]->group_name;
-            $adjustmentValues[] = $data;
-            //$adjustmentValues[$adjustments[$i]->group_name][] = $data;
-        }  
+        $result['additional_address'] = \DB::table('additional_address')
+        ->get();
+        // $adjustmentValues  = [];  
+
+        // for($i=0; $i<count($adjustments); $i++){
+        //     $data = [];
+        //     $data['id'] = $adjustments[$i]->id;
+        //     $data['name'] = $adjustments[$i]->name;
+        //     $data['percentage'] = $adjustments[$i]->percentage;
+        //     $data['group_name'] = $adjustments[$i]->group_name;
+        //     $adjustmentValues[] = $data;
+        //     //$adjustmentValues[$adjustments[$i]->group_name][] = $data;
+        // }  
         $result['adjustment_values'] = $adjustmentValues;
 
         $charactRs = PropertyCharacteristicValue::orderBy('group_name')->orderBy('id')->get();

@@ -5,7 +5,7 @@ namespace App\Grids;
 use Closure;
 use Leantony\Grid\Grid;
 
-class PropertyUsesGrid extends Grid implements PropertyUseGridInterface
+class PropertyUseGrid extends Grid implements PropertyUseGridInterface
 {
     /**
      * The name of the grid
@@ -43,7 +43,7 @@ class PropertyUsesGrid extends Grid implements PropertyUseGridInterface
     public function setColumns()
     {
         $this->columns = [
-            "id" => [
+            "order_id" => [
                 "label" => "ID",
                 "filter" => [
                     "enabled" => true,
