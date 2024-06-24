@@ -48,7 +48,8 @@ class LandlordDetail extends Model
         'address_image',
         'requested_by',
         'conveyance_image',
-        'temp_street_numbernew'
+        'temp_street_numbernew',
+        'additional_address_id'
     ];
 
     //protected static $ignoreChangedAttributes = ['first_name','updated_at'];
@@ -69,7 +70,7 @@ class LandlordDetail extends Model
         return true;
     }
 
-
+   
     public function titles()
     {
         return $this->hasOne(
@@ -124,7 +125,10 @@ class LandlordDetail extends Model
         return $this->belongsTo(BoundaryDelimitation::class, 'ward', 'ward');
     }
 
-
+    public function additionaladdressLandloard()
+    {
+        return $this->belongsTo(AdditionalAddress::class,'additional_address_id');
+    }
     //landowner verification documents
 
     public function getDocumentImagePathAttribute()
@@ -196,5 +200,10 @@ class LandlordDetail extends Model
     public function getConveyanceImagePath($width = 800, $height = 800)
     {
         return $this->hasConveyanceImage() ? url(Image::url($this->conveyance_image, $width, $height, [])) : null;   
+    }
+
+    public function additionaladdress()
+    {
+        return $this->belongsTo(AdditionalAddress::class,'additional_address_id');
     }
 }

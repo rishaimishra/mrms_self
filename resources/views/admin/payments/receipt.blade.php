@@ -16,7 +16,7 @@
 <div class="pagebreak"></div>
 
 <div class="page">
-    @include('admin.payments.receipt-policy',['district' => $district])
+    @include('admin.payments.receipt-policy',['property' => $property, 'paymentInQuarter' => $paymentInQuarter,'district' => $district])
 </div>
 {{--</div>--}}
 

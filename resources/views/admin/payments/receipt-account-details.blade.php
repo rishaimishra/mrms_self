@@ -3,58 +3,48 @@
         <div class="receipt-content">
             <div class="row">
                 <div class="col-lg-12">
-                    <p class="font-weight-bold" style="font-size: 12px;text-transform: uppercase;">THE {{$district->council_name}} DEMANDS
+                    <p class="font-weight-bold" style="margin-bottom:0px;font-size: 12px;text-transform: uppercase;text-align:justify;">THE {{$district->council_name}} DEMANDS
                         PAYMENT OF MUNICIPAL RATE IN
                         RESPECT OF THE PERIOD COMMENCING 1ST JANUARY TO 31ST
-                        DECEMBER {{ $assessment->created_at->year }} IN 4
+                        DECEMBER {{ $assessment->created_at->year }} IN 2
                         INSTALLMENTS ON OR
                         BEFORE THE FOLLOWING DATES</p>
 
                     <table width="100%">
                         <tr>
-                            <td align="left" style="text-align: left; font-weight:bold;" class="installment-section">
+                            <td width="30%" align="left" style="text-align: left; font-weight:bold;" class="installment-section">
                                 <ul>
                                     <li><span>FIRST INSTALLMENT</span></li>
                                     <li><span>SECOND INSTALLMENT</span></li>
-                                    <li><span>THIRD INSTALLMENT</span></li>
-                                    <li><span>FINAL INSTALLMENT</span></li>
+                                    {{--  <li><span>THIRD INSTALLMENT</span></li>
+                                    <li><span>FINAL INSTALLMENT</span></li>  --}}
                                 </ul>
                             </td>
                             <td align="left" style="text-align: left; font-weight:bold;" class="installment-section">
                                 <ul>
-                                    <li><span>- 31-03-{{ $assessment->created_at->year }}</span></li>
                                     <li><span>- 30-06-{{ $assessment->created_at->year }}</span></li>
-                                    <li><span>- 30-09-{{ $assessment->created_at->year }}</span></li>
                                     <li><span>- 31-12-{{ $assessment->created_at->year }}</span></li>
+                                    {{--  <li><span>- 30-09-{{ $assessment->created_at->year }}</span></li>
+                                    <li><span>- 31-12-{{ $assessment->created_at->year }}</span></li>  --}}
                                 </ul>
                             </td>
 <!--                             <td width="40%" align="right" style="text-align: right;">
                                  <img style="margin-right: 5px;" src="{{$assessment->getImageAnyUrl(85,85)}}">
                             </td> -->
-                            <td width="60%" align="right" class="qr-code-wrapper" style="text-align: right;">
-                                <img style="margin-right: 20px;" src="data:image/png;base64,{!! base64_encode(
-                                        \QrCode::format('png')->size(140)->generate(
-                                        "ON : ". ($property->is_organization ?  $property->organization_name :  (optional($property->landlord)->first_name . ' ' . optional($property->landlord)->middle_name . ' ' . optional($property->landlord)->surname)).
-                                        ",\n DA : ". (optional($property->geoRegistry)->digital_address).
-                                        ",\n RD : ". (number_format($assessment->getCurrentYearAssessmentAmount())).
-                                        ",\n ARR : ". (number_format($assessment->getCurrentYearTotalDue())).
-                                        ",\n PT : ". ($assessment->types->pluck('label')->implode(', ')).
-                                        ",\n PD : ". ((optional(optional($assessment)->dimension)->label) . ' ' . (optional(optional($assessment)->dimension)->id == 1 ? '' : ' SQ METERS')) .
-                                       ",\n MOW : ". (optional(optional($assessment)->wallMaterial)->label) .
-                                        ",\n MOR : ". (optional(optional($assessment)->roofMaterial)->label) .
-                                       // ",\n VA : ". ($property->valueAdded->pluck('label')->implode(', ')) .
-                                        ",\n OT : ". (optional($property->occupancy)->type) .
-                                        ",\n ADD : ". ($property->street_number . ', ' . $property->street_name . ', ' . $property->ward . ', ' . $property->constituency . ', '. $property->section . ', ' . $property->district . ', ' . $property->province)
-
-                                        ))!!}">
-                            </td>
+                        
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <p class="mb-0 special-text font-weight-bold " style="text-align:justify;margin-top:0px;">
+                                    <!-- WARNING: {{-- $district->warning_note --}} -->
+                                    PLEASE NOTE: A SURCHARGE OF 25% WILL BE LEVIED ON THE TOTAL UNPAID OR ARREARS AMOUNT DUE AFTER 31 DECEMBER <br> OF EVERY CALENDAR YEAR
+                                </p>
+                            </td> 
+                           
                         </tr>
                     </table>
 
-                    <p class="mb-0 special-text font-weight-bold">
-                        <!-- WARNING: {{-- $district->warning_note --}} -->
-                        PLEASE NOTE: A SURCHARGE OF 25% WILL BE LEVIED ON THE TOTAL UNPAID OR ARREARS AMOUNT DUE AFTER 31 DECEMBER OF EVERY CALENDAR YEAR
-                    </p>
+                   
                     <p class="font-weight-bold">BANK ACCOUNTS FOR COLLECTION OF MUNICIPAL RATE REVENUE</p>
 
                     <table width="100%">
@@ -64,7 +54,7 @@
                                     <thead>
                                     <tr>
                                         <th style="border:1px solid lightgray;"></th>
-                                        <th style="border:1px solid lightgray;text-align: left;">Location</th>
+                                        <th style="border:1px solid lightgray;text-align: left;">Council</th>
                                         <th style="border:1px solid lightgray;">BANK</th>
                                         <th style="border:1px solid lightgray;">ACCOUNT NAME</th>
                                         <th style="border:1px solid lightgray;">ACCOUNT NUMBER</th>
@@ -108,7 +98,7 @@
 
                             @foreach($district->collection_point as $ekey => $collection)
                                 @if ($loop->first)
-                                    <td style="border:1px solid lightgray;text-align: left;"><strong>{{$collection}}</strong></td>
+                                    <td style="border:1px solid lightgray;text-align: left;"><strong class="font-weight-bold special-text" style="font-size: 12px;font-weight:bold;">{{$collection}}</strong></td>
                                 @else
                                     <td style="border:1px solid lightgray;">{{$collection}}</td>
                                 @endif
@@ -132,7 +122,7 @@
                         @endphp                            
                             @foreach(array_filter($district->collection_point2) as $ekey => $collection2)
                                 @if ($loop->first)
-                                    <td style="border:1px solid lightgray;text-align: left;"><strong>{{$collection2}}</strong>
+                                    <td style="border:1px solid lightgray;text-align: left;"><strong class="font-weight-bold special-text" style="font-size: 12px;font-weight:bold;">{{$collection2}}</strong>
                                     </td>
                                 @else
                                     <td style="border:1px solid lightgray;">{{$collection2}}</td>
@@ -163,7 +153,7 @@
 
             <table width="100%">
                 <tr>
-                    <td style="text-align: left; width: 60%">
+                    <td style="text-align: left; width: 33%">
                         <table style="width: 100%; text-align: left;">
                             <tr>
                                 <td style="text-align: left; padding-left: 47px;">
@@ -182,7 +172,24 @@
                             </tr>
                         </table>
                     </td>
-                    <td style=" width: 40%;">
+                    <td width="10%" align="right" class="qr-code-wrapper" style="text-align: right;">
+                        <img style="margin-right: 20px;margin-bottom: 30px;" src="data:image/png;base64,{!! base64_encode(
+                                \QrCode::format('png')->size(140)->generate(
+                                "ON : ". ($property->is_organization ?  $property->organization_name :  (optional($property->landlord)->first_name . ' ' . optional($property->landlord)->middle_name . ' ' . optional($property->landlord)->surname)).
+                                ",\n DA : ". (optional($property->geoRegistry)->digital_address).
+                                ",\n RD : ". (number_format($assessment->getCurrentYearAssessmentAmount())).
+                                ",\n ARR : ". (number_format($assessment->getCurrentYearTotalDue())).
+                                ",\n PT : ". ($assessment->types->pluck('label')->implode(', ')).
+                                ",\n PD : ". ((optional(optional($assessment)->dimension)->label) . ' ' . (optional(optional($assessment)->dimension)->id == 1 ? '' : ' SQ METERS')) .
+                               ",\n MOW : ". (optional(optional($assessment)->wallMaterial)->label) .
+                                ",\n MOR : ". (optional(optional($assessment)->roofMaterial)->label) .
+                               // ",\n VA : ". ($property->valueAdded->pluck('label')->implode(', ')) .
+                                ",\n OT : ". (optional($property->occupancy)->type) .
+                                ",\n ADD : ". ($property->street_number . ', ' . $property->street_name . ', ' . $property->ward . ', ' . $property->constituency . ', '. $property->section . ', ' . $property->district . ', ' . $property->province)
+
+                                ))!!}">
+                    </td>
+                    <td style=" width: 33%;">
                         <table style="width: 100%;   ">
                             <tr>
                                 <td align="center" style=" text-align: right; padding-right: 65px;">
@@ -230,10 +237,23 @@
                             
                         </p>
                     </td>
-                    <td>
-                        <p style="text-align: right;" class="officer-text">
-                            Enumerator: {{$property->user->getName()}}</p>
-                    </td>
+                    {{--  <td rowspan="2" width="20%" align="right" class="qr-code-wrapper" style="text-align: right;">
+                        <img style="margin-right: 20px;" src="data:image/png;base64,{!! base64_encode(
+                                \QrCode::format('png')->size(140)->generate(
+                                "ON : ". ($property->is_organization ?  $property->organization_name :  (optional($property->landlord)->first_name . ' ' . optional($property->landlord)->middle_name . ' ' . optional($property->landlord)->surname)).
+                                ",\n DA : ". (optional($property->geoRegistry)->digital_address).
+                                ",\n RD : ". (number_format($assessment->getCurrentYearAssessmentAmount())).
+                                ",\n ARR : ". (number_format($assessment->getCurrentYearTotalDue())).
+                                ",\n PT : ". ($assessment->types->pluck('label')->implode(', ')).
+                                ",\n PD : ". ((optional(optional($assessment)->dimension)->label) . ' ' . (optional(optional($assessment)->dimension)->id == 1 ? '' : ' SQ METERS')) .
+                               ",\n MOW : ". (optional(optional($assessment)->wallMaterial)->label) .
+                                ",\n MOR : ". (optional(optional($assessment)->roofMaterial)->label) .
+                               // ",\n VA : ". ($property->valueAdded->pluck('label')->implode(', ')) .
+                                ",\n OT : ". (optional($property->occupancy)->type) .
+                                ",\n ADD : ". ($property->street_number . ', ' . $property->street_name . ', ' . $property->ward . ', ' . $property->constituency . ', '. $property->section . ', ' . $property->district . ', ' . $property->province)
+
+                                ))!!}">
+                    </td>  --}}
                 </tr>
             </table>
 

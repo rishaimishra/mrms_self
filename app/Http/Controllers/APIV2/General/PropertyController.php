@@ -46,6 +46,7 @@ class PropertyController extends ApiController
 
     public function save(Request $request)
     {
+        // return $request;
         $assessment_images = new PropertyAssessmentDetail();
         \Illuminate\Support\Facades\Log::debug($request->all());
         $this->propertyId = $request->input('property_id');
@@ -118,9 +119,13 @@ class PropertyController extends ApiController
             'is_draft_delivered' => $request->input('is_draft_delivered', false),
             'delivered_name' => $request->input('delivered_name'),
             'delivered_number' => $request->input('delivered_number'),
-
+            'occupancy_other_organization_type' => $request->occupancy_other_organization_type,
+            'occupancy_organization_type'=>$request->occupancy_organization_type,
+            'occupancy_organization_name'=>$request->occupancy_organization_name,
             // 'window_type_value' =>($request->window_type_condition)? $request->window_type_condition['value'] : null,
             'random_id' => $request->input('random_id'),
+            'additional_address_id' => $request->property_additional_address_id,
+            'beach_front' => $request->beach_front,
 
         ]);
 
@@ -175,6 +180,7 @@ class PropertyController extends ApiController
             'mobile_1' => $request->landlord_mobile_1,
             'mobile_1' => $request->landlord_mobile_1,
             'mobile_2' => $request->landlord_mobile_2,
+            'additional_address_id' => $request->landlord_additional_address_id
         ]);
 
         $landlord->save();
@@ -457,30 +463,30 @@ class PropertyController extends ApiController
 
                 [ 'id' => '1',
                  'name' => 'Water Supply',
-                 'percentage' => '3',
+                 'percentage' => '10.0',
                  'group_name' => '"A"'
                 ],
                 [ 'id' => '2',
                  'name' => 'Electricity',
-                 'percentage' => '3',
+                 'percentage' => '5.0',
                  'group_name' => '"A"'
                 ],
                 [
                     'id'=> '3',
-                    'name'=> 'Waste Management Services/Points/Locations',
-                    'percentage'=> '5',
+                    'name'=> 'Waste Management Services',
+                    'percentage'=> '10.0',
                     'group_name'=> '"A"'
                 ],
                 [
                     'id'=> '5',
                     'name'=> 'Hazardous Location/Environment',
-                    'percentage'=> '5',
+                    'percentage'=> '7.5',
                     'group_name'=> '"A"'
                 ],
                 [
                     'id'=> '7',
                     'name'=> 'Easy Street Access',
-                    'percentage'=> '5',
+                    'percentage'=> '7.5',
                     'group_name'=> '"A"'
                 ]
 
@@ -671,13 +677,30 @@ class PropertyController extends ApiController
 
     }
 
-    public function getIncompleteProperty(Request $request)
+    public function getIncompleteProperty(Request $request,$ward = null,$section = null)
     {
-        $property = $request->user()->properties()
+        // dd($request->user());
+        $ward = $request->ward;
+        $section = $request->section;
+        if($ward){
+            $property = $request->user()->properties()->where('ward',$ward)
             ->with('images', 'occupancy', 'assessment', 'geoRegistry', 'registryMeters', 'payments', 'landlord', 'assessment.typesTotal:id,label,value', 'assessment.types:id,label,value', 'assessment.valuesAdded:id,label,value', 'occupancies:id,occupancy_type,property_id', 'assessment.categories:id,label,value', 'propertyInaccessible:id,label')
             ->orderBy('id', 'desc')
             ->get();
-
+        }
+        elseif($section){
+            $property = $request->user()->properties()->where('section',$section)
+            ->with('images', 'occupancy', 'assessment', 'geoRegistry', 'registryMeters', 'payments', 'landlord', 'assessment.typesTotal:id,label,value', 'assessment.types:id,label,value', 'assessment.valuesAdded:id,label,value', 'occupancies:id,occupancy_type,property_id', 'assessment.categories:id,label,value', 'propertyInaccessible:id,label')
+            ->orderBy('id', 'desc')
+            ->get();
+        }
+        else{
+            $property = $request->user()->properties()
+            ->with('images', 'occupancy', 'assessment', 'geoRegistry', 'registryMeters', 'payments', 'landlord', 'assessment.typesTotal:id,label,value', 'assessment.types:id,label,value', 'assessment.valuesAdded:id,label,value', 'occupancies:id,occupancy_type,property_id', 'assessment.categories:id,label,value', 'propertyInaccessible:id,label')
+            ->orderBy('id', 'desc')
+            ->get();
+        }
+       
                         $adjustments = [
 
                 [ 'id' => '1',
@@ -692,8 +715,8 @@ class PropertyController extends ApiController
                 ],
                 [
                     'id'=> '3',
-                    'name'=> 'Waste Management Services/Points/Locations',
-                    'percentage'=> '5',
+                    'name'=> 'Waste Management Services',
+                    'percentage'=> '10.0',
                     'group_name'=> '"A"'
                 ],
                 [
@@ -722,7 +745,7 @@ class PropertyController extends ApiController
                     array_push($adjustments,
                     [ 'id' => '1',
                     'name' => 'Water Supply',
-                    'percentage' => '3',
+                    'percentage' => '10.0',
                     'group_name' => '"A"'
                     ]);
                 }
@@ -731,7 +754,7 @@ class PropertyController extends ApiController
                     array_push($adjustments,
                     [ 'id' => '2',
                     'name' => 'Electricity',
-                    'percentage' => '3',
+                    'percentage' => '5.0',
                     'group_name' => '"A"'
                     ]);
                 }
@@ -739,9 +762,9 @@ class PropertyController extends ApiController
                 {
                     array_push($adjustments,
                     [ 'id' => '3',
-                    'name' => 'Waste Management Services/Points/Locations',
-                    'percentage' => '5',
-                    'group_name' => '"A"'
+                    'name' => 'Waste Management Services',
+                    'percentage' => '10.0',
+                    'group_name' => '"10.0"'
                     ]);
                 }
                 if($p->assessment->market_percentage != 0 )
@@ -749,7 +772,7 @@ class PropertyController extends ApiController
                     array_push($adjustments,
                     [ 'id' => '4',
                     'name' => 'Market',
-                    'percentage' => '3',
+                    'percentage' => '7.5',
                     'group_name' => '"A"'
                     ]);
                 }
@@ -758,7 +781,7 @@ class PropertyController extends ApiController
                     array_push($adjustments,
                     [ 'id' => '5',
                     'name' => 'Hazardous Location/Environment',
-                    'percentage' => '15',
+                    'percentage' => '7.5',
                     'group_name' => '"A"'
                     ]);
                 }
@@ -767,7 +790,7 @@ class PropertyController extends ApiController
                     array_push($adjustments,
                     [ 'id' => '6',
                     'name' => 'Informal settlement',
-                    'percentage' => '21',
+                    'percentage' => '7.5',
                     'group_name' => '"A"'
                     ]);
                 }
@@ -776,7 +799,7 @@ class PropertyController extends ApiController
                     array_push($adjustments,
                     [ 'id' => '7',
                     'name' => 'Easy Street Access',
-                    'percentage' => '7',
+                    'percentage' => '7.5',
                     'group_name' => '"A"'
                     ]);
                 }
@@ -785,7 +808,7 @@ class PropertyController extends ApiController
                     array_push($adjustments,
                     [ 'id' => '8',
                     'name' => 'Paved/Tarred Road/Street',
-                    'percentage' => '3',
+                    'percentage' => '10.0',
                     'group_name' => '"A"'
                     ]);
                 }
@@ -794,7 +817,7 @@ class PropertyController extends ApiController
                     array_push($adjustments,
                     [ 'id' => '9',
                     'name' => 'Drainage',
-                    'percentage' => '3',
+                    'percentage' => '10.0',
                     'group_name' => '"A"'
                     ]);
                 }
@@ -1491,6 +1514,7 @@ public function createInAccessibleProperties(Request $request)
                 'organization_addresss' => $request->organization_address ?: null,
                 'organization_tin' => $request->organization_tin ?: null,
                 'organization_type' => $request->organization_type ?: null,
+                'organization_school_type' => $request->organization_school_type ?: null,
                 'organization_name' => $request->organization_name ?: null,
                 'is_organization' => $request->input('is_organization', false),
                 'is_completed' => $request->input('is_completed', false),
@@ -1499,6 +1523,9 @@ public function createInAccessibleProperties(Request $request)
                 'delivered_name' => $request->input('delivered_name'),
                 'delivered_number' => $request->input('delivered_number'),
                 'random_id' => $request->input('random_id'),
+                'occupancy_other_organization_type' => $request->occupancy_other_organization_type,
+                'occupancy_organization_type'=>$request->occupancy_organization_type,
+                'occupancy_organization_name'=>$request->occupancy_organization_name,
             ]);
 
             if ($request->hasFile('delivered_image')) {

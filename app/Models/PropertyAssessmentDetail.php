@@ -74,7 +74,13 @@ class PropertyAssessmentDetail extends Model
         'council_group_name',
         'sanitation',
         'is_rejected_pensioner',
-        'is_rejected_disability'
+        'is_rejected_disability',
+        'net_property_assessed_value',
+        'taxable_property_value',
+        'property_assessed_value',
+        'property_tax_payable_2024',
+        'discounted_rate_payable',
+        'council_adjustments'
     ];
 
     protected $appends = [
@@ -96,14 +102,61 @@ class PropertyAssessmentDetail extends Model
         'assessment_year',
         'assessment_length',
         'assessment_breadth',
-        'assessment_square_meter'
+        'assessment_square_meter',
+        'wall_material',
+        'roof_material',
+        'window_material',
     ];
 
     protected $dates = [
         'last_printed_at',
         'demand_note_delivered_at'
     ];
-
+    public function getCostofOneTownAttribute(){
+        return 250000;
+    }
+    public function getOneTownLotAttribute(){
+        return 3750;
+    }
+    public function getFloorAreaPlottedOnMapAttribute(){
+        return 1722;
+    }
+    public function getValuePerSquareFeetAttribute(){
+        return $this->getCostofOneTownAttribute() / $this->getOneTownLotAttribute();
+    }
+    public function getfloorAreaValueAttribute(){
+        return $this->getValuePerSquareFeetAttribute() * $this->getFloorAreaPlottedOnMapAttribute();
+    }
+    public function getWallMaterialAttribute()
+    {
+            // Extract the three columns and create an object
+            return (object) [
+                'property_wall_materials' => $this->property_wall_materials,
+                'wall_material_percentage' => $this->wall_material_percentage,
+                'wall_material_type' => $this->wall_material_type,
+            ];
+         // Return null if no related data is found
+    }
+    public function getRoofMaterialAttribute()
+    {
+            // Extract the three columns and create an object
+            return (object) [
+                'roofs_materials' => $this->roofs_materials,
+                'roof_material_percentage' => $this->roof_material_percentage,
+                'roof_material_type' => $this->roof_material_type,
+            ];
+         // Return null if no related data is found
+    }
+    public function getWindowMaterialAttribute()
+    {
+            // Extract the three columns and create an object
+            return (object) [
+                'property_window_type' => $this->property_window_type,
+                'window_type_percentage' => $this->window_type_percentage,
+                'window_type_type' => $this->window_type_type,
+            ];
+         // Return null if no related data is found
+    }
     public function getIsDemandNoteDeliveredAttribute()
     {
         return !is_null($this->demand_note_delivered_at);
@@ -341,7 +394,7 @@ class PropertyAssessmentDetail extends Model
 
     public function getPropertyTaxPayable()
     {
-        return ($this->mill_rate * $this->geTaxablePropertyValue()) / 1000;
+        return ($this->mill_rate * $this->getNetPropertyAssessedValue()) / 1000;
     }
 
     public function getPensionerDiscount()
@@ -533,10 +586,13 @@ class PropertyAssessmentDetail extends Model
             }
             return $this->getTotalPayable() - $this->getCurrentYearTotalPayment() + $this->getCurrentYearAssessmentAmount();
         }else {
-
+            
+            if($this->pensioner_discount == 0 && $this->disability_discount == 0){
+                $discounted_rate_payable = $this->getPropertyTaxPayable() -  $this->pensioner_discount - $this->disability_discount ;
+            }else{
+                $discounted_rate_payable = $this->getPensionerDisabilityDiscountActual() -  $this->pensioner_discount - $this->disability_discount ;
+            }
             // amount due modification
-              
-                $discounted_rate_payable = $this->getPropertyTaxPayable() -  $this->pensioner_discount -$this->disability_discount ;
 
 
             return $discounted_rate_payable - $this->getCurrentYearTotalPayment();

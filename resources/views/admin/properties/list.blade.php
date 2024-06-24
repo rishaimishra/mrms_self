@@ -32,7 +32,7 @@
             {!! Form::open(['method' => 'get', 'id' => 'filter-form']) !!}
             <div class="row row-flex">
 
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <div class="form-group">
                         <div class="form-line">
                             <label>Property ID</label>
@@ -63,57 +63,101 @@
                         <div id="open_location_code" style="width: 100%; overflow: hidden;"></div>
                     </div>
                 </div>
-                <div class="col-sm-2">
-                    <div class="form-group">
-                        <label>Organization Properties</label>
-                        <div class="demo-radio-button" style="display: inline-block">
-                            <input name="is_organization"
-                                   {{ $request->is_organization == 1 ? 'checked' : ''  }} class="input-is-organization"
-                                   type="radio" id="is_organization_yes" value="1"/>
-                            <label for="is_organization_yes" style="min-width: auto">Yes</label>
-                            <input name="is_organization"
-                                   {{ ($request->is_organization == "0") ? 'checked' : ''  }}  class="input-is-organization"
-                                   type="radio" id="is_organization_no" value="0"/>
-                            <label for="is_organization_no" style="min-width: auto">No</label>
+                <div class="col-sm-3">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Owner Fname</label>
+
+                                <div id="owner_first_name" style="width: 100%; overflow: hidden;"></div>
+
+                            </div>
                         </div>
-                        <div id="sub-input" style="display: {{ $request->is_organization == 1 ? 'block' : 'none' }}">
-                            {!! Form::select('organization_type', $organizationTypes ,$request->organization_type, ['class' => 'form-control', 'data-live-search'=>'true', 'placeholder' => 'Organization Type']) !!}
+                       <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Owner Mname</label>
+
+                                <div id="owner_middle_name" style="width: 100%; overflow: hidden;"></div>
+
+                            </div>
+                        </div> 
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Owner Lname</label>
+
+                                <div id="owner_last_name" style="width: 100%; overflow: hidden;"></div>
+
+                            </div>
                         </div>
                     </div>
-
-
                 </div>
 
                 <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>Street Name</label>
-                        <div class="form-line">
-                            {!! Form::select('street_name', $street_names, $request->street_name, ['class' => 'form-control']) !!}
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Tenant Fname</label>
+
+                                <div id="tenant_first_name" style="width: 100%; overflow: hidden;"></div>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Tenant Mname</label>
+
+                                <div id="tenant_middle_name" style="width: 100%; overflow: hidden;"></div>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Tenant Lname</label>
+
+                                <div id="tenant_last_name" style="width: 100%; overflow: hidden;"></div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
-
 
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label>Street No.</label>
-                        <div class="form-line">
+                        
                             {!! Form::select('street_number', $street_numbers, $request->street_number, ['class' => 'form-control']) !!}
-                        </div>
+                       
                     </div>
                 </div>
-
+               
 
                 <div class="col-sm-3">
                     <div class="form-group">
-                        <label>Postcode</label>
-                        <div class="form-line">
-                            {!! Form::select('postcode', $postcodes, $request->postcode, ['class' => 'form-control']) !!}
-                        </div>
+                        <label>Street Name</label>
+                       
+                            {!! Form::select('street_name', $street_names, $request->street_name, ['class' => 'form-control']) !!}
+                       
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Additional Address</label>
+                       
+                            {!! Form::select('addition_address', $street_names, $request->street_name, ['class' => 'form-control']) !!}
+                       
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Area</label>
+                       
+                            {!! Form::select('area', $street_names, $request->street_name, ['class' => 'form-control']) !!}
+                       
                     </div>
                 </div>
 
 
+                
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label>Ward</label>
@@ -130,29 +174,11 @@
 
                 <div class="col-sm-3">
                     <div class="form-group">
-                        <label>Inaccessible Properties</label>
-                        <div class="demo-radio-button" style="display: inline-block;">
-                            <input name="is_accessible"
-                                   {{ $request->is_accessible ? 'checked' : ''  }} class="input-inaccessible"
-                                   type="radio" id="radio_1" value="1"/>
-                            <label for="radio_1" style="min-width: auto">Yes</label>
-                            <input name="is_accessible"
-                                   {{ ($request->is_accessible === "0") ? 'checked' : ''  }}  class="input-inaccessible"
-                                   type="radio" id="radio_2" value="0"/>
-                            <label for="radio_2" style="min-width: auto">No</label>
-                        </div>
+                        <label>Constituency</label>
+                        {!! Form::select('constituency', $constituency ,$request->constituency, ['class' => 'form-control','data-live-search'=>'true']) !!}
+                    </div>
+                </div>
 
-                        {!! Form::select('property_inaccessible', $property_inaccessibles , $request->property_inaccessible, ['class' => 'form-control dropdown-inaccessible','data-live-search'=>'true']) !!}
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>Occupancy Type</label>
-                        <div class="form-line">
-                            {!! Form::select('occupancy_type', ['' => 'Select', 'Owned Tenancy' => 'Owned Tenancy', 'Rented House' => 'Rented House','Unoccupied House'=>'Unoccupied House'] , $request->occupancy_type, ['class' => 'form-control']) !!}
-                        </div>
-                    </div>
-                </div>
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label>Chiefdom</label>
@@ -160,13 +186,6 @@
                     </div>
                 </div>
 
-
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>Constituency</label>
-                        {!! Form::select('constituency', $constituency ,$request->constituency, ['class' => 'form-control','data-live-search'=>'true']) !!}
-                    </div>
-                </div>
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label>District</label>
@@ -183,9 +202,36 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-sm-3">
                     <div class="form-group">
-                        <label>Habitable Floors</label>
+                        <label>Postcode</label>
+                        
+                            {!! Form::select('postcode', $postcodes, $request->postcode, ['class' => 'form-control']) !!}
+                        
+                    </div>
+                </div>
+
+
+                
+
+              
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Occupancy Type</label>
+                        <div class="form-line">
+                            {!! Form::select('occupancy_type', ['' => 'Select', 'Owned Tenancy' => 'Owned Tenancy', 'Rented House' => 'Rented House','Unoccupied House'=>'Unoccupied House'] , $request->occupancy_type, ['class' => 'form-control']) !!}
+                        </div>
+                    </div>
+                </div>
+                
+
+
+                
+                
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Property Type</label>
                         <div class="form-line">
                             {!! Form::select('type', $types ,$request->type, ['class' => 'form-control','data-live-search'=>'true']) !!}
                         </div>
@@ -241,82 +287,13 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-sm-3">
                     <div class="form-group">
-                        <label>Complete - All Data Captured</label>
-                        <div class="form-line">
-                            {!! Form::select('is_completed', ['' => 'All', 'yes' => 'Yes', 'no' => 'No'] , $request->is_completed, ['class' => 'form-control']) !!}
-                        </div>
+                        <label>Enumerator</label>
+                        <div id="name" style="width: 100%; overflow: hidden;"></div>
                     </div>
                 </div>
 
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <div class="form-line">
-                            <label>Compound Name</label>
-                            <div id="compound_name" style="width: 100%;"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-3">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label>Owner Fname</label>
-
-                                <div id="owner_first_name" style="width: 100%; overflow: hidden;"></div>
-
-                            </div>
-                        </div>
-                        <!-- <div class="col-sm-4">
-                            <div class="form-group">
-                                <label>Owner Mname</label>
-
-                                <div id="owner_middle_name" style="width: 100%; overflow: hidden;"></div>
-
-                            </div>
-                        </div> -->
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label>Owner Lname</label>
-
-                                <div id="owner_last_name" style="width: 100%; overflow: hidden;"></div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-3">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label>Tenant Fname</label>
-
-                                <div id="tenant_first_name" style="width: 100%; overflow: hidden;"></div>
-
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label>Tenant Mname</label>
-
-                                <div id="tenant_middle_name" style="width: 100%; overflow: hidden;"></div>
-
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label>Tenant Lname</label>
-
-                                <div id="tenant_last_name" style="width: 100%; overflow: hidden;"></div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="col-sm-3">
                     <div class="form-group">
@@ -327,8 +304,32 @@
                     </div>
                 </div>
 
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Complete - All Data Captured</label>
+                        <div class="form-line">
+                            {!! Form::select('is_completed', ['' => 'All', 'yes' => 'Yes', 'no' => 'No'] , $request->is_completed, ['class' => 'form-control']) !!}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3" style="display: none">
+                    <div class="form-group">
+                        <div class="form-line">
+                            <label>Compound Name</label>
+                            <div id="compound_name" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+               
+
+                
+
+                
+
                 <div class="col-md-3">
-                    <label for="">Property Created </label>
+                    {{-- <label for="">Created </label> --}}
                     <div class="row">
 
                         <div class="col-sm-6">
@@ -353,21 +354,7 @@
                     </div>
                 </div>
 
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>Payments</label>
-                        <div class="demo-radio-button">
-                            <input name="paid"
-                                   {{ $request->paid == 'paid' ? 'checked' : ''  }}
-                                   type="radio" id="is_paid_property_1" value="paid"/>
-                            <label for="is_paid_property_1" style="min-width: auto">Yes</label>
-                            <input name="paid"
-                                   {{ ($request->paid === "unpaid") ? 'checked' : ''  }}
-                                   type="radio" id="is_paid_property_2" value="unpaid"/>
-                            <label for="is_paid_property_2" style="min-width: auto">No</label>
-                        </div>
-                    </div>
-                </div>
+                
 
                 <div class="col-md-3">
                     <div class="row">
@@ -417,52 +404,11 @@
                     </div>
                 </div>
 
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>Enumerator</label>
-                        <div id="name" style="width: 100%;"></div>
-                    </div>
-                </div>
+               
 
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>Delivered Demand Notes</label>
-                        <div class="demo-radio-button">
-                            <input name="is_draft_delivered"
-                                   {{ $request->is_draft_delivered ? 'checked' : ''  }}
-                                   type="radio" id="is_draft_delivered_1" value="1"/>
-                            <label for="is_draft_delivered_1" style="min-width: auto">Yes</label>
-                            <input name="is_draft_delivered"
-                                   {{ ($request->is_draft_delivered === "0") ? 'checked' : ''  }}
-                                   type="radio" id="is_draft_delivered_2" value="0"/>
-                            <label for="is_draft_delivered_2" style="min-width: auto">No</label>
-                        </div>
-                    </div>
-                </div>
+                
 
-                <div class="col-sm-3 dd {{$request->is_draft_delivered == 1 ?:"hidden"}}">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <div class="form-line">
-                                    <label>Delivery Start Date</label>
-                                    {!! Form::text('dd_start_date', $request->dd_start_date, ['class' => 'form-control datepicker']) !!}
-                                </div>
-                                {!! $errors->first('dd_start_date', '<div class="error">:message</div>') !!}
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <div class="form-line">
-                                    <label>Delivery End Date</label>
-                                    {!! Form::text('dd_end_date', $request->dd_end_date, ['class' => 'form-control datepicker']) !!}
-                                </div>
-                                {!! $errors->first('dd_end_date', '<div class="error">:message</div>') !!}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+               
 
                 <div class="col-sm-3">
                     <div class="form-group">
@@ -478,61 +424,158 @@
                     </div>
                 </div>
 
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>Printed Demand Notes</label>
-                        <div class="demo-radio-button">
-                            <input name="is_printed"
-                                   {{ $request->is_printed ? 'checked' : ''  }}
-                                   type="radio" id="is_printed_1" value="1"/>
-                            <label for="is_printed_1" style="min-width: auto">Yes</label>
-                            <input name="is_printed"
-                                   {{ ($request->is_printed === "0") ? 'checked' : ''  }}
-                                   type="radio" id="is_printed_2" value="0"/>
-                            <label for="is_printed_2" style="min-width: auto">No</label>
-                        </div>
-                    </div>
-                </div>
-{{--                <div class="col-sm-3">--}}
-{{--                    <div class="form-group">--}}
-{{--                        <label>Open Location Code</label>--}}
-{{--                        <div id="open_location_code" style="width: 100%;"></div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-                 <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>Gated Community</label>
-                        <div class="demo-radio-button">
-                            <input name="is_gated_community"
-                                   {{ $request->is_gated_community ? 'checked' : ''  }}
-                                   type="radio" id="is_gated_community_1" value="1"/>
-                            <label for="is_gated_community_1" style="min-width: auto">Yes</label>
-                            <input name="is_gated_community"
-                                   {{ ($request->is_gated_community === "0") ? 'checked' : ''  }}
-                                   type="radio" id="is_gated_community_2" value="0"/>
-                            <label for="is_gated_community_2" style="min-width: auto">No</label>
-                        </div>
-                    </div>
-                </div>
+                <div class="col-sm-12">
+                    <div class="row">
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Printed Demand Notes</label>
+                                    <div class="demo-radio-button">
+                                        <input name="is_printed"
+                                            {{ $request->is_printed ? 'checked' : ''  }}
+                                            type="radio" id="is_printed_1" value="1"/>
+                                        <label for="is_printed_1" style="min-width: auto">Yes</label>
+                                        <input name="is_printed"
+                                            {{ ($request->is_printed === "0") ? 'checked' : ''  }}
+                                            type="radio" id="is_printed_2" value="0"/>
+                                        <label for="is_printed_2" style="min-width: auto">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                {{--                <div class="col-sm-3">--}}
+                {{--                    <div class="form-group">--}}
+                {{--                        <label>Open Location Code</label>--}}
+                {{--                        <div id="open_location_code" style="width: 100%;"></div>--}}
+                {{--                    </div>--}}
+                {{--                </div>--}}
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Gated Community</label>
+                                    <div class="demo-radio-button">
+                                        <input name="is_gated_community"
+                                            {{ $request->is_gated_community ? 'checked' : ''  }}
+                                            type="radio" id="is_gated_community_1" value="1"/>
+                                        <label for="is_gated_community_1" style="min-width: auto">Yes</label>
+                                        <input name="is_gated_community"
+                                            {{ ($request->is_gated_community === "0") ? 'checked' : ''  }}
+                                            type="radio" id="is_gated_community_2" value="0"/>
+                                        <label for="is_gated_community_2" style="min-width: auto">No</label>
+                                    </div>
 
-                <div class="col-sm-3 gcr {{$request->is_gated_community == 1 ?:"hidden"}}">
-                    <div class="form-group">
-                        <label>Gated Community</label>
-                        <div class="form-line">
-                            <select name="gated_community" class="form-control">
-                                @php
-                                    $minyer = 2018;
-                                    $j=1;
-                                @endphp
-                                @for($i = date('Y'); $i >= 2019; $i--)
-                                @php
-                                    $j = $i - $minyer;
-                                @endphp
-                                    <option
-                                        {{ $j == request('gated_community') ? 'selected' : '' }} value="{{ $j }}">{{ $i }}</option>
-                                @endfor
-                            </select>
-                        </div>
+                                    <div class="gcr {{$request->is_gated_community == 1 ?:"hidden"}}" >
+                                        <div class="form-group">
+                                            {{-- <label>Gated Community</label> --}}
+                                            <div class="form-line">
+                                                <select name="gated_community" class="form-control">
+                                                    @php
+                                                        $minyer = 2018;
+                                                        $j=1;
+                                                    @endphp
+                                                    @for($i = date('Y'); $i >= 2019; $i--)
+                                                    @php
+                                                        $j = $i - $minyer;
+                                                    @endphp
+                                                        <option
+                                                            {{ $j == request('gated_community') ? 'selected' : '' }} value="{{ $j }}">{{ $i }}</option>
+                                                    @endfor
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                           
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Delivered Demand Notes</label>
+                                    <div class="demo-radio-button">
+                                        <input name="is_draft_delivered"
+                                            {{ $request->is_draft_delivered ? 'checked' : ''  }}
+                                            type="radio" id="is_draft_delivered_1" value="1"/>
+                                        <label for="is_draft_delivered_1" style="min-width: auto">Yes</label>
+                                        <input name="is_draft_delivered"
+                                            {{ ($request->is_draft_delivered === "0") ? 'checked' : ''  }}
+                                            type="radio" id="is_draft_delivered_2" value="0"/>
+                                        <label for="is_draft_delivered_2" style="min-width: auto">No</label>
+                                    </div>
+                                </div>
+
+                                <div class="dd {{$request->is_draft_delivered == 1 ?:"hidden"}}">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <div class="form-line">
+                                                    <label>Start Date</label>
+                                                    {!! Form::text('dd_start_date', $request->dd_start_date, ['class' => 'form-control datepicker']) !!}
+                                                </div>
+                                                {!! $errors->first('dd_start_date', '<div class="error">:message</div>') !!}
+                                            </div>
+                                        </div>
+                
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <div class="form-line">
+                                                    <label>End Date</label>
+                                                    {!! Form::text('dd_end_date', $request->dd_end_date, ['class' => 'form-control datepicker']) !!}
+                                                </div>
+                                                {!! $errors->first('dd_end_date', '<div class="error">:message</div>') !!}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Payments</label>
+                                    <div class="demo-radio-button">
+                                        <input name="paid"
+                                               {{ $request->paid == 'paid' ? 'checked' : ''  }}
+                                               type="radio" id="is_paid_property_1" value="paid"/>
+                                        <label for="is_paid_property_1" style="min-width: auto">Yes</label>
+                                        <input name="paid"
+                                               {{ ($request->paid === "unpaid") ? 'checked' : ''  }}
+                                               type="radio" id="is_paid_property_2" value="unpaid"/>
+                                        <label for="is_paid_property_2" style="min-width: auto">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Inaccessible Properties</label>
+                                    <div class="demo-radio-button" style="display: inline-block;">
+                                        <input name="is_accessible"
+                                               {{ $request->is_accessible ? 'checked' : ''  }} class="input-inaccessible"
+                                               type="radio" id="radio_1" value="1"/>
+                                        <label for="radio_1" style="min-width: auto">Yes</label>
+                                        <input name="is_accessible"
+                                               {{ ($request->is_accessible === "0") ? 'checked' : ''  }}  class="input-inaccessible"
+                                               type="radio" id="radio_2" value="0"/>
+                                        <label for="radio_2" style="min-width: auto">No</label>
+                                    </div>
+            
+                                    {!! Form::select('property_inaccessible', $property_inaccessibles , $request->property_inaccessible, ['class' => 'form-control dropdown-inaccessible','data-live-search'=>'true']) !!}
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Organization Properties</label>
+                                    <div class="demo-radio-button" style="display: inline-block">
+                                        <input name="is_organization"
+                                               {{ $request->is_organization == 1 ? 'checked' : ''  }} class="input-is-organization"
+                                               type="radio" id="is_organization_yes" value="1"/>
+                                        <label for="is_organization_yes" style="min-width: auto">Yes</label>
+                                        <input name="is_organization"
+                                               {{ ($request->is_organization == "0") ? 'checked' : ''  }}  class="input-is-organization"
+                                               type="radio" id="is_organization_no" value="0"/>
+                                        <label for="is_organization_no" style="min-width: auto">No</label>
+                                    </div>
+                                    <div id="sub-input" style="display: {{ $request->is_organization == 1 ? 'block' : 'none' }}">
+                                        {!! Form::select('organization_type', $organizationTypes ,$request->organization_type, ['class' => 'form-control', 'data-live-search'=>'true', 'placeholder' => 'Organization Type']) !!}
+                                    </div>
+                                </div>
+            
+            
+                            </div>
                     </div>
                 </div>
 
@@ -646,8 +689,8 @@
                     <button type="button" class="btn btn-success pull-right" id="send-sms">Send SMS</button>
                     <input type="hidden" name="send_sms" id="send_sms" value="0">
                 </div> -->
-                <div class="col-md-2">
-                    <label style="font-size: 12px;">Demand Note Year</label>
+                <div class="col-md-1">
+                    <label style="font-size: 12px;"> Year</label>
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
@@ -663,8 +706,8 @@
                 <div class="col-md-2">
                     <button type="submit" name="download_envelope" value="1" class="btn btn-info waves-effect" id="filter-envelope">Download Envelope</button>
                 </div>                
-                <div class="col-md-2">
-                    <button type="submit" name="download_pdf" value="1"  class="btn btn-primary waves-effect pull-right" id="filter-downloads">Download PDF</button>
+                <div class="col-md-3">
+                    <button type="submit" name="download_pdf" value="1"  class="btn btn-primary waves-effect pull-right" id="filter-downloads">Download Demand Note (PDF) </button>
                 </div>
 
             </div>
@@ -841,13 +884,13 @@
                 name: "owner_last_name"
             });
 
-            // owner_middle_name = new dhtmlXCombo({
-            //     parent: "owner_middle_name",
-            //     width: 230,
-            //     filter: "{{route('admin.middle-name')}}",
-            //     filter_cache: true,
-            //     name: "owner_middle_name"
-            // });
+            owner_middle_name = new dhtmlXCombo({
+                parent: "owner_middle_name",
+                width: 230,
+                filter: "{{route('admin.middle-name')}}",
+                filter_cache: true,
+                name: "owner_middle_name"
+            });
 
             tenant_first_name = new dhtmlXCombo({
                 parent: "tenant_first_name",

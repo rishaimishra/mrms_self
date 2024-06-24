@@ -23,7 +23,13 @@
                         <table class="table">
                             <thead>
                             <th>Assessment Year</th>
-                            <th>Assessment amount</th>
+                            {{--  <th>Assessment amount</th>  --}}
+                            <th>Assessed Value</th>
+                            <th>Council Adjustments</th>
+                            <th>Net Assessed Value</th>
+                            <th>Rate Payable</th>
+                            <th>Council Discounts</th>
+                            <th>Discounted rate payable</th>
                             <th>Arrears</th>
                             <th>Penalty</th>
                             <th>Amount Paid</th>
@@ -35,7 +41,16 @@
                                     @foreach($property->assessmentHistory as $assessmentHistory)
                                         <tr>
                                             <td>{{ $assessmentHistory->created_at->format('Y') }}</td>
-                                            <td>{{ number_format($assessmentHistory->getCurrentYearAssessmentAmount()) }}</td>
+                                             <td>{{ number_format($assessmentHistory->getCurrentYearAssessmentAmount()) }}</td> 
+                                            {{-- <td>{{ $assessmentHistory->property_assessed_value }}</td> --}}
+                                            <td>{{ number_format($assessmentHistory->getCouncilAdjustments()) }}</td>
+
+                                            <td>{{ number_format($assessmentHistory->getNetPropertyAssessedValue()) }}</td>
+                                             <td>{!! number_format($assessmentHistory->getPropertyTaxPayable(),0,'',',') !!}</td> 
+                                            {{-- <td>{{( ($assessmentHistory->property_assessed_value-$assessmentHistory->getCouncilAdjustments()) *2.50)/1000}}</td> --}}
+                                            <td>{!! $assessmentHistory->pensioner_discount ? number_format($assessmentHistory->getPensionerDiscount(),0,'',',') : 0 !!}</td>
+                                            
+                                            <td>{!! $assessmentHistory->getPensionerDisabilityDiscountActual() ? number_format($assessmentHistory->getPensionerDisabilityDiscountActual(),0,'',',') : 0 !!}</td>
                                             <td>{{ number_format($assessmentHistory->getPastPayableDue()) }}</td>
                                             <td>{{ number_format($assessmentHistory->getPenalty()) }}</td>
                                             <td>{{ number_format($assessmentHistory->getCurrentYearTotalPayment()) }}</td>
@@ -222,6 +237,14 @@
                                 <h6>Gender</h6>
                                 <p>{{$property->landlord->sex}}</p>
                             </div>
+                            <div class="col-sm-3">
+                                <h6>NIN</h6>
+                                <p>{{$property->landlord->sex}}</p>
+                            </div>
+                            <div class="col-sm-3">
+                                <h6>Street Number</h6>
+                                <p>{{$property->landlord->street_number}}</p>
+                            </div>
                         @elseif($property->is_organization==1)
                             <div class="col-sm-3">
                                 <h6>Organization Name</h6>
@@ -243,17 +266,25 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-3">
-                            <h6>Email Address</h6>
-                            <p>{{$property->landlord->email}}</p>
-                        </div>
-                        <div class="col-sm-3">
-                            <h6>Street Number</h6>
-                            <p>{{$property->landlord->street_number}}</p>
-                        </div>
-                        <div class="col-sm-3">
                             <h6>Street Name</h6>
                             <p>{{$property->landlord->street_name}}</p>
                         </div>
+                        <div class="col-sm-3">
+                            <h6>Additional Street address</h6>
+                            <p>{{$property->landlord->additional_address_id}}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <h6>Area</h6>
+                            <p>{{$property->landlord->additional_address_id}}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <h6>Ward</h6>
+                            <p>{{$property->landlord->ward}}</p>
+                        </div>
+                        
+                       
+                        
+                        
                         @if($property->is_organization==0)
                             {{-- <div class="col-sm-3">
                                 <h6>Tin Number</h6>
@@ -267,29 +298,23 @@
                                 <h6>Id Number</h6>
                                 <p>{{$property->landlord->id_number}}</p>
                             </div> --}}
-                            <div class="col-sm-3">
-                                <div id="aniimated-thumbnials" class="list-unstyled row clearfix aniimated-thumbnials">
+                            {{-- <div class="col-sm-3"> --}}
+                                {{-- <div id="aniimated-thumbnials" class="list-unstyled row clearfix aniimated-thumbnials"> --}}
                                     {{-- <h6>Image</h6>
                                     <a href="{{$property->landlord->getImageUrl(800,800)}}" data-sub-html="">
                                         <img class="img-responsive thumbnail"
                                              src="{{$property->landlord->getImageUrl(100,100)}}">
                                     </a> --}}
-                                </div>
-                            </div>
+                                {{-- </div> --}}
+                            {{-- </div> --}}
                         @endif
                     </div>
                     <div class="row">
-                        <div class="col-sm-3">
-                            <h6>Ward</h6>
-                            <p>{{$property->landlord->ward}}</p>
-                        </div>
+                       
                         <div class="col-sm-3">
                             <h6>Constituency</h6>
                             <p>{{$property->landlord->constituency}}</p>
                         </div>
-                    </div>
-
-                    <div class="row">
                         <div class="col-sm-3">
                             <h6>Section</h6>
                             <p>{{$property->landlord->section}}</p>
@@ -302,12 +327,14 @@
                             <h6>District</h6>
                             <p>{{$property->landlord->district}}</p>
                         </div>
+                    </div>
+
+                    <div class="row">
+                        
                         <div class="col-sm-3">
                             <h6>Province</h6>
                             <p>{{$property->landlord->province}}</p>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-sm-3">
                             <h6>Postcode</h6>
                             <p>{{$property->landlord->postcode}}</p>
@@ -320,7 +347,14 @@
                             <h6>Mobile Number 2</h6>
                             <p>{{$property->landlord->mobile_2}}</p>
                         </div>
-
+                    </div>
+                    <div class="row">
+                        
+                        <div class="col-sm-3">
+                            <h6>Email Address</h6>
+                            <p>{{$property->landlord->email}}</p>
+                        </div>
+                        
                     </div>
                 </div>
                 <div style="display: none;" class="body landlord-edit">
@@ -581,6 +615,17 @@
                             <h6>Street Name</h6>
                             <p>{{$property->street_name}}</p>
                         </div>
+                        <div class="col-sm-3">
+                            <h6>Additional Street address</h6>
+                            <p>{{$property->additional_address_id}}</p>
+                        </div>
+                       
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <h6>Area</h6>
+                            <p>{{$property->additional_address_id}}</p>
+                        </div>
 
                         <div class="col-sm-3">
                             <h6>Ward</h6>
@@ -590,12 +635,13 @@
                             <h6>Constituency</h6>
                             <p>{{$property->constituency}}</p>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-sm-3">
                             <h6>Section</h6>
                             <p>{{$property->section}}</p>
                         </div>
+                    </div>
+                    <div class="row">
+                        
                         <div class="col-sm-3">
                             <h6>Chiefdom</h6>
                             <p>{{$property->chiefdom}}</p>
@@ -608,12 +654,13 @@
                             <h6>Province</h6>
                             <p>{{$property->province}}</p>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-sm-3">
                             <h6>Postcode</h6>
                             <p>{{$property->postcode}}</p>
                         </div>
+                    </div>
+                    {{-- <div class="row">
+                       
 
 
                         <div class="col-sm-3">
@@ -631,7 +678,7 @@
                             <h6>Demand Note Delivered</h6>
                             <p>{{ $property->is_draft_delivered ? 'Yes' : 'No' }}</p>
                         </div>
-
+                        
 
                         @if($property->is_draft_delivered)
                             <div class="col-sm-3">
@@ -662,7 +709,7 @@
                             @endif
                         @endif
 
-                    </div>
+                    </div> --}}
                 </div>
                 <div style="display: none" class="body property-edit">
                     <div class="row">
@@ -843,12 +890,13 @@
                                 <h6>Tenant First Name</h6>
                                 <p>{{$property->occupancy->tenant_first_name}}</p>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-sm-3">
                                 <h6>Middle Name</h6>
                                 <p>{{$property->occupancy->middle_name}}</p>
                             </div>
+                        </div>
+                        <div class="row">
+                            
                             <div class="col-sm-3">
                                 <h6>Surname</h6>
                                 <p>{{$property->occupancy->surname}}</p>
@@ -969,7 +1017,7 @@
 
                     </div>
                     <div class="body geo-registry-view">
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col-sm-3">
                                 <h6>Point 1</h6>
                                 <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point1)}}</p>
@@ -986,9 +1034,9 @@
                                 <h6>Point 4</h6>
                                 <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point4)}}</p>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="row">
-                            <div class="col-sm-3">
+                            {{-- <div class="col-sm-3">
                                 <h6>Point 5</h6>
                                 <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point5)}}</p>
                             </div>
@@ -1003,7 +1051,7 @@
                             <div class="col-sm-3">
                                 <h6>Point 8</h6>
                                 <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point8)}}</p>
-                            </div>
+                            </div> --}}
                             <div class="clearfix"></div>
                             <div class="col-sm-3">
                                 <h6>Dor Lat Long</h6>
@@ -1017,7 +1065,9 @@
 
                             <div class="col-sm-3">
                                 <h6>Open Location Code</h6>
-                                <p>{{ $property->postcode }} {{$property->geoRegistry->open_location_code}}</p>
+                                {{-- <p>{{ $property->postcode }} </p> --}}
+                                    
+                                    <p>{{$property->geoRegistry->open_location_code}}</p>
                             </div>
                         </div>
 

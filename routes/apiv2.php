@@ -31,7 +31,7 @@ Route::group(
         Route::post('get/address-options-by-ward', 'General\PopulateOnWardController@Populate');
         Route::get('get/meta', 'General\PopulateAssessmentController@getMeta');
         Route::post('save/property', 'General\PropertyController@save');
-        Route::get('get/incomplete-property', 'General\PropertyController@getIncompleteProperty');
+        Route::get('get/incomplete-property/{ward?}/{section?}', 'General\PropertyController@getIncompleteProperty');
         Route::post('update/property', 'General\PropertyController@update_property');
         Route::post('update/user-profile', 'General\AppUserController@editProfile');
         Route::get('get/my/district', 'General\PropertyController@getMyDistrict');

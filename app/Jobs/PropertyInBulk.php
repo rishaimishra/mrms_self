@@ -47,7 +47,7 @@ class PropertyInBulk implements ShouldQueue
             },
         ])->latest()->get();
 
-        //return view('admin.payments.bulk-receipt', ['properties' => $properties, 'year' => $year]);
+        // return view('admin.payments.bulk-receipt', ['properties' => $properties, 'year' => $year]);
 
         $pdf = \PDF::loadView('admin.payments.bulk-receipt', ['properties' => $properties, 'year' => $year]);
 

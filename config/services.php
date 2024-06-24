@@ -49,7 +49,7 @@ return [
         'auth_token' => env('TWILIO_TOKEN'), // optional when using username and password
         'account_sid' => env('TWILIO_SID'),
         'from' => env('TWILIO_FROM'), // optional
-        'alphanumeric_sender' => 'WARDC'
+        'alphanumeric_sender' => 'MRMS-SL'
     ],
 
 

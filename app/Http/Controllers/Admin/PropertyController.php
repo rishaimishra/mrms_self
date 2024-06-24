@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Admin;
 use App\Grids\LandLordVerifyGrid;
 use App\Exports\PropertyExport;
+use App\Imports\ExcelImport;
+use App\Imports\AddressImport;
 use App\Grids\PropertiesGrid;
+use App\Grids\AssignPropertiesGrid;
 use App\Http\Controllers\Controller;
 use App\Jobs\PropertyInBulk;
 use App\Jobs\PropertyEnvpBulk;
@@ -35,11 +38,14 @@ use App\Models\User;
 use App\Models\District;
 use App\Models\InaccessibleProperty;
 use App\Models\UnfinishedProperty;
+use App\Models\AdditionalAddress;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Twilio;
 use App\Notifications\PaymentRequestSMS;
+use DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PropertyController extends Controller
 {
@@ -47,6 +53,8 @@ class PropertyController extends Controller
 
     public function list(PropertiesGrid $usersGrid, Request $request)
     {
+        // return "sdf";
+        // dd($request->all());
         $organizationTypes = collect(json_decode(file_get_contents(storage_path('data/organizationTypes.json')), true))->pluck('label', 'value');
 
 
@@ -54,7 +62,7 @@ class PropertyController extends Controller
         // ->orderBy('id', 'desc')
         // ->get();
 
-        $this->properties = Property::with([
+        $this->properties = Property::where('street_number','!=',null)->where('street_name','!=',null)->where('ward','!=',null)->where('constituency','!=',null)->with([
             'user',
             'landlord',
             'assessment' => function ($query) use ($request) {
@@ -67,7 +75,8 @@ class PropertyController extends Controller
             'occupancies',
             'propertyInaccessible',
             'payments',
-            'districts'
+            'districts',
+            'assessmentHistory'
         ])
             ->whereHas('assessment', function ($query) use ($request) {
 
@@ -90,10 +99,10 @@ class PropertyController extends Controller
                     $query->where('gated_community', $request->gated_community);
                 }
 
-            })
-            ->whereHas('districts', function($query) {
-                $query->where('id',13);
             });
+            // ->whereHas('districts', function($query) {
+            //     $query->where('id',13);
+            // });
         if (request()->user()->hasRole('Super Admin')) {
         } else {
             $this->properties->where('district', request()->user()->assign_district);
@@ -274,8 +283,8 @@ class PropertyController extends Controller
 
         $data['categories'] = PropertyType::pluck('label', 'id')->prepend('Select', '');
         $data['windowtype'] = PropertyWindowType::pluck('label', 'id')->prepend('Select Window Type', '');
-        $data['wallMaterial'] = PropertyWallMaterials::pluck('label', 'id')->prepend('Wall Material', '');
-        $data['roofMaterial'] = PropertyRoofsMaterials::pluck('label', 'id')->prepend('Roof Material', '');
+        $data['wallMaterial'] = PropertyWallMaterials::pluck('label', 'id')->prepend('Wall Material', '')->prepend('Select wall material', '');
+        $data['roofMaterial'] = PropertyRoofsMaterials::pluck('label', 'id')->prepend('Roof Material', '')->prepend('Select roof material', '');
         $data['propertyDimension'] = PropertyDimension::pluck('label', 'id')->prepend('Dimensions', '');
         $data['valueAdded'] = PropertyValueAdded::where('is_active', true)->pluck('label', 'id')->prepend('Value Added', '');
         $data['town'] = BoundaryDelimitation::distinct()->orderBy('section')->pluck('section', 'section')->prepend('Select Town', '');;
@@ -299,9 +308,9 @@ class PropertyController extends Controller
 
         $data['property_inaccessibles'] = PropertyInaccessible::where('is_active', 1)->pluck('label', 'id')->prepend('Select Property Inaccessible');
 
-        $data['street_names'] = Property::distinct('street_name')->orderBy('street_name')->pluck('street_name', 'street_name');
-        $data['street_numbers'] = Property::distinct('street_number')->orderBy('street_number')->pluck('street_number', 'street_number');
-        $data['postcodes'] = Property::distinct('postcode')->orderBy('postcode')->pluck('postcode', 'postcode');
+        $data['street_names'] = Property::distinct('street_name')->orderBy('street_name')->pluck('street_name', 'street_name')->sort()->prepend('Select street name', '');
+        $data['street_numbers'] = Property::distinct('street_number')->orderBy('street_number')->pluck('street_number', 'street_number')->sort()->prepend('Select street number', '');
+        $data['postcodes'] = Property::distinct('postcode')->orderBy('postcode')->pluck('postcode', 'postcode')->sort()->prepend('Select post code', '');
         $data['organizationTypes'] = $organizationTypes;
 
         //return view('admin.payments.bulk-receipt')->with(['properties' => $this->properties->latest()->get()]);
@@ -337,7 +346,7 @@ class PropertyController extends Controller
         }
 
         if ($request->bulk_demand && $request->bulk_demand == 2 && $this->properties->count() > 0) {
-
+            
             $coordinates = $this->getMapCoordinates();
             $points = $coordinates[0];
             $center = $coordinates[1];
@@ -354,7 +363,7 @@ class PropertyController extends Controller
             $this->properties = $this->properties->orderBy('is_completed', $request->sort_dir)->orderBy('is_draft_delivered', $request->sort_dir);
         }
         // $data['list_user'] = User::pluck('name', 'name')->toArray();
-        //dd($this->properties->toSql());
+        // dd($this->properties->get());
         return $usersGrid
             ->create(['query' => $this->properties, 'request' => $request])
             ->withoutSearchForm()
@@ -390,24 +399,44 @@ class PropertyController extends Controller
 
     public function getMapCoordinates()
     {
-        $properties = $this->properties->latest()->get();
+    //   return  $properties = $this->properties->latest()->get();
+    $properties = $this->properties = Property::with([
+        'landlord',
+        'geoRegistry',
+        'user',
+        'districts'
+    ])->get();
         $points = [];
         $center = null;
 
         if ($properties->count()) {
             foreach ($properties as $key => $property) {
-
+                // return $property->id;
+                // echo($property->street_number == null);
                 if (optional($property->geoRegistry)->dor_lat_long) {
                     $point = explode(', ', $property->geoRegistry->dor_lat_long);
                 } else {
                     continue;
                 }
-                if ($property->assessment->getCurrentYearTotalDue() - $property->assessment->getCurrentYearTotalPayment() != 0) {
+               
+                if ($property->assessment->getTotalPaid() == 0 ){
+                    if($property->street_number == null && $property->assessment->getCurrentYearAssessmentAmount() == 0 && $property->ward == null && $property->constituency == null && $property->street_name == null){
+                        // return "black";
+                        $icon = "https://i.ibb.co/ysShF3B/location-pin.png";
+                    }else{
+                        $icon = "https://maps.google.com/mapfiles/ms/icons/orange-dot.png";
+                    }
+                } else if ($property->assessment->getCurrentYearTotalDue() > 0) {
                     $icon = "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png";
-                } else if ($property->assessment->getCurrentYearTotalDue() - $property->assessment->getCurrentYearTotalPayment() == 0) {
+                } else if ($property->assessment->getCurrentYearTotalDue() < 0) {
                     $icon = "https://maps.google.com/mapfiles/ms/icons/green-dot.png";
+                } else if ($property->assessment->getCurrentYearTotalDue() == 0) {
+                    $icon = "https://maps.google.com/mapfiles/ms/icons/orange-dot.png";
                 } else if(isset($property->user->assign_district_id)){
                     $icon = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+                }else if($property->street_number == null ){
+                    // return "black";
+                    $icon = "https://i.ibb.co/ysShF3B/location-pin.png";
                 }
                 else{
                     $icon = "http://maps.google.com/mapfiles/ms/icons/pink-dot.png";
@@ -442,6 +471,7 @@ class PropertyController extends Controller
 
     public function downloadPdf(Request $request)
     {
+        
         $this->validate($request, [
             'properties' => 'required',
 
@@ -457,6 +487,7 @@ class PropertyController extends Controller
         ]);
 
         if($request->delete_property){
+            
             $this->properties->whereIn('properties.id', explode(',', $request->properties))->delete();
             return \Redirect::back()->with('success', 'Record deleted Successfully');
         }
@@ -514,10 +545,10 @@ class PropertyController extends Controller
         $property = Property::findOrFail($request->property);
 
         // Generate current year assessment if missing
-        $property->generateAssessments();
+         $property->generateAssessments();
 
         // load sub modals
-        $property->load([
+         $property->load([
             'images',
             'occupancy',
             'assessments' => function ($query) {
@@ -579,7 +610,7 @@ class PropertyController extends Controller
     {
         $year = !$year ? date('Y') : $year;
 
-        $property = Property::with('assessment', 'occupancy', 'types', 'geoRegistry', 'user')->findOrFail($id);
+       return $property = Property::with('assessment', 'occupancy', 'types', 'geoRegistry', 'user')->findOrFail($id);
         $assessment = $property->assessments()->whereYear('created_at', $year)->firstOrFail();
 
         //        $pdf = \PDF::loadView('admin.payments.receipt');
@@ -598,14 +629,28 @@ class PropertyController extends Controller
     {
     }
 
-    public function assignProperty(Request $request)
+    public function assignProperty(AssignPropertiesGrid $assignusersGrid, Request $request)
     {
-
+        $this->properties = Property::where('street_number','=',null)->where('street_name','=',null)->where('ward','=',null)->where('constituency','=',null)->with([
+            'user',
+            'landlord',
+            'assessment',
+            'geoRegistry',
+            'user',
+            'occupancies',
+            'propertyInaccessible',
+            'payments',
+            'districts',
+            'assessmentHistory'
+        ]);
         $data['title'] = 'Details';
         $data['request'] = $request;
-        $data['assessmentOfficer'] = $assessmentUser = User::pluck('name', 'id')->prepend('Select Officer', '');
+        $data['assessmentOfficer'] = $assessmentUser = User::where('ward','!=', 'NA')->pluck('name', 'id')->prepend('Select Officer', '');
 
-        return view('admin.properties.assign', $data);
+        return $assignusersGrid
+            ->create(['query' => $this->properties, 'request' => $request])
+            ->renderOn('admin.properties.assign', $data);
+        // return view('admin.properties.assign', $data);
     }
 
 
@@ -1010,6 +1055,7 @@ class PropertyController extends Controller
 
     public function saveAssessment(Request $request)
     {
+        // return $request;
         $request->validate([
             "assessment_id" => "required|integer",
             "property_id" => "required|integer",
@@ -1028,6 +1074,7 @@ class PropertyController extends Controller
             "zone" => "required|integer",
             'assessment_images_1' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
             'assessment_images_2' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            
         ]);
 
         $data = $request->except(['property_types', 'property_types_total', 'property_value_added', 'assessment_images_1', 'assessment_images_2']);
@@ -1054,7 +1101,7 @@ class PropertyController extends Controller
         }
 
         /* @var $assessment PropertyAssessmentDetail */
-        $data['gated_community'] = $data['gated_community'] ? getSystemConfig(SystemConfig::OPTION_GATED_COMMUNITY) : null;
+        $data['gated_community'] = $data['gated_community'] ? getSystemConfig(SystemConfig::OPTION_GATED_COMMUNITY) : 2;
         $data['sanitation'] = $request->property_sanitation;
 
 
@@ -1104,7 +1151,21 @@ class PropertyController extends Controller
         $data['easy_street_access_percentage'] = $easy_street_access_percentage;
         $data['paved_tarred_street_percentage'] = $paved_tarred_street_percentage;
         $data['drainage_percentage'] = $drainage_percentage;
-
+        $data['property_wall_materials'] = $request->property_wall_materials;
+        $data['roofs_materials'] =$request->roofs_materials;
+        $data['property_window_type']=$request->property_window_type;
+        $data['wall_material_type']=$request->property_wall_materials_type;
+        $data['roof_material_type']=$request->property_roof_materials_type;
+        $data['window_type_type']=$request->property_window_materials_type;
+        $data['wall_material_percentage']=$request->property_wall_materials_percentage;
+        $data['roof_material_percentage']=$request->property_roof_materials_percentage;
+        $data['window_type_percentage']=$request->property_window_materials_percentage;
+        $data['property_assessed_value']=$request->property_assessed_value;
+        $data['net_property_assessed_value']=$request->net_property_assessed_value;
+        $data['taxable_property_value']=$request->taxbale_property_value;
+        $data['property_tax_payable_2024']=$request->property_tax_payable_2024;
+        $data['discounted_rate_payable']=$request->discounted_rate_payable;
+        $data['council_adjustments']=$request->council_adjustments;
         $assessment->fill($data);
         $assessment->swimming()->associate($request->input('swimming_pool'));
         $assessment->save();
@@ -1328,64 +1389,1435 @@ class PropertyController extends Controller
         ->get();
     }
 
-    public function delete_selected_prop(){
-        $propertyIds =[154,
-        527,
-        940,
-        1109,
-        1110,
-        2900,
-        3050,
-        3876,
-        4507,
-        7903,
-        7922,
-        9286,
-        9387,
-        10774,
-        11461,
-        11600,
-        15524,
-        41839,
-        41840,
-        41844];
+    public function delete_selected_prop()
+    {
 
+        $propertyIds = [
+            154, 527, 940, 1109, 1110, 2900, 3050, 3876, 4507, 7903, 7922, 9286, 
+            9387, 10774, 11461, 11600, 15524, 41839, 41840, 41844
+        ];
+    
         if (empty($propertyIds)) {
             return ['error' => 'No property IDs provided'];
         }
-            $propertiesToDelete = Property::whereNotIn('id', $propertyIds)->pluck('id');
-
-
+    
+        $propertiesToDelete = Property::get();
+        $propertiesToDelete = Property::whereNotIn('id', $propertyIds)->get();
+    
         DB::beginTransaction();
-
+    
         try {
-            foreach ($propertiesToDelete as $propertyId) {
-                $property = Property::find($propertyId);
-
-                if (!$property) {
-                    continue;
-                }
-
+            foreach ($propertiesToDelete as $property) {
                 // Delete associated assessment data
                 $property->assessment()->delete();
-
-                // get associated payment data
+    
+                // Delete associated payment data
                 $property->payments()->delete();
-
-                // get related landlords, occupancies, and registry
-                // $property->landlord()->get();
-                // $property->occupancies()->get();
-                // $property->registry()->get();
-
-                // get property itself
+    
+                // Delete related landlords, occupancies, and registry
+                $property->landlord()->delete();
+                $property->occupancies()->delete();
+                $property->georegistry()->delete();
+    
+                // Delete property itself
                 $property->delete();
             }
-
+    
             DB::commit();
             return ['success' => 'Properties and associated data successfully deleted'];
         } catch (\Exception $e) {
             DB::rollback();
             return ['error' => 'Failed to delete properties and associated data', 'message' => $e->getMessage()];
         }
+    }
+    
+    public function get_material(Request $request){
+        // return $request;
+        $wall_material = PropertyWallMaterials::where('id',$request->value)->first();
+
+       return view('admin.properties.wall_material_dropdown',compact('wall_material'));
+    }
+    public function get_material_roof(Request $request){
+        // return $request;
+        $roof_material = PropertyRoofsMaterials::where('id',$request->value)->first();
+
+       return view('admin.properties.roof_material_dropdown',compact('roof_material'));
+    }
+    public function get_material_window(Request $request){
+        // return $request;
+        $window_material = PropertyWindowType::where('id',$request->value)->first();
+
+       return view('admin.properties.window_material_dropdown',compact('window_material'));
+    }
+    public function read_excel(){
+        $streetNames = [
+            "Ngiawo",
+            "Ngobeh",
+            "Ngobie",
+            "Ngoka",
+            "Ngongou",
+            "NGulama",
+            "Nichole",
+            "Nicholson",
+            "Nicle",
+            "Nicol",
+            "Nicol-Wilson",
+            "Niederhausein",
+            "Njai",
+            "Nkamra",
+            "Nnadi",
+            "Nnaji",
+            "Nneli",
+            "Noah",
+            "Noldred",
+            "Norfleet",
+            "Nortey",
+            "Nottidge",
+            "NULL",
+            "Nuni",
+            "Nuyma",
+            "Nyagua",
+            "Nyallay",
+            "Nyalley",
+            "Nyalopo",
+            "Nyamoh",
+            "Nyandemoh",
+            "Nyangui",
+            "Nyberg",
+            "Nyei",
+            "Nyelenkeh",
+            "Nylander",
+            "Nyuma",
+            "Obed-Cole",
+            "O'Connor",
+            "Odinga",
+            "Office",
+            "Ojumu",
+            "Okechukwu",
+            "Okeke",
+            "Okeke-Macauley",
+            "Okoro",
+            "Okoye",
+            "Olah",
+            "Olatunji",
+            "Olings",
+            "Olujones",
+            "Olu-Jones",
+            "Olu-williams",
+            "Omodal",
+            "Omoh",
+            "Oneil",
+            "Oniell",
+            "Onuoha",
+            "Onuona",
+            "Onwama",
+            "Onwuma",
+            "Onyenze",
+            "Onyeudo",
+            "Opene",
+            "O'reilly",
+            "Organization",
+            "Orielly",
+            "Oseah",
+            "Osman",
+            "Othello-Kargbo",
+            "Othmam",
+            "Ottie",
+            "Oyovo",
+            "Paikisan",
+            "Pakinson",
+            "Palamer",
+            "Palmer",
+            "Palner",
+            "Panaki",
+            "Papa",
+            "Papu",
+            "Paris",
+            "Parkinson",
+            "Parsons",
+            "Partel",
+            "Partt",
+            "Patewa",
+            "Patnelli",
+            "Patso",
+            "Paul",
+            "Pawells",
+            "Paye",
+            "Paywa",
+            "Pearce",
+            "Pears",
+            "Peetz",
+            "Pegbo",
+            "Pemagbi",
+            "Penn-Timity",
+            "Pessima",
+            "Peter",
+            "Peters",
+            "Phatty",
+            "Philip",
+            "Philips",
+            "Pienaar",
+            "Pimbi",
+            "Pitt",
+            "Pokawa",
+            "Police",
+            "Pollect",
+            "Polo",
+            "Pontis",
+            "Porter",
+            "Posseh",
+            "Poter",
+            "Potho",
+            "Pover",
+            "Praet",
+            "Pratt",
+            "Pratta",
+            "Preston",
+            "Prett",
+            "Priddy",
+            "Princess",
+            "Property",
+            "Pujuh",
+            "Pullom",
+            "Pyne",
+            "Quee",
+            "Queen",
+            "Quinn",
+            "Quist",
+            "Quity",
+            "Quiwa",
+            "Quraishi",
+            "Radder",
+            "Rahman",
+            "Ramos",
+            "Randall",
+            "Rando",
+            "Ranner",
+            "Rashid",
+            "Raymond",
+            "Reader",
+            "Record",
+            "Reffell",
+            "Refuell",
+            "Reider",
+            "Reken",
+            "Remi",
+            "Renner",
+            "Residence",
+            "Richard",
+            "Richards",
+            "Riche",
+            "Riddle",
+            "Rinna",
+            "Risch",
+            "Robbin-Coker",
+            "Robert",
+            "Robertin",
+            "Roberts",
+            "Robet",
+            "Robinson",
+            "Robort",
+            "Robot",
+            "Rogers",
+            "Rojos",
+            "Rollings",
+            "Roques",
+            "Rose",
+            "Rosenior",
+            "Ross",
+            "Rowe",
+            "Roy",
+            "Rubes",
+            "Rugiatu",
+            "Russel",
+            "Saad",
+            "Saba",
+            "Sabab",
+            "Saboleh",
+            "Saccoh",
+            "Sackey",
+            "Saffa",
+            "Sagba",
+            "Saha",
+            "Sahid",
+            "Sahr",
+            "Saidu",
+            "Saio",
+            "Sajoh",
+            "Sakilla",
+            "Sakoh",
+            "Sakpa",
+            "Sal",
+            "Salaam",
+            "Salamie",
+            "Salankole",
+            "Saleyah",
+            "Salia",
+            "Salieu",
+            "Salin",
+            "Sall",
+            "Sallie",
+            "Sallieu",
+            "Salloum",
+            "Sam",
+            "Sama",
+            "Samah",
+            "Samai",
+            "Samasa",
+            "Samba",
+            "Sambo",
+            "Sam-kabba",
+            "Samkoh",
+            "Sam-Kpakra",
+            "Sammie",
+            "Samoura",
+            "Sam-Roberts",
+            "Samson",
+            "Samu",
+            "Samuel",
+            "Samuels",
+            "Samura",
+            "Samurah",
+            "Samuru",
+            "Sandi",
+            "Sando",
+            "Sandy",
+            "Sanko",
+            "Sankoh",
+            "Sankon",
+            "Sannase",
+            "Sannoh",
+            "Sanpha",
+            "Sansie",
+            "Santigie",
+            "Santigie-Koroma",
+            "Sanu",
+            "Sanusie",
+            "Sanusy",
+            "Sapateh",
+            "Saquee",
+            "Sarah",
+            "Sarky",
+            "Sarmu",
+            "Sasay",
+            "Sasey",
+            "Saunders",
+            "Savage",
+            "Savula",
+            "Saw",
+            "Sawanah",
+            "Sawaneh",
+            "Sawanneh",
+            "Sawarray",
+            "Sawi",
+            "Sawie",
+            "Sawo",
+            "Sawyah",
+            "Sawyer",
+            "Sawyerr",
+            "Schenka",
+            "Scot",
+            "Scott",
+            "Scott-Boyle",
+            "Scott-Manga",
+            "Seaay",
+            "Seasy",
+            "Sebeh",
+            "Seeay",
+            "Seewald",
+            "Sei",
+            "Seilenga",
+            "Seisay",
+            "Seiwoh",
+            "Sell",
+            "Sellah",
+            "Sellu",
+            "Senasi",
+            "Sendor",
+            "Senesie",
+            "Senessie",
+            "Sengeh",
+            "Sengova",
+            "Sento",
+            "Sepha",
+            "Serry",
+            "Sesar",
+            "Sesay",
+            "Sesay-Jalloh",
+            "Sesay-Kamara",
+            "Sessay",
+            "Session",
+            "Sessy",
+            "Sewor",
+            "Seworld",
+            "Shaban",
+            "Shahbour",
+            "Sharie",
+            "Sharkha",
+            "Sharma",
+            "Sharp",
+            "Sharpe",
+            "Shavay",
+            "Shaw",
+            "Shears",
+            "Shears-Moses",
+            "Shebureh",
+            "Sheika",
+            "Sheku",
+            "Shengeh",
+            "Shepard",
+            "Sherief",
+            "Sheriff",
+            "Sheriff-Zorokong",
+            "Sherriff",
+            "Sherry",
+            "Shillon",
+            "Shonkoh",
+            "Show",
+            "Showers",
+            "Shrief",
+            "Shriff",
+            "Shyllon",
+            "Shylon",
+            "Sidi",
+            "Sidibay",
+            "Sidigba",
+            "Sidikie",
+            "Sidique",
+            "Sidu",
+            "Sie",
+            "Sifoi",
+            "Silla",
+            "Sillah",
+            "Sim",
+            "Simbo",
+            "Simon",
+            "Simth",
+            "Sinah",
+            "Sindeh",
+            "Singh",
+            "Sinnah",
+            "Sirfaya",
+            "Sivalie",
+            "Siwckler",
+            "Skaikay",
+            "Slow",
+            "Slowe",
+            "Small",
+            "Smalle",
+            "Smart",
+            "Smartia",
+            "Smith",
+            "Smoura",
+            "Smythe",
+            "Sogbandi",
+            "Sogie-Thomas",
+            "Soja",
+            "Soko",
+            "Soloku",
+            "Solomon",
+            "Sombi",
+            "Sombo",
+            "Sondai",
+            "Songa",
+            "Songbo",
+            "Songo",
+            "Songo-Brown",
+            "Songowa",
+            "Songu-M'briwa",
+            "Sonnie",
+            "Sonsiama",
+            "Sorie",
+            "Sorieba",
+            "Sorie-Bah",
+            "Sorrie",
+            "Sourie",
+            "Sovola",
+            "Sow",
+            "Sowa",
+            "Sowah",
+            "Sowe",
+            "Soya",
+            "Spain",
+            "Spencer",
+            "Spido",
+            "Spilsbury-Williams",
+            "Spring",
+            "Square",
+            "Squire",
+            "Staanley",
+            "Stanley",
+            "Station",
+            "Stephens",
+            "Steven",
+            "Stevens",
+            "Stevin",
+            "Stone",
+            "Store",
+            "Strasser",
+            "Streeter",
+            "Stronge",
+            "Stvens",
+            "Sulaiman",
+            "Suluku",
+            "Suma",
+            "Sumah",
+            "Sumaila",
+            "Sumalai",
+            "Sumana",
+            "Sumelia",
+            "Summah",
+            "Summer",
+            "Sumura",
+            "Sun",
+            "Sundu",
+            "Sunkari",
+            "Suray",
+            "Sutton",
+            "Swalley",
+            "Swaray",
+            "Swarray",
+            "Swill",
+            "Swyer",
+            "Sylvalie",
+            "Taal",
+            "Tabib",
+            "Tagoe",
+            "Tailor",
+            "Tam",
+            "Tamba",
+            "Tambayor",
+            "Tamer",
+            "Tamu",
+            "Tamukay",
+            "Tamukey",
+            "Tangar",
+            "Taqi",
+            "Tarawali",
+            "Tarawalia",
+            "Tarawalie",
+            "Tarawalli",
+            "Tarawallie",
+            "Tarawally",
+            "Tarawaly",
+            "Tarawellie",
+            "Tarawollie",
+            "Tarawulie",
+            "Tarawullie",
+            "Tarbay",
+            "Tasima",
+            "Tatta",
+            "Tawaralie",
+            "Tawarally",
+            "Taylor",
+            "Taylor-Morgan",
+            "Techam",
+            "Technologies",
+            "Tee",
+            "Teh",
+            "Tehrawaly",
+            "Tejan",
+            "Tejan-Cole",
+            "Tejancy",
+            "Tejansie",
+            "Tekuyama",
+            "Temple",
+            "TENGBE",
+            "Tengbeh",
+            "Tenneh",
+            "Terry",
+            "Thamas",
+            "Thamb",
+            "Thension",
+            "Thokuwa",
+            "Tholey",
+            "Tholley",
+            "Thollie",
+            "Tholly",
+            "Thomas",
+            "Thomas-Comba",
+            "Thomas-Coomba",
+            "Thomos",
+            "Thompson",
+            "Thomson",
+            "Thonkara",
+            "Thonpson",
+            "Thoranka",
+            "Thorankah",
+            "Thorley",
+            "Thorlie",
+            "Thorlu-Bangura",
+            "Thoronka",
+            "Thoronkah",
+            "Thorpe",
+            "Thukara",
+            "Thula",
+            "Thular",
+            "Thulla",
+            "Thullah",
+            "Thullay",
+            "Thuray",
+            "Tie",
+            "Timbo",
+            "Timbo-Jalloh",
+            "Timity",
+            "Tolno",
+            "Tolnoh",
+            "Tomboyeke",
+            "Tommes",
+            "Tommy",
+            "Tomson",
+            "Tomus",
+            "Tonkara",
+            "Top",
+            "Toranka",
+            "Toranlla",
+            "Torto",
+            "Totangi",
+            "Touray",
+            "Toure",
+            "Trawallie",
+            "Try",
+            "Trye",
+            "Tuary",
+            "Tuboku-Metzger",
+            "Tucker",
+            "Tuday",
+            "Tuffic",
+            "Tugbawa",
+            "Tulliver",
+            "Tuma",
+            "Tumoe",
+            "Tunateh",
+            "Tunis",
+            "Tunkara",
+            "Tunkarah",
+            "Tunkura",
+            "Tunubu",
+            "Turay",
+            "Turner",
+            "Tweed",
+            "Ugwucke",
+            "Umaru",
+            "Unisa",
+            "Ureh",
+            "Uthman",
+            "Uz",
+            "Uzondu",
+            "Valcarcel",
+            "Vamboi",
+            "Vandalieda",
+            "Vandi",
+            "Vandy",
+            "Vanger",
+            "Velzevoal",
+            "Venson",
+            "Vicent",
+            "Vincent",
+            "Vonjoe",
+            "Waema",
+            "Wagay",
+            "Wahid",
+            "Wai",
+            "Walkei",
+            "Walker",
+            "Wallace",
+            "Wallah",
+            "Wallice",
+            "Walter",
+            "Walterneba",
+            "Walter-Neba",
+            "Walters",
+            "Walton",
+            "Wanaeh",
+            "Wanna",
+            "Ward",
+            "Wardlow",
+            "Waritay",
+            "Warritay",
+            "Warshaw",
+            "Wast",
+            "Watfa",
+            "Watifa",
+            "Watkins",
+            "Wattey",
+            "Weath",
+            "Weekes",
+            "Weeks",
+            "Whaheed",
+            "Whaleed",
+            "Whilem",
+            "White",
+            "Wicks",
+            "Wieliams",
+            "Wilhelm",
+            "Wilkinson",
+            "Will",
+            "Willams",
+            "Willems",
+            "William",
+            "Williams",
+            "Willie",
+            "Willile",
+            "Willoughby",
+            "Willson",
+            "Wilson",
+            "Winiba",
+            "Winiber",
+            "Winner",
+            "Winton-Cummings",
+            "Wobeh",
+            "Woobay",
+            "Wood",
+            "Woodward",
+            "Wray",
+            "Wright",
+            "Wrobeh",
+            "Wunda",
+            "Wurie",
+            "Wurrie",
+            "Wurroh",
+            "Wurror",
+            "Wyndham",
+            "Wyse",
+            "Yabom",
+            "Yabu",
+            "Yagbe",
+            "Yajah",
+            "Yakoh",
+            "Yalie",
+            "Yama",
+            "Yamba",
+            "Yambasu",
+            "Yanka",
+            "Yankain",
+            "Yankson",
+            "Yannie",
+            "Yansaeh",
+            "Yansaneh",
+            "Yarjah",
+            "Yarmah",
+            "Yarteh",
+            "Yasaneh",
+            "Yaskey",
+            "Yatteh",
+            "Yayah",
+            "Yealie",
+            "Yellow",
+            "Yewoh",
+            "Yibaya",
+            "Yilla",
+            "Yillah",
+            "Yokey",
+            "Yokie",
+            "Yomba-Bindi",
+            "Yombo",
+            "Yongai",
+            "Yorke",
+            "Yorpoi",
+            "Young",
+            "Yumba",
+            "Yumkela",
+            "Yunkella",
+            "Yus",
+            "Yusuf",
+            "Zainab",
+            "Zaka",
+            "Zakaim",
+            "Zoker",
+            "Zombo",
+            "Zorokong",
+            "Zorro",
+            "Zubairu",
+            "Zylbersztain",
+            "Abass", "Abass-Bangura", "Abban", "Abdalah", "Abdallah", "Abdul", "Abdullah", "Abdullai", "Abdulrahman", "Aberdeen", 
+            "Abess", "Abijoudi", "Aboko-Cole", "Abou", "Aboy", "Abraha", "Abraham", "Abron", "Abu", "Abubakarr", 
+            "Academy", "Acheampong", "Achmus", "Adama", "Adams", "Adamsay", "Adaqua", "Adaqueh", "Adejobi", "Adekule", 
+            "Adeniran", "Adikalie", "Admire", "Adraman", "Adu", "Aduadjoe", "Adusdjoe", "Afadi", "Affu", "Afful", 
+            "Aforo", "Agell", "Aghali", "Agu", "Ahaba", "Ahlvor", "Ahmed", "Aitkins", "Ajami", "Ajax", 
+            "Akai", "Akara", "Akibobeth", "Akibo-betts", "Akosua", "Alaba", "Alabi", "Aladdin", "Alammy", "Alao", 
+            "Albat", "Aldam", "Alex", "Alhaji", "Ali", "Alie", "Aliesos", "Alieu", "Alieya", "Alima", 
+            "Al-Kamara", "Allen", "Allie", "Allieu", "Almond", "Alpha", "Alusine", "Amadi", "Amadu", "Amara", 
+            "Amarah", "Aminzason", "Anante", "Anderson", "Annan", "Ansari", "Ansu", "Ansumana", "Antar", "Anthony", 
+            "Antony", "Antuah", "Anyaa", "Arab", "Archer", "Arkhust", "Arngel", "Arnold", "Arouni", "Arthur", 
+            "Aruna", "Asgill", "Ashely", "Asirifi", "Association", "Atarrah", "Atippo", "Atkins", "Atsakpo", "Attara", 
+            "Attiogbe", "Attipoe", "Auab", "Ayuba", "Aziz", "Ba", "Babin", "Babonjo", "Baby", "Badara", 
+            "Badin", "Bagura", "Bah", "Bahaguna", "Bah-Kargbo", "Bahkeywar", "Bahsoon", "Bailay", "Bailey", "Bailor", 
+            "Baimba", "BAIN", "Bainda", "Bainna", "Baio", "Bakar", "Bakarr", "Bakarr-Conteh", "Baker", "Balater", 
+            "Balay", "Balde", "Ballah", "Ballani", "Ballay", "Bamba", "Bambay", "Bamigbaye", "Banata", "Bandagba", 
+            "Bandami", "Banda-Thomas", "Bandu", "Bangalie", "Bangra", "Bangrua", "Bangs", "Bangs'Tucker", "Bangura", "Bangura/Kanu", 
+            "Bangurah", "Banguray", "Bangure", "Banguta", "Banguura", "Banjo", "Bankoloh", "Bannerman", "Bannett", "Bannister", 
+            "Banugra", "Banya", "Bao", "Bar", "Baraka", "Baratay", "Barbah", "Barber", "Bare", "Barie", 
+            "Barley", "Barnes", "Barnet", "Barnett", "Baronn", "Barra", "Barrel", "Barrie", "Barrow", "Barry", 
+            "Barton", "Baryoh", "Barzey", "Basamba", "Bash", "Basma", "Bassie", "Bassir", "Bassma", "Batema", 
+            "Batter", "Battis", "Bawa", "Bawah", "Bawoh", "Bayanka", "Bayinka", "Bayo", "Bayoh", "Bayon", 
+            "Bayor", "Beabum", "Beah", "Beccles", "Becker", "Beckles", "Beckley", "Beckley-Thomas", "Beckly", "Becule", 
+            "Belewa", "Bell", "Bello", "Belloh", "Belmon", "Ben", "Bendu", "Benga", "Bengah", "Bengali", 
+            "Bengeh", "Benjamin", "Bennett", "Benya", "Berewa", "Berewe", "Bernard", "Bertels", "Bertin", "Bets", 
+            "Bettey", "Betts", "Betty", "Biango", "Bickerseth", "Bickersteth", "Bidwell", "Bimdi", "Bindi", "Binneh", 
+            "Bio", "Bishop", "Black", "Blackie", "Blaize", "Blake", "Blakie", "Blango", "Blessed", "Bliden", 
+            "Blyden", "Boayh", "Bob", "Bobareh", "Bobb", "Bobby", "Bob-Williams", "Bockarie", "Bockarie-Konteh", "Bockrie", 
+            "Bocum", "Bodin", "Boima", "Boima-Hamid", "Boina", "Bokarie", "Bokon", "Bokrey", "Bolaroh", "Bollaroh", 
+            "Bolley", "Bolow", "Bome", "Bona", "Bona-Bayoh", "Bonaparte", "Bonbil", "Bondo", "Bongo", "Bonguloh", 
+            "Bonta", "Borboh", "Borbor", "Borlaror", "Born", "Bosco", "Boss", "Boston", "Bowen", "Boyah", 
+            "Boyle", "Boymah", "Boyor", "Braima", "Brainaerd", "Brained", "Brainerd", "Brandon", "Brassay", "Breject", 
+            "Brewa", "Brewah", "Briama", "Bricks", "Bright", "Brima", "Brima-", "Broki", "Brown", "Browne", 
+            "Buck", "Buckle", "Budunka", "Buery", "Bull", "Bull/Children", "Bundor", "Bundu", "Bunduka", "Bungera", 
+            "Bunter", "Bureh", "Burney-Nicol", "Butcher", "Buya", "Buyaka", "Buya-Kamara", "Cabralfilme", "Cambo", "Campbell", 
+            "Candy", "Cannon", "Cantala", "Capenter", "Carell", "Carew", "Carol", "Caroll", "Carpenter", "Carr", 
+            "Carrol", "Carroll", "Carsel", "Carter", "Cassah", "Cater", "Caulia", "Caulker", "Cempbell", "Chails", 
+            "Chalie", "Cham", "Chambers", "Chamie", "Chandeh", "Chando", "Chang", "Chapman", "Charles", "Charley", 
+            "Charlie", "Chinery-Hesse", "Choga", "Chuku", "Chukuma", "Church", "Cinteh", "Clarke", "Clarkson", "Claye", 
+            "Clemens", "Clerkson", "Cleveland", "Clifford-Jarrett", "Cline", "Cline-Cole", "Cline-Smythe", "Cobba", "Cobinah", "Codah", 
+            "Coke", "Coker", "Coker-Davies", "Cole", "Collier", "Collingwoode-Williams", "Collins", "Combay", "Commings", "Company", 
+            "Complex", "Condeh", "Coneth", "Confort", "Conger-Thompson", "Conision", "Connell", "Contah", "Conteh", "Conteh-Kalawa", 
+            "Cooker", "Coomber", "Cooper", "Cornford", "Coulson", "Courtis", "Cowan", "Cowan-Bangura", "Cracrabah", "Crowther", 
+            "Cudjoe", "Cummings", "Cummings-Wray", "Curtis", "Cyprain", "Dadeh", "Daffy", "Dago", "Dain", "Dains", 
+            "Dala", "Dallo", "Damon", "Dandrew", "Dan-Dewar", "Daniel", "Daniels", "Dankay", "Daramy", "Daro", 
+            "Darries", "Darusman", "Dauda", "Dauda-Kamara", "David", "Davidson", "Davies", "Davis", "Daykineh", "De", 
+            "Dea", "Deangama", "Debayo", "Dedah", "Dennis", "Deshield", "Deveaux", "Dewey", "Dexter", "Dickens", 
+            "Dickson", "Diegbe", "Doh", "Doherty", "Dokie", "Dombaya", "Dombay-Moore", "Dombey", "Dombey-Kargbo", "Domby", 
+            "Dondo", "Dongey", "Dongkau", "Donso", "Dontauski", "Dorley", "Douglas", "Dove", "Dovowa", "Dowu", 
+            "Dowuona", "Dre", "Duncan", "Dunn", "Durand", "Dusu", "Dwyer", "Dzong", "Eannoh", "Eboma", 
+            "Ebo-Sowa", "Ebun", "Eddie", "Eddy", "Edwards", "Edwardson", "Eesay", "Efana", "Efenali", "Egbor", 
+            "Egbon", "Ejiofor", "Ekpiwhre", "Eku", "El", "Ellis", "Eltayeb", "Eman", "Emazan", "Embalo", 
+            "Embalo-Lowe", "Emmett", "Enokela", "Entoh", "Entri", "Enuwa", "Ernest", "Erskine", "Esan", "Esenwah", 
+            "Esho", "Essamuah", "Essau", "Essendoh", "Essig", "Essien", "Essob", "Essuman", "Etornam", "Etuk", 
+            "Eva", "Evans", "Eyenshie", "Eyram", "Eysia", "Fabba", "Fadahunsi", "Fadika", "Fadike", "Fagbuara", 
+            "Fahina", "Fahm", "Fahmy", "Faika", "Fakayode", "Fallah", "Fambule", "Fanama", "Fanata", "Farida", 
+            "Faris", "Farmer", "Farnie", "Farr", "Fatai", "Fatmata", "Fatou", "Fatoumata", "Fawundu", "Fayia", 
+            "Fayiah", "Fayon", "Faziah", "Fell", "Ferrao", "Fernandez", "Ferran", "Ferrara", "Ferriera", "Fhemo", 
+            "Fibbings", "Fidel", "Filthorpe", "Finney", "Fisher", "Fitzgerald", "Fitzjohn", "Floyd", "Fofana", "Fofanah", 
+            "Fo-fona", "Fokam", "Fokams", "Fomba", "Foray", "Foray-Kamara", "Forbes", "Ford", "Forde", "Formeh", 
+            "Fortune", "Foster", "Foya", "Fowora", "Fox", "Foye", "Foyoh", "Foyoh-Byron", "Foyoh-Grant", "Francis", 
+            "Fraser", "Freckleton", "French", "Frempong", "French", "Freston", "Friday", "Frimpong", "Ftahsia", "Ftshams", 
+            "Fudia", "Fulah", "Fullah", "Funes", "Funes-Ribiero", "Furkati", "Furkoto", "Fyn", "Gabiddon", "Gado", 
+            "Gandam", "Gangwar", "Garnett", "Garrick", "Garwo", "Gary", "Gassimu", "Gay", "Gayflor", "Gaygflor", 
+            "Gebeh", "Gebrilla", "Gebrillah", "George", "Ghaly", "Gibrilla", "Gibrillah", "Gifty", "Gilpin", "Gindiri", 
+            "Ginoria", "Gitimoma", "Gittens", "Givens", "Giza", "Gnagbe", "Goayue", "Goba", "Gobow", "Gombeh", 
+            "Gomez", "Gomina", "Gonga", "Gonzalez", "Gooding", "Gordon", "Gouray", "Gourley", "Gracia", "Graham", 
+            "Grant", "Grant-Gbomoh", "Grant-Gbormoh", "Grant-Gould", "Graves", "Gray", "Green", "Greene", "Gregory", "Griffin", 
+            "Griffin-Kargbo", "Gudman", "Gueh", "Guevara", "Guidotti", "Gundor", "Gungor", "Gurley", "Guruza", "Gwambe", 
+            "Gwamby", "Gwana", "Gwargwar", "Gweh", "Gyamfi", "Gyening", "Gysin", "Gywa", "Habib", "Haggaard", 
+            "Haja", "Hajara", "Haji", "Haji-Ahmed", "Haji-Kella", "Haji-Sesay", "Haji-Williams", "Halibozek", "Hall", "Hallowell", 
+            "Hallowell-Smith", "Hamad", "Hamadi", "Hamaji", "Hamilton", "Hamzat", "Hanciles", "Hansen", "Hanson", "Hapoor", 
+            "Harb", "Harding", "Harris", "Harry", "Harvey", "Hasan", "Hasana", "Hashim", "Hassan", "Hassim", 
+            "Hasson", "Haver", "Haynes", "Hayward", "Hazzan", "Healy", "Heath", "Heaven", "Hector", "Henderson", 
+            "Henries", "Henry", "Heridt", "Hill", "Hills", "Hinga", "Hinneh", "Hirsch", "Hodge", "Hodges", 
+            "Hofer", "Hoffman", "Holliday", "Holmes", "Holmquist", "Holness", "Holst", "Holt", "Hooper", "Horatio", 
+            "Horgan", "Horsfall", "Horst", "Howard", "Howarth", "Howell", "Hudson", "Humphrey", "Hunt", "Hunter", 
+            "Husain", "Hussein", "Huyzer", "Hyde", "Ibrahim", "Ibro", "Ibtoye", "Idaghdour", "Idris", "Idrissa", 
+            "Ihejirika", "Ijomah", "Ikechi", "Ikeh", "Ikoku", "Ikonneh", "Ilaw", "Illodut", "Imoke", "Ingmar", 
+            "Ingred", "Ingram", "Innis", "Ireke", "Iribhogbe", "Ironkwe", "Isaac", "Ishmael", "Ishmail", "Isis", 
+            "Ismail", "Ismailla", "Issa", "Iwara", "Iyana", "Iyebo", "Iyengar", "Jabbie", "Jackson", "Jagana", 
+            "Jalloh", "Jaloh", "James", "Jammeh", "Jan", "Janus", "Jappah", "Javombo", "Jawara", "Jaye", 
+            "Jenkins", "Jesse", "Jimoh", "Jinga", "Jna", "John", "John's", "Johnson", "Jones", "Jordan", 
+            "Joseph", "Joshua", "Jusu", "Kabanka",
+            "Kabay",
+            "Kabba",
+            "Kabbah",
+            "Kabba-Sei",
+            "Kabbay",
+            "Kabbba",
+            "Kabbia",
+            "Kabia",
+            "Kabineh",
+            "Kabo",
+            "Kabu",
+            "Kadi",
+            "Kadie",
+            "Kafoe",
+            "Kagbo",
+            "Kai",
+            "Kaifala",
+            "Kaikai",
+            "Kailey",
+            "Kailie",
+            "Kaindaneh",
+            "Kaindoh",
+            "Kaine",
+            "Kainehsie",
+            "Kainwa",
+            "Kainyanda",
+            "Kainyande",
+            "Kaisamba",
+            "Kaitell",
+            "Kaitibi",
+            "Kajue",
+            "Kakata",
+            "Kakay",
+            "Kalawa",
+            "Kalie",
+            "Kalil",
+            "Kallay",
+            "Kallno",
+            "Kalloh",
+            "Kallon",
+            "Kaloga",
+            "Kalohah",
+            "Kalokoh",
+            "Kamada",
+            "Kamanda",
+            "Kamara",
+            "Kamarah",
+            "Kamara-Kay",
+            "Kamarakeh",
+            "Kamara-Keh",
+            "Kamara-Will",
+            "Kamason",
+            "Kambai",
+            "Kambay",
+            "Kambo",
+            "Kamoh",
+            "Kamtuck",
+            "Kamuray",
+            "Kanagbo",
+            "Kanawa",
+            "Kanbu",
+            "Kande",
+            "Kandeh",
+            "Kandi",
+            "Kanga",
+            "Kangaju",
+            "Kangbai",
+            "Kangbay",
+            "Kangoma",
+            "Kanjah",
+            "Kankay",
+            "Kannah",
+            "Kannan",
+            "Kanneh",
+            "Kanta",
+            "Kanu",
+            "Kanwa",
+            "Kanyade",
+            "Kapen",
+            "Kapindi",
+            "Kaprie",
+            "Kapu",
+            "Kapuwa",
+            "Karbgo",
+            "Kargbo",
+            "Kargbp",
+            "Kargobai",
+            "Karhbo",
+            "Karim",
+            "Karimu",
+            "Karji",
+            "Karoma",
+            "Karrow-Kamara",
+            "Karta",
+            "Karum",
+            "Kasheteh",
+            "Kaspa",
+            "Kassegbama",
+            "Kassim",
+            "Kassuma",
+            "Katta",
+            "Kaun",
+            "Kawa",
+            "Kawan",
+            "Kawn",
+            "Kay",
+            "Kayanda",
+            "Kaye",
+            "Kebbay",
+            "Kebbe",
+            "Kebbie",
+            "Kefel",
+            "Keifa",
+            "Keifala",
+            "Keikura",
+            "Keili",
+            "Keister",
+            "Keita",
+            "Kekuda",
+            "Kelfala",
+            "Kella",
+            "Kellay",
+            "Kellenberger",
+            "Kellie",
+            "Kellon",
+            "Kelly",
+            "Kembay",
+            "Kemoh",
+            "Kemokai",
+            "Kemokia",
+            "Kenagbou",
+            "Kendor",
+            "Kenneh",
+            "Kennie",
+            "Kenny",
+            "Kenyenyen",
+            "Keppah",
+            "Keppor",
+            "Kessambo",
+            "Kessebeh",
+            "Kesuma",
+            "Khalil",
+            "Khan",
+            "Khanda",
+            "Khanou",
+            "Khanu",
+            "Khaun",
+            "Khouri",
+            "Kiawu",
+            "King",
+            "Kingsley",
+            "Kister",
+            "Koademba",
+            "Kobba",
+            "Kobe",
+            "Kodamie",
+            "Kofie",
+            "Koi",
+            "Koipoi",
+            "Koita",
+            "Koker",
+            "Kokobay",
+            "Kokobaye",
+            "Kokofele",
+            "Kolifa",
+            "Kolleh",
+            "Kollie",
+            "Komara",
+            "Komba",
+            "Kombay",
+            "Kombe",
+            "Komeh",
+            "Komohma",
+            "Komora",
+            "Konda",
+            "Kondeh",
+            "Kondoh",
+            "Kondorvoh",
+            "Kondowa",
+            "Koneh",
+            "Kongaima",
+            "Kongo",
+            "Konjo",
+            "Konnah",
+            "Konne",
+            "Konneh",
+            "Kono",
+            "Konoboy",
+            "Konomanyi",
+            "Konte",
+            "Konteh",
+            "Kontehmoi",
+            "Konuwa",
+            "Korama",
+            "Korfeh",
+            "Korgbo",
+            "Korgbow",
+            "Korji",
+            "Korngor",
+            "Koroma",
+            "Koromah",
+            "Kortequee",
+            "Kortu",
+            "Kortutay",
+            "Koryapoe",
+            "Kosia",
+            "Kosia-Gande",
+            "Kosseh",
+            "Koteh",
+            "Kouroma",
+            "Kowa",
+            "Kowateh",
+            "Kpaera",
+            "Kpagoi",
+            "Kpaka",
+            "Kpakima",
+            "Kpakiwa",
+            "Kpakoi",
+            "Kpakra",
+            "Kpana",
+            "Kpange",
+            "Kpolewa",
+            "Kpolie",
+            "Kposowa",
+            "Kpukumu",
+            "Kpullum",
+            "Kpundeh",
+            "Krio",
+            "Kroma",
+            "Kromah",
+            "Kuangueh",
+            "Kukubeh",
+            "Kulabaly",
+            "Kulanda",
+            "Kumba",
+            "Kumbala",
+            "Kumbula",
+            "Kuminah",
+            "Kunateh",
+            "Kuneteh",
+            "Kungo",
+            "Kusha",
+            "Kuteh",
+            "Kutubu",
+            "Kutubu-koroma",
+            "Kutubu-Kosia",
+            "Kuyateh",
+            "Kuyatey",
+            "Kuyembeh",
+            "Labbie",
+            "Labi",
+            "Labiyi",
+            "Labor",
+            "Lacan",
+            "Laggah",
+            "Laghai",
+            "Lahai",
+            "Lahei",
+            "Lahundeh",
+            "Lake",
+            "Lakka",
+            "Lakoh",
+            "Lamboi",
+            "Lamin",
+            "Lamtey",
+            "Landana",
+            "Langley",
+            "Lansana",
+            "Lapia",
+            "Lappia",
+            "Lardner",
+            "Lashite",
+            "Lasite",
+            "Las-Lamin",
+            "Lassayo",
+            "Latif",
+            "Lavahun",
+            "Lavaley",
+            "Lavalie",
+            "Lavallie",
+            "Lavaly",
+            "Lavay",
+            "Laverly",
+            "Lavey",
+            "Lawal",
+            "Lawalli",
+            "Lawn",
+            "Lawrence",
+            "Lawson",
+            "Lawundeh",
+            "Lebbia",
+            "LEBBIE",
+            "Lebby",
+            "Ledlum",
+            "Lee",
+            "Lefevre",
+            "Leigh",
+            "Lemoh",
+            "Lemon",
+            "Lengger",
+            "Lengon",
+            "Lengor",
+            "Lenoh",
+            "Lenor",
+            "Lew",
+            "Lewalley",
+            "Lewally",
+            "Lewis",
+            "Lima",
+            "Limited",
+            "Lisk",
+            "Lisk-anani",
+            "Liverpool",
+            "Lloyd",
+            "Logan",
+            "Lolliod",
+            "Longstreach",
+            "Louis",
+            "Lua",
+            "Lucas",
+            "Lucky",
+            "Lugbu",
+            "Luke",
+            "Lukeman",
+            "Lukulay",
+            "Lungay",
+            "Lunsar",
+            "Luronica",
+            "Lusani",
+            "Lusany",
+            "Luseni",
+            "Lusine",
+            "Lymon",
+            "Lynch",
+            "Macarthy",
+            "Macathy",
+            "Macaulay",
+            "Macauley",
+            "Macauly",
+            "Macavorey",
+            "Macbutcsher",
+            "Macco",
+            "Macfoi",
+            "Macfoy",
+            "Mackie",
+            "Maclean",
+            "Macleane",
+            "Macomok",
+            "Mactay",
+            "Macualey",
+            "Macualy",
+            "Maculey",
+            "Macwright",
+            "Maddie",
+            "Madi",
+            "Madret",
+            "Magana",
+            "Magbinty",
+            "Maggi",
+            "Maggo",
+            "Magona",
+            "Mahdi",
+            "Mahmood",
+            "Mahmoud",
+            "Mahoi",
+            "Maiyeli",
+            "Maj",
+            "Majid",
+            "Maju",
+            "Makavore",
+            "Mali",
+            "Malik",
+            "Malo",
+            "Mamah",
+            "Mambu",
+            "Mamie",
+            "Mammah",
+            "Mammie",
+            "Mammy",
+            "Mamsaray",
+            "Mana",
+            "Manages",
+            "Manah",
+            "Manasaray",
+            "Manasary",
+            "Manbu",
+            "Mandela",
+            "Mando",
+            "Manga",
+            "Mangoh",
+            "Mangu",
+            "Mani",
+            "Manley",
+            "Manley-Spain",
+            "Mannah",
+            "Mansaray",
+            "Mansarsay",
+            "Mansary",
+            "Manseray",
+            "Mansour",
+            "Manu",
+            "Manyeh",
+            "Manzo",
+            "Maoilh",
+            "Marah",
+            "Marchaty",
+            "Margai",
+            "Margay",
+            "Mariama",
+            "Mark",
+            "Marna",
+            "Marrah",
+            "Marthia",
+            "Martia",
+            "Martin",
+            "Martyn",
+            "Masalay",
+            "Masaqui",
+            "Masaray",
+            "Maseray",
+            "Mason",
+            "Massa",
+            "Massally",
+            "Massaqoui",
+            "Massaquoi",
+            "Masuba",
+            "Mathews",
+            "Mattews",
+            "Matthews",
+            "Mattia",
+            "Matturi",
+            "Maucualey",
+            "Mawendeh",
+            "Max-Macarthy",
+            "Maxwell",
+            "Max-williams",
+            "May",
+            "Mayah",
+            "Mayalli",
+            "Mayfield",
+            "Mayler",
+            "Mbaimba",
+            "Mbawah",
+            "Mbayo",
+            "M'bayo",
+            "Mbayoh",
+            "Mboma",
+            "M'boma",
+            "Mbrewa",
+            "Mcarthy",
+            "McCarthy",
+            "Mc-carthy",
+            "McEwen",
+            "Meheux",
+            "Memuna",
+            "Memunatu",
+            "Mende",
+            "Mendia",
+            "Mends",
+            "Mensah",
+            "Meson",
+            "Messon",
+            "Metzger",
+            "Metziger",
+            "Mezegar",
+            "Mgaujah",
+            "Michael",
+            "Miller",
+            "Milton",
+            "Minah",
+            "Mirie",
+            "Mission",
+            "Mmegbuanaeze",
+            "Mobis",
+            "Modeh",
+            "Mohai",
+            "Mohamed",
+            "Mohammed",
+            "Moi",
+            "Moiba",
+            "Moibe",
+            "Moiforay",
+            "Moifula",
+            "Moigua",
+            "Moijueh",
+            "Moiwah",
+            "Moiwo",
+            "Molaro",
+            "Molimba",
+            "Momodu",
+            "Momoh",
+            "Momoi",
+            "Momorie",
+            "Mondeh",
+            "Mongorquee",
+            "Monibah",
+            "Monyamoigwoi",
+            "Moody",
+            "Moor",
+            "Moore",
+            "Morfue",
+            "Morgan",
+            "Morgan-Williams",
+            "Moriba",
+            "Morie",
+            "Mormorie",
+            "Mornowa",
+            "Morovia",
+            "Morowah",
+            "Morray",
+            "Morrba",
+            "Morriba",
+            "Morrow",
+            "Mosaiay",
+            "Mosee",
+            "Moseray",
+            "Moses",
+            "Mousa",
+            "Moussa",
+            "Moyo",
+            "Mpenah",
+            "Muana",
+            "Mukeh",
+            "Mulai",
+            "Multi-Kamara",
+            "Mumu",
+            "Munda",
+            "Mundah",
+            "Munu",
+            "Murray",
+            "Musa",
+            "Mustada",
+            "Mustapha",
+            "Myers",
+            "Nabay",
+            "Nabie",
+            "Nabue",
+            "Nachs",
+            "Nadav",
+            "Nahim",
+            "Nallah",
+            "Nallo",
+            "Nanoh",
+            "Nao",
+            "Nasralla",
+            "Nasser",
+            "Navo",
+            "Nawo",
+            "Ndanama",
+            "Ndanema",
+            "N'danema",
+            "Ndoinje",
+            "Ndoinjeh",
+            "Ndoleh",
+            "Ndomaina",
+            "Ndulu",
+            "Nelson-Okrafor",
+            "Neneh",
+            "Newellyn",
+            "Newland",
+            "Newman",
+            "Ngaima",
+            "Ngaiwa",
+            "Ngakui",
+            "Ngaliwa",
+            "Ngaojia",
+            "Ngaujah",
+            "Ngayenga",
+            "N'Gbark",
+            "Ngbegba",
+            "Ngebeh",
+            "Ngegba",
+            "Ngeh",
+            "Ngevao",
+            "Nghandi"
+        ];
+    //    echo count($streetNames);
+    // echo $properties = LandlordDetail::select('id')->count();
+    // die;
+        $properties = LandlordDetail::select('id')->get();
+    //    die;
+        for($i=1;$i<2077;$i++){
+            // echo count($streetNames[$i]);
+            // echo $properties[$i]->id ;    
+            LandlordDetail::where('id', $properties[$i]->id)->update(['surname' => $streetNames[$i]]);
+        }
+    //    return $users = \Excel::toArray(new ExcelImport, asset('abc_imports/additionaladdeess.xlsx'));
+    // $url = asset('abc_imports/additionaladdress.csv');
+    // $fp = fopen($url, 'r');
+    // $csv = [];
+    // $additional_address = new AdditionalAddress();
+    // while ($row = fgetcsv($fp)) {
+    //     $csv[] = $row;
+
+    //     $check = \App\Models\AdditionalAddress::where('title',$row[0])->first();
+    //     if(!$check){
+    //         $additional_address->id = null;
+    //         $additional_address->title = $row[0];
+    //         $additional_address->save(); 
+    //     }
+    // }
+
+    // // echo $additional_address;
+    // fclose($fp);
+    // return $csv;
+    
     }
 }

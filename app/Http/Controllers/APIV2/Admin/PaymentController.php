@@ -204,14 +204,63 @@ class PaymentController extends Controller
     {
         $property = Property::with('landlord')->findOrFail($id);
         $history = [];
-        $this->validate($request, [
-            'amount' => 'required',
-            'penalty' => 'nullable',
-            'payment_type' => 'required|in:cash,cheque',
-            'cheque_number' => 'nullable|required_if:payment_type,cheque|digits_between:5,10',
-            'payee_name' => 'required|max:250'
-        ]);
+        // $this->validate($request, [
+        //     'amount' => 'required',
+        //     'penalty' => 'nullable',
+        //     'payment_type' => 'required|in:cash,cheque',
+        //     'cheque_number' => 'nullable|required_if:payment_type,cheque|digits_between:5,10',
+        //     'payee_name' => 'required|max:250'
+        // ]);
 
+        //when only discount is booked new code
+
+        if (!$request->amount) {
+            # code...
+            $assessment = $property->assessment()->first();
+
+        
+            $pensioner_discount_image = null;
+
+            if ($request->hasFile('pensioner_discount_image')) {
+                $pensioner_discount_image = $request->pensioner_discount_image->store(PropertyPayment::PENSIONER_DISCOUNT_IMAGE);
+                $data['pensioner_discount_image'] = $pensioner_discount_image;
+            
+                $assessment_data = [
+                    'is_rejected_pensioner' => 0,
+                ];
+
+                $assessment->fill($assessment_data);
+                $assessment->save();
+            }
+
+            $disability_discount_image = null;
+
+            if ($request->hasFile('disability_discount_image')) {
+                $disability_discount_image = $request->disability_discount_image->store(PropertyPayment::DISABILITY_DISCOUNT_IMAGE);
+                $data['disability_discount_image'] = $disability_discount_image;
+                
+                $assessment_data = [
+                    'is_rejected_disability' => 0,
+                ];
+
+                $assessment->fill($assessment_data);
+                $assessment->save();
+                
+            }
+
+            $property = Property::with([
+                'landlord',
+                'occupancy',
+                'assessment',
+                'geoRegistry',
+                'payments',
+                'assessmentHistory'
+            ])->find($id);
+    
+            $paymentInQuarter = $property->getPaymentsInQuarter();
+            return response()->json(compact('property', 'paymentInQuarter', 'history'));
+        }
+        //when only discount is booked new code
         
 
         $t_amount = intval(str_replace(',', '', $request->amount));

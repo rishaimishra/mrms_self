@@ -142,9 +142,17 @@
                             <label for="email_address">Disability Discount Image</label>
                             <div class="form-group">
                                 <div class="form-line" id="payee_name">
-                                @if(($property->assessment->disability_discount) )
+                                {{--  @if(($property->assessment->disability_discount) )
                                     <img  src="{{ $disability_image_path->disability_discount_image_path  }}" alt="" width="200" height="100">
+                                @endif  --}}
+
+                                @if(!is_null($disability_image_path) && is_object($disability_image_path) && isset($disability_image_path->disability_discount_image_path))
+                                    <img src="{{ $disability_image_path->disability_discount_image_path }}" alt="" width="200" height="100">
+                                @else
+                                    <p>Disability discount image not available</p>
                                 @endif
+
+
                                     <!-- <input type="text" id="payee_name" value="{{ old('payee_name', $payment->disability_discount_image_path) }}"
                                            name="payee_name" class="form-control"
                                            placeholder="Payee Name"> -->
@@ -174,9 +182,17 @@
                             <label for="email_address">Pensioner Discount Image</label>
                             <div class="form-group">
                                 <div class="form-line" id="payee_name">
-                                @if(($property->assessment->pensioner_discount) )
+                                {{--  @if(($property->assessment->pensioner_discount) )
                                     <img  src="{{ $pensioner_image_path->pensioner_discount_image_path }}" alt="" width="200" height="100">
+                                @endif  --}}
+
+
+                                @if(!is_null($pensioner_image_path) && is_object($pensioner_image_path) && isset($pensioner_image_path->pensioner_discount_image_path))
+                                    <img src="{{ $pensioner_image_path->pensioner_discount_image_path }}" alt="" width="200" height="100">
+                                @else
+                                    <p>Pensioner discount image not available</p>
                                 @endif
+                                
                                     <!-- <input type="text" id="payee_name" value="{{ old('payee_name', $payment->pensioner_discount_image_path) }}"
                                            name="payee_name" class="form-control"
                                            placeholder="Payee Name"> -->

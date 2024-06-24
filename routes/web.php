@@ -78,28 +78,29 @@ Route::get('/sms-test', function() {
 
    /* @var $property \App\Models\Property */
 
-   $property = \App\Models\Property::find(16615);
+   // $property = \App\Models\Property::find(41844);
 
    //$property->landlord->notify(new PaymentSMSNotification($property, $property->landlord->mobile_1, $property->payments()->first()));
   //$property->landlord->notify(new PaymentSMSNotification($property, $property->landlord->mobile_1, \App\Models\Payment::first()));
    //$property->landlord->notify(new PaymentSMSNotification($property, '7003520826', $property->payments()->first()));
 
-//dd(config('services.mrms.connections.twilio'));
-  // Twilio::from(config('services.mrms.connections.twilio'))->message('+917003520826', 'Hello world!!');
-   //Twilio::message('+917003520826', 'Hello world!!');
+// dd(config('services.mrms.connections.twilio'));
+//   Twilio::from(config('services.mrms.connections.twilio'))->message('+2321200200', 'Hello world!!');
+   // Twilio::message('+2321200200', 'Hello world!!');
 
-// Twilio::message(
-//                 '+91...',
-//                 [
-//                     "body" => 'test sms 4',
-//                     "from" => config('services.twilio.alphanumeric_sender')
-//                     //   On US phone numbers, you could send an image as well!
-//                     //  'mediaUrl' => $imageUrl
-//                 ]
-//             );   
+Twilio::message(
+                '+23276100100',
+                [
+                    
+                    "from" => '+14707482322',
+                    "body" => 'test sms 4'
+                    //   On US phone numbers, you could send an image as well!
+                    //  'mediaUrl' => $imageUrl
+                ]
+            );   
 
-   //Notification::send($property->landlord, new BroadcastNotification($property, 'test sms'));
-   //$property->landlord->notify(new BroadcastNotification($property, 'hiiii'));
+   // Notification::send($property->landlord, new BroadcastNotification($property, 'test sms'));
+   // $property->landlord->notify(new BroadcastNotification($property, 'hiiii'));
    echo 'sms-test done';
 });
 
