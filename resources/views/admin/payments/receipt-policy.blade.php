@@ -89,7 +89,7 @@
                                     {{ $type }} ({{ $type_val }})
                                 </td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Water Supply</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">No Water Supply</th>
                                 </td>
                                 <td style="border:1px solid #606060; color: #484848;">{{ $assessment->water_percentage.'%' }}</td>
                                 {{--  <td>
@@ -104,11 +104,11 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Dimension</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Floor Area</th>
                                 </td>
                                 <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(number_format(optional($assessment)->square_meter, 2,'.','')) }} {{ (optional($assessment)->square_meter) ? ' SQ FEET' : '' }}</td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Electricity</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">No Electricity</th>
                                 </td>
                                 <td style="border:1px solid #606060; color: #484848;">{{ $assessment->electricity_percentage.'%' }}</td>
                                 <td>
@@ -123,7 +123,7 @@
                                 {{--  <td style="border:1px solid #606060; color: #484848;">NLe {{ number_format($district->sq_meter_value) }}</td>  --}}
                                 <td style="border:1px solid #606060; color: #484848;">NLe 67</td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Waste Managment</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">No Waste Managment</th>
                                 </td>
                                 <td style="border:1px solid #606060; color: #484848;">{{ $assessment->waste_management_percentage.'%' }}</td>
                                 <td>
@@ -133,7 +133,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Habitable Floor</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Habitable Floor(S)</th>
                                 </td>
                                 <td style="border:1px solid #606060; color: #484848;">
                                     <span style="font-size:9px;">{{ strtoupper($assessment->types->pluck('label')->implode(', ')) }} ({{ $assessment->types->pluck('value')->sum() }})</span>
@@ -142,7 +142,7 @@
                                     {{ strtoupper($assessment->types->pluck('label')->implode(', ')) }}
                                 </td>  --}}
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Market</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">No Market</th>
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->market_percentage.'%' }}</td>
                                 <td>
@@ -220,7 +220,7 @@
                                     ({!! strtoupper(optional(optional($assessment)->swimming)->value ? optional(optional($assessment)->swimming)->value : 0) !!})
                                 </td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Drainage</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">No Drainage</th>
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->drainage_percentage.'%' }}</td>
                                 <td>

@@ -81,7 +81,7 @@
                         <tr>
                             <th style="border:1px solid #ccc; text-align: center;" scope="col" width="20%">PROPERTY TYPE</th>
                              <th style="border:1px solid #ccc;" scope="col" width="16%">HABITABLE FLOOR(S)</th> 
-                            <th style="border:1px solid #ccc;white-space: pre" scope="col">DIMENSION (Ft<sup>2</sup>)</th>
+                            <th style="border:1px solid #ccc;white-space: pre" scope="col">FLOOR AREA (Ft<sup>2</sup>)</th>
                             <th style="border:1px solid #ccc;" scope="col" width="20%">WALL MATERIAL</th>
                             <th style="border:1px solid #ccc;" scope="col">ROOF MATERIAL</th>
                             <th style="border:1px solid #ccc;" scope="col" width="16%">WINDOW TYPE</th>
@@ -156,6 +156,7 @@
                             <th style="border:1px solid #ccc;" scope="col">ASSESSED VALUE</th>
                             <th style="border:1px solid #ccc;" scope="col">COUNCIL ADJUSTMENTS</th>
                             <th style="border:1px solid #ccc;" scope="col">NET ASSESSED VALUE</th>
+                            <th style="border:1px solid #ccc;" scope="col">COUNCIL CATEGORY</th>
                             {{--  <th style="border:1px solid #ccc;" scope="col">TAXABLE PROPERTY VALUE</th>  --}}
                             <th style="border:1px solid #ccc;" scope="col">MILL RATE</th>
                             <th style="border:1px solid #ccc;" scope="col">RATE PAYABLE 2024</th>
@@ -167,6 +168,7 @@
                             <td style="border:1px solid lightgray;">{!! number_format($assessment->getCurrentYearAssessmentAmount()) !!}</td>
                             <td style="border:1px solid lightgray;">{!! number_format($assessment->getCouncilAdjustments()) !!}</td>
                             <td style="border:1px solid lightgray;">{!! number_format($assessment->getNetPropertyAssessedValue()) !!}</td>
+                            <td style="border:1px solid lightgray;">{!! ($assessment->group_name) !!}</td>
                             {{--  <td style="border:1px solid lightgray;">{!! number_format($assessment->getNetPropertyAssessedValue()*12*27*1.18, 2, '.',',') !!}</td>  --}}
                             <td style="border:1px solid lightgray;">{!! $assessment->mill_rate > 0? $assessment->mill_rate: 0 !!}</td>
                             <td style="border:1px solid lightgray;">{!! number_format($assessment->getPropertyTaxPayable()) !!}</td>

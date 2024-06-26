@@ -124,8 +124,9 @@ class PropertyController extends ApiController
             'occupancy_organization_name'=>$request->occupancy_organization_name,
             // 'window_type_value' =>($request->window_type_condition)? $request->window_type_condition['value'] : null,
             'random_id' => $request->input('random_id'),
-            'additional_address_id' => $request->property_additional_address_id,
-            'beach_front' => $request->beach_front,
+            'additional_address_id' => $request->property_additional_address_id ?: null,
+            'beach_front' => $request->beach_front ?: null,
+            'organization_school_type' => $request->organization_school_type ?: null,
 
         ]);
 
@@ -197,7 +198,8 @@ class PropertyController extends ApiController
             'middle_name' => $request->occupancy_middle_name,
             'surname' => $request->occupancy_surname,
             'mobile_1' => $request->occupancy_mobile_1,
-            'mobile_2' => $request->occupancy_mobile_2
+            'mobile_2' => $request->occupancy_mobile_2,
+            'organizational_school_type'=> $request->organization_school_type ?: null,
         ]);
 
         $occupancy->save();
@@ -839,6 +841,7 @@ class PropertyController extends ApiController
             ->leftJoin('districts', 'boundary_delimitations.district', '=', 'districts.name')
             ->select('boundary_delimitations.id', 'boundary_delimitations.ward', 'boundary_delimitations.constituency', 'boundary_delimitations.section', 'boundary_delimitations.chiefdom', 'boundary_delimitations.district', 'boundary_delimitations.province', 'boundary_delimitations.council', 'boundary_delimitations.prefix', 'districts.group_name')
             ->where('boundary_delimitations.district', $request->user()->assign_district)
+            ->groupBy('boundary_delimitations.ward')
             ->get();
 
 
@@ -1211,9 +1214,11 @@ public function createInAccessibleProperties(Request $request)
 
     public function updatePropertyAssessmentPensionDiscount(Request $request)
     {
+        // return $request;
+        // return "cas";
         $property_id = $request->property_id;
         $is_pension_set = $request->is_pension_set;
-        $detail = PropertyAssessmentDetail::where('id', '=', $request->assessment_id)->firstOrFail();
+        $detail = PropertyAssessmentDetail::where('property_id', '=', $property_id)->first();
         $detail->pensioner_discount = $is_pension_set;
         $detail->save();
 

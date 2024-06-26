@@ -88,9 +88,21 @@ class PopulateAssessmentController extends ApiController
 
     public function getMeta()
     {
-        $result['firstNames'] =  LandlordDetail::select('first_name as label', 'first_name as value')->whereNotNull('first_name')->union(OccupancyDetail::select('tenant_first_name as label', 'tenant_first_name as value')->whereNotNull('tenant_first_name'))->union(MetaValue::select('value as label', 'value')->where('name', 'first_name'))->distinct()->get()->each->setVisible(['label', 'value']);
-        $result['lastNames'] = LandlordDetail::select('surname as label', 'surname as value')->whereNotNull('surname')->union(OccupancyDetail::select('surname as label', 'surname as value')->whereNotNull('surname'))->union(MetaValue::select('value as label', 'value')->where('name', 'surname'))->distinct()->get()->each->setVisible(['label', 'value']);;
-        $result['streetNames'] = LandlordDetail::select('street_name as label', 'street_name as value')->whereNotNull('street_name')->union(MetaValue::select('value as label', 'value')->whereNotNull('value')->where('name', 'street_name'))->distinct()->get()->each->setVisible(['label', 'value']);
+        $result['firstNames'] =  MetaValue::select('value as label', 'value')
+        ->whereNotNull('value')
+        ->where('name', 'first_name')
+        ->distinct()->get()->each->setVisible(['label', 'value']);
+        // $result['firstNames'] =  LandlordDetail::select('first_name as label', 'first_name as value')->whereNotNull('first_name')->union(OccupancyDetail::select('tenant_first_name as label', 'tenant_first_name as value')->whereNotNull('tenant_first_name'))->union(MetaValue::select('value as label', 'value')->where('name', 'first_name'))->distinct()->get()->each->setVisible(['label', 'value']);
+        // $result['lastNames'] = LandlordDetail::select('surname as label', 'surname as value')->whereNotNull('surname')->union(OccupancyDetail::select('surname as label', 'surname as value')->whereNotNull('surname'))->union(MetaValue::select('value as label', 'value')->where('name', 'surname'))->distinct()->get()->each->setVisible(['label', 'value']);;
+        $result['lastNames'] = MetaValue::select('value as label', 'value')
+        ->whereNotNull('value')
+        ->where('name', 'surname')
+        ->distinct()->get()->each->setVisible(['label', 'value']);;
+        // $result['streetNames'] = LandlordDetail::select('street_name as label', 'street_name as value')->whereNotNull('street_name')->union(MetaValue::select('value as label', 'value')->whereNotNull('value')->where('name', 'street_name'))->distinct()->get()->each->setVisible(['label', 'value']);
+        $result['streetNames'] = MetaValue::select('value as label', 'value')
+        ->whereNotNull('value')
+        ->where('name', 'street_name')
+        ->distinct()->get()->each->setVisible(['label', 'value']);
 
         return $this->success([
             'result' => $result,

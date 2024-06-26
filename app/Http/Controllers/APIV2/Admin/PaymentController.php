@@ -105,7 +105,17 @@ class PaymentController extends Controller
             $disability_discount = 0;
        }
        
-       @$property->assessment->{"discounted_value"} = number_format($discounted_value,2,'.','');
+    //    @$property->assessment->{"discounted_value"} = number_format($discounted_value,2,'.','');
+
+       if ( $property->assessment->pensioner_discount && $property->assessment->disability_discount){
+        @$property->assessment->{"discounted_value"} = number_format($property->assessment->getPensionerDiscount()) + number_format($property->assessment->getDisabilityDiscount());
+       }
+        else{
+            @$property->assessment->{"discounted_value"} =$property->assessment->pensioner_discount ? number_format($property->assessment->getPensionerDiscount(),0,'',',') : 0;
+
+        }
+        $property->assessment->{"balance"} =$property->assessment->getCurrentYearTotalDue();
+
                
        $property->assessment->{"pensioner_discount"} = number_format($pensioner_discount,2,'.','');
        $property->assessment->{"disability_discount"} = number_format($disability_discount,2,'.','');
@@ -185,9 +195,10 @@ class PaymentController extends Controller
                                                                         $property->assessment->paved_tarred_street_percentage+
                                                                         $property->assessment->drainage_percentage;
                 
-                $property->assessment->{"council_adjustments_parameters"} = ($property->assessment->property_rate_without_gst * $property->assessment->{"council_adjustments_parameters"})/100;
-                $property->assessment->{"council_adjustments_parameters"} = number_format($property->assessment->{"council_adjustments_parameters"},0,'',',');
-
+                // $property->assessment->{"council_adjustments_parameters"} = ($property->assessment->property_rate_without_gst * $property->assessment->{"council_adjustments_parameters"})/100;
+                // $property->assessment->{"council_adjustments_parameters"} = number_format($property->assessment->{"council_adjustments_parameters"},0,'',',');
+//getCouncilAdjustments
+$property->assessment->{"council_adjustments_parameters"}  = number_format($property->assessment->getCouncilAdjustments(),0,'',',');
         //$property['currentYearAssessmentAmount'] = $property->assessment->getCurrentYearAssessmentAmount();
         //$property['arrearDue'] = $property->assessment->getPastPayableDue();
         //$property['penalty'] = $property->assessment->getPenalty();
@@ -202,6 +213,7 @@ class PaymentController extends Controller
 
     public function store($id, Request $request)
     {
+        // return ":dsfas";
         $property = Property::with('landlord')->findOrFail($id);
         $history = [];
         // $this->validate($request, [
@@ -215,6 +227,7 @@ class PaymentController extends Controller
         //when only discount is booked new code
 
         if (!$request->amount) {
+            // return "amount";
             # code...
             $assessment = $property->assessment()->first();
 
@@ -227,6 +240,7 @@ class PaymentController extends Controller
             
                 $assessment_data = [
                     'is_rejected_pensioner' => 0,
+                    'pensioner_discount' => 1,
                 ];
 
                 $assessment->fill($assessment_data);
@@ -241,6 +255,7 @@ class PaymentController extends Controller
                 
                 $assessment_data = [
                     'is_rejected_disability' => 0,
+                    'disability_discount' => 1,
                 ];
 
                 $assessment->fill($assessment_data);
@@ -258,10 +273,13 @@ class PaymentController extends Controller
             ])->find($id);
     
             $paymentInQuarter = $property->getPaymentsInQuarter();
+            // return $data;
+            // $payment = $property->payments()->create($data);
+            // $payment->save();
             return response()->json(compact('property', 'paymentInQuarter', 'history'));
         }
         //when only discount is booked new code
-        
+        // return $request->amount;
 
         $t_amount = intval(str_replace(',', '', $request->amount));
 
@@ -327,7 +345,8 @@ class PaymentController extends Controller
             
         }
 
-
+        // return $data;
+        // return $property->payments();
         $payment = $property->payments()->create($data);
         $property2 = Property::with('landlord')->findOrFail($id);
         $t_balance = number_format($property2->assessment->getCurrentYearTotalDue(), 0, '.', '');

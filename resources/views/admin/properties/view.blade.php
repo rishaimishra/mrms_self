@@ -48,7 +48,12 @@
                                             <td>{{ number_format($assessmentHistory->getNetPropertyAssessedValue()) }}</td>
                                              <td>{!! number_format($assessmentHistory->getPropertyTaxPayable(),0,'',',') !!}</td> 
                                             {{-- <td>{{( ($assessmentHistory->property_assessed_value-$assessmentHistory->getCouncilAdjustments()) *2.50)/1000}}</td> --}}
-                                            <td>{!! $assessmentHistory->pensioner_discount ? number_format($assessmentHistory->getPensionerDiscount(),0,'',',') : 0 !!}</td>
+                                            @if ( $assessmentHistory->pensioner_discount && $assessmentHistory->disability_discount)
+                                                <td> {{  number_format($assessmentHistory->getPensionerDiscount()) + number_format($assessmentHistory->getDisabilityDiscount())  }}</td>
+                                               @else
+                                                <td>{!! $assessmentHistory->pensioner_discount ? number_format($assessmentHistory->getPensionerDiscount(),0,'',',') : 0 !!}</td>
+                                            @endif
+                                           
                                             
                                             <td>{!! $assessmentHistory->getPensionerDisabilityDiscountActual() ? number_format($assessmentHistory->getPensionerDisabilityDiscountActual(),0,'',',') : 0 !!}</td>
                                             <td>{{ number_format($assessmentHistory->getPastPayableDue()) }}</td>

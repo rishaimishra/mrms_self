@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 
 
 Route::get('update/assessments', 'APIV2\General\PropertyController@updatePropertyAssessmentDetail');
-Route::get('update/pensiondiscount', 'APIV2\General\PropertyController@updatePropertyAssessmentPensionDiscount');
+Route::post('update/pensiondiscount', 'APIV2\General\PropertyController@updatePropertyAssessmentPensionDiscount');
 Route::get('update/disabilitydiscount', 'APIV2\General\PropertyController@updatePropertyAssessmentDisabilityDiscount');
 Route::get('get/options', 'APIV2\General\PopulateAssessmentController@populateField');
 Route::get('get/district', 'APIV2\General\DistrictController@getDistrict');
