@@ -10,7 +10,7 @@ class OccupancyDetail extends Model
 {
     use LogsActivity;
     protected $fillable = [
-        'ownerTenantTitle','tenant_first_name', 'middle_name', 'surname', 'mobile_1', 'mobile_2'
+        'ownerTenantTitle','tenant_first_name', 'middle_name', 'surname', 'mobile_1', 'mobile_2','organizational_school_type'
     ];
 
     protected static $logAttributes = ['*'];

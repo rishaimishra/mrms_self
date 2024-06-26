@@ -173,6 +173,14 @@ class PaymentController extends Controller
                 
                 $pr->assessment->{"council_adjustments_parameters"} = ($pr->assessment->property_rate_without_gst * $pr->assessment->{"council_adjustments_parameters"})/100;
                 $pr->assessment->{"council_adjustments_parameters"} = number_format($pr->assessment->{"council_adjustments_parameters"},0,'',',');
+
+                if ( $pr->assessment->pensioner_discount && $pr->assessment->disability_discount){
+                    @$pr->assessment->{"discounted_value"} = number_format($pr->assessment->getPensionerDiscount()) + number_format($pr->assessment->getDisabilityDiscount());
+                   }
+                    else{
+                        @$pr->assessment->{"discounted_value"} =$pr->assessment->pensioner_discount ? number_format($pr->assessment->getPensionerDiscount(),0,'',',') : 0;
+            
+                    }
                 $pensioner_image_path = PropertyPayment::where('property_id','=',$propertyId)->whereNotNull('pensioner_discount_image')->orderBy('created_at','desc')->first();
                 $disability_image_path = PropertyPayment::where('property_id','=',$propertyId)->whereNotNull('disability_discount_image')->orderBy('created_at','desc')->first();
                 $data = [

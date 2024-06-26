@@ -2,7 +2,7 @@
 
 
 @section('content')
-
+  
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
@@ -42,7 +42,8 @@
                 position: new google.maps.LatLng(locations[i][1], locations[i][2]),
                 map: map,
                 icon: {
-                    url: locations[i][4]
+                    url: locations[i][4],
+                    scaledSize: new google.maps.Size(32, 32)
                 }
             });
 

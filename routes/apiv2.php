@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 
 
 Route::get('update/assessments', 'APIV2\General\PropertyController@updatePropertyAssessmentDetail');
-Route::get('update/pensiondiscount', 'APIV2\General\PropertyController@updatePropertyAssessmentPensionDiscount');
+Route::post('update/pensiondiscount', 'APIV2\General\PropertyController@updatePropertyAssessmentPensionDiscount');
 Route::get('update/disabilitydiscount', 'APIV2\General\PropertyController@updatePropertyAssessmentDisabilityDiscount');
 Route::get('get/options', 'APIV2\General\PopulateAssessmentController@populateField');
 Route::get('get/district', 'APIV2\General\DistrictController@getDistrict');
@@ -31,7 +31,7 @@ Route::group(
         Route::post('get/address-options-by-ward', 'General\PopulateOnWardController@Populate');
         Route::get('get/meta', 'General\PopulateAssessmentController@getMeta');
         Route::post('save/property', 'General\PropertyController@save');
-        Route::get('get/incomplete-property', 'General\PropertyController@getIncompleteProperty');
+        Route::get('get/incomplete-property/{ward?}/{section?}', 'General\PropertyController@getIncompleteProperty');
         Route::post('update/property', 'General\PropertyController@update_property');
         Route::post('update/user-profile', 'General\AppUserController@editProfile');
         Route::get('get/my/district', 'General\PropertyController@getMyDistrict');

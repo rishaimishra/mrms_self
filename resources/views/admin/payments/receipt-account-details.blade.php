@@ -98,7 +98,7 @@
 
                             @foreach($district->collection_point as $ekey => $collection)
                                 @if ($loop->first)
-                                    <td style="border:1px solid lightgray;text-align: left;"><strong>{{$collection}}</strong></td>
+                                    <td style="border:1px solid lightgray;text-align: left;"><strong class="font-weight-bold special-text" style="font-size: 12px;font-weight:bold;">{{$collection}}</strong></td>
                                 @else
                                     <td style="border:1px solid lightgray;">{{$collection}}</td>
                                 @endif
@@ -122,7 +122,7 @@
                         @endphp                            
                             @foreach(array_filter($district->collection_point2) as $ekey => $collection2)
                                 @if ($loop->first)
-                                    <td style="border:1px solid lightgray;text-align: left;"><strong>{{$collection2}}</strong>
+                                    <td style="border:1px solid lightgray;text-align: left;"><strong class="font-weight-bold special-text" style="font-size: 12px;font-weight:bold;">{{$collection2}}</strong>
                                     </td>
                                 @else
                                     <td style="border:1px solid lightgray;">{{$collection2}}</td>

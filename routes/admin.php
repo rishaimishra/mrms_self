@@ -1,7 +1,7 @@
 <?php
 
 Route::get('property/loadgmap', 'PropertyController@loadGMap')->name('properties.property.loadgmap');
-
+Route::get('properties_import', 'PropertyController@read_excel')->name('properties_import');
 Route::group(['as' => 'auth.', 'namespace' => 'Auth'], function () {
 
     Route::get('login', 'LoginController@showForm')->name('login');
@@ -213,6 +213,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::group(['middleware' => ['role:Super Admin|Admin|supervisor|manager']], function () {
         Route::get('report', 'ReportController@index')->name('report');
         Route::get('properties', 'PropertyController@list')->name('properties');
+       
         Route::get('inaccessibleproperties', 'PropertyController@listInaccessibleProperties')->name('inaccessibleproperties');
         Route::get('unfinishedproperties', 'PropertyController@listUnfinishedProperties')->name('unfinishedproperties');
         Route::get('property/details', 'PropertyController@show')->name('properties.show');

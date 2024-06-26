@@ -81,7 +81,9 @@ class Property extends Model
         'occupancy_other_organization_type',
         'occupancy_organization_type',
         'occupancy_organization_name',
-        'additional_address_id'
+        'additional_address_id',
+        'organization_school_type',
+        'beach_front'
     ];
 
     protected $casts = [

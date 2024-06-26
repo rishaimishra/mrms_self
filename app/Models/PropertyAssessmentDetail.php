@@ -587,9 +587,12 @@ class PropertyAssessmentDetail extends Model
             return $this->getTotalPayable() - $this->getCurrentYearTotalPayment() + $this->getCurrentYearAssessmentAmount();
         }else {
             
-            // amount due modification
-              
+            if($this->pensioner_discount == 0 && $this->disability_discount == 0){
                 $discounted_rate_payable = $this->getPropertyTaxPayable() -  $this->pensioner_discount - $this->disability_discount ;
+            }else{
+                $discounted_rate_payable = $this->getPensionerDisabilityDiscountActual() -  $this->pensioner_discount - $this->disability_discount ;
+            }
+            // amount due modification
 
 
             return $discounted_rate_payable - $this->getCurrentYearTotalPayment();

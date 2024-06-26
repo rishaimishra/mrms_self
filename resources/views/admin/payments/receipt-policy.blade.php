@@ -89,7 +89,7 @@
                                     {{ $type }} ({{ $type_val }})
                                 </td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Water Supply</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">No Water Supply</th>
                                 </td>
                                 <td style="border:1px solid #606060; color: #484848;">{{ $assessment->water_percentage.'%' }}</td>
                                 {{--  <td>
@@ -104,11 +104,11 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Dimension</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Floor Area</th>
                                 </td>
                                 <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(number_format(optional($assessment)->square_meter, 2,'.','')) }} {{ (optional($assessment)->square_meter) ? ' SQ FEET' : '' }}</td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Electricity</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">No Electricity</th>
                                 </td>
                                 <td style="border:1px solid #606060; color: #484848;">{{ $assessment->electricity_percentage.'%' }}</td>
                                 <td>
@@ -123,29 +123,30 @@
                                 {{--  <td style="border:1px solid #606060; color: #484848;">NLe {{ number_format($district->sq_meter_value) }}</td>  --}}
                                 <td style="border:1px solid #606060; color: #484848;">NLe 67</td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Waste Managment</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">No Waste Managment</th>
                                 </td>
                                 <td style="border:1px solid #606060; color: #484848;">{{ $assessment->waste_management_percentage.'%' }}</td>
                                 <td>
-                                    <th style="border-top:1px solid #606060; border-left:1px solid #606060;border-right:1px solid #606060; border-bottom:1px solid #606060; color:#303030;" colspan="2" scope="col">RATE PAYABLE 2024</th>
+                                    <th style="border-top:1px solid #606060; border-left:1px solid #606060;border-right:1px solid #606060; border-bottom:1px solid #606060; color:#303030;">RATE PAYABLE 2024</th>
                                 </td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe&nbsp;{!! number_format($assessment->getPropertyTaxPayable()) !!}</td>
                             </tr>
                             <tr>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Habitable Floor</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Habitable Floor(S)</th>
+                                </td>
+                                <td style="border:1px solid #606060; color: #484848;">
+                                    <span style="font-size:9px;">{{ strtoupper($assessment->types->pluck('label')->implode(', ')) }} ({{ $assessment->types->pluck('value')->sum() }})</span>
                                 </td>
                                 {{--  <td style="border:1px solid #606060; color: #484848;">
-                                    {{ strtoupper($assessment->types->pluck('label')->implode(', ')) }}, ({{ $assessment->types->pluck('value')->sum() }})
-                                </td>  --}}
-                                <td style="border:1px solid #606060; color: #484848;">
                                     {{ strtoupper($assessment->types->pluck('label')->implode(', ')) }}
-                                </td>
+                                </td>  --}}
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Market</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">No Market</th>
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->market_percentage.'%' }}</td>
                                 <td>
-                                    <td style="border:1px solid #606060; color:#303030;font-weight:bold;" colspan="2" scope="col">NLe&nbsp;{!! number_format($assessment->getPropertyTaxPayable()) !!}</td>
+                                    <td style="border:none;" colspan="2" scope="col"></td>
 
                                    
                                 </td>
@@ -161,9 +162,9 @@
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->hazardous_precentage.'%' }}</td>
                                 <td>
-                                    <th style="border:0px solid #606060;text-align: left;" scope="col"></th>
+                                    <th style="border-top:1px solid #606060; border-left:1px solid #606060;border-right:1px solid #606060; border-bottom:1px solid #606060; color:#303030;" colspan="2" scope="col">COUNCIL DISCOUNT</th>
                                 </td>
-                                <td style="border:0px solid #606060;"></td>
+                                {{--  <td style="border:0px solid #606060;"></td>  --}}
 
                             </tr>
                             <tr>
@@ -176,8 +177,9 @@
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->informal_settlement_percentage.'%' }}</td>
                                 <td>
-                                    <th style="border-top:1px solid #606060; border-left:1px solid #606060;border-right:1px solid #606060; border-bottom:1px solid #606060; color:#303030;" colspan="2" scope="col">COUNCIL DISCOUNT</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Disability (10%)</th>
                                 </td>
+                                <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->disability_discount ? 'Yes' : 'No') !!}</td>
                                 <!-- <td style="border-top:1px solid #606060; border-right:1px solid #606060; border-bottom:1px solid #606060; font-weight: bold;text-align: left; color:#303030;" >2021</td> -->
                             </tr>
                             <tr>
@@ -190,9 +192,9 @@
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->easy_street_access_percentage.'%' }}</td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Disability (10%)</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Pensioners (10%)</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->disability_discount ? 'Yes' : 'No') !!}</td>
+                                <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->pensioner_discount ? 'Yes' : 'No') !!}</td>
                                  {{--  <td style="border-left:1px solid  #606060; border-bottom:1px solid  #606060; border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px;width:15%; color:#303030;">VALUE (LE)</td>   --}}
                             </tr>
                             <tr>
@@ -205,9 +207,9 @@
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->paved_tarred_street_percentage.'%' }}</td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Pensioners (10%)</th>
+                                    <th style="border:none" scope="col"></th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->pensioner_discount ? 'Yes' : 'No') !!}</td>
+                                <td style="border:none;"></td>
                             </tr>
                             <tr>
                                 <td>
@@ -218,12 +220,13 @@
                                     ({!! strtoupper(optional(optional($assessment)->swimming)->value ? optional(optional($assessment)->swimming)->value : 0) !!})
                                 </td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Drainage</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">No Drainage</th>
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->drainage_percentage.'%' }}</td>
                                 <td>
-                                    <th style="border:0; color:#303030;" colspan="2" scope="col"></th>
+                                    <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">DISCOUNTED RATE</th>
                                 </td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getPensionerDisabilityDiscountActual())!!}</td>
                                 <!-- <td style="border-top:1px solid #606060; border-right:1px solid #606060; border-bottom:1px solid #606060; font-weight: bold;text-align: left;color:#303030;">DISCOUNT</td> -->
                                
                             </tr>
@@ -240,9 +243,9 @@
                                 </td>
                                 <td style="border:0px solid #606060;"></td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">DISCOUNTED RATE</th>
+                                    <th style="none;" scope="col"></th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getPensionerDisabilityDiscountActual())!!}</td>
+                                <td style="border:none;"></td>
               
                             </tr>
                             <tr>
@@ -258,9 +261,9 @@
                                 </td>
                                 <td style="border:0px solid #606060; color: #484848;"></td>
                                 <td>
-                                    <th style="border:0;text-align: left;" scope="col"></th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">ARREARS</th>
                                 </td>
-                                <td style="border:0;color: #484848;"></td>
+                                <td style="border:1px solid #606060; color:#303030;">NLe {!! number_format($assessment->getPastPayableDue()) !!}</td>
                             </tr>
                             <tr>
                                 <td>
@@ -272,9 +275,9 @@
                                 </td>
                                 <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getCouncilAdjustments()) !!}</td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">ARREARS</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">PENALTY</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;">NLe {!! number_format($assessment->getPastPayableDue()) !!}</td>
+                                <td style="border:1px solid #606060; color:#303030;">NLe {!! number_format($assessment->getPenalty()) !!}</td>
                               
                             </tr>
                             <tr>
@@ -288,9 +291,9 @@
                                 </td>
                                 <td style="border:0px solid #606060;"></td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">PENALTY</th>
+                                    <th style="border:1px solid #606060;color:#303030;text-align: left;font-weight:bold;" scope="col">Amount paid</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;">NLe {!! number_format($assessment->getPenalty()) !!}</td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getCurrentYearTotalPayment()) !!}</td>
                             </tr>
                             <tr>
                             <td>
