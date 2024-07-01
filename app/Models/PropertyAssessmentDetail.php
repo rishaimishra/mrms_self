@@ -119,9 +119,10 @@ class PropertyAssessmentDetail extends Model
         return 3750;
     }
     public function getFloorAreaPlottedOnMapAttribute(){
-        return 1722;
+        return $this->length * $this->breadth;
     }
     public function getValuePerSquareFeetAttribute(){
+        // return 67;
         return $this->getCostofOneTownAttribute() / $this->getOneTownLotAttribute();
     }
     public function getfloorAreaValueAttribute(){

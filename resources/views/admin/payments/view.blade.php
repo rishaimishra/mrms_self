@@ -512,14 +512,14 @@
                                             <td>{{ number_format($assessmentHistory->getCurrentYearTotalDue()) }}</td>
                                         </tr>
                                     @endforeach
-                                    <tr>
+                                    {{-- <tr>
                                         <td>{{ \Carbon\Carbon::parse($property->assessment->created_at)->format('Y') }}</td>
                                         <td>{{ number_format($property->assessment->getCurrentYearAssessmentAmount()) }}</td>
                                         <td>{{ number_format($property->assessment->getPastPayableDue()) }}</td>
                                         <td>{{ number_format($property->assessment->getPenalty()) }}</td>
                                         <td>{{ number_format($property->assessment->getCurrentYearTotalPayment()) }}</td>
                                         <td>{{ number_format($property->assessment->getCurrentYearTotalDue()) }}</td>
-                                    </tr>
+                                    </tr> --}}
                                     </tbody>
                                 </table>
                             </div>

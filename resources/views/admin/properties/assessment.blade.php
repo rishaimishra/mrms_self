@@ -26,7 +26,7 @@
     $habitable = $assessment->types->pluck('value')->map(function ($item) {
         return (float) $item;
     })->sum();
-    
+  
     // Calculate multipliers
     $multipliers = $sanitationValue * $propertyUse * $category * $zoneValue * $habitable;
     
@@ -351,6 +351,8 @@
 @endphp
             {{-- <p>NLe {{ ($assessment->getfloorAreaValueAttribute() + $additions) * $multipliers  }}</p> --}}
              <p>NLe {{number_format($assessment->property_rate_without_gst,0,'',',')}}</p> 
+             {{--  <p>{{number_format($additions) }}</p>
+             <p>{{number_format($multipliers) }}</p>  --}}
         </div>
         {{--                        <div class="col-sm-3">--}}
         {{--                            <h6>GST Calculation</h6>--}}
@@ -487,6 +489,14 @@
                 <label class="error">{{ $errors->first('property_wall_materials') }}</label>
             @endif
             <span id="append_selected"></span>
+            {{--  <h1>total area {{ $assessment->getOneTownLotAttribute() }}</h1>
+            <h1>value square per feet {{ $assessment->getValuePerSquareFeetAttribute() }}</h1>
+            <h1>foor area plooted map {{ $assessment->getFloorAreaPlottedOnMapAttribute() }}</h1>
+            <h1>floor area value {{ $assessment->getfloorAreaValueAttribute() }}</h1>
+            <h1>Additions {{ $additions }}</h1>
+            <h1>Multipliers {{ $multipliers }}</h1>
+            <h1>Net assessed value {{ $assessed_value - ($assessed_value * $council_adjustment) }}</h1>
+            <h1>Assessed value {{ ($assessment->getfloorAreaValueAttribute() + $additions) * $multipliers  }}</h1>  --}}
             <input type="hidden" name="property_wall_materials_percentage" value="{{ $assessment->wall_material_percentage }}">
             <input type="hidden" name="property_wall_materials_type" value="{{ $assessment->wall_material_type }}">
             <input type="hidden" name="property_assessed_value" value="{{ ($assessment->getfloorAreaValueAttribute() + $additions) * $multipliers  }}">

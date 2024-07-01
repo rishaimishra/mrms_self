@@ -577,7 +577,13 @@ class PropertyController extends Controller
             $data['ward'] = BoundaryDelimitation::distinct()->where('district', request()->user()->assign_district)->orderBy('ward')->pluck('ward', 'ward')->sort();
             $data['constituency'] = BoundaryDelimitation::distinct()->where('district', request()->user()->assign_district)->orderBy('constituency')->pluck('constituency', 'constituency')->sort();
         }
-        $data['categories'] = PropertyCategory::distinct()->where('is_active', 1)->pluck('label', 'id');
+        //  $get_cat = PropertyCategory::where('is_active', 1)->get();
+        // $options = [];
+        // foreach ($get_cat as $key => $value) {
+        //     $options[$value->value]=$value->label;
+        // }
+        // return $options;
+         $data['categories'] = PropertyCategory::distinct()->where('is_active', 1)->pluck('label', 'id');
         $data['types'] = PropertyType::distinct()->where('is_active', 1)->pluck('label', 'id');
         $data['window_types'] = PropertyWindowType::distinct()->where('is_active', 1)->pluck('label', 'id');
         //$data['window_types_values'] = PropertyWindowType::distinct()->where('is_active', 1)->pluck('value', 'id');
@@ -1162,6 +1168,7 @@ class PropertyController extends Controller
         $data['roof_material_percentage']=$request->property_roof_materials_percentage;
         $data['window_type_percentage']=$request->property_window_materials_percentage;
         $data['property_assessed_value']=$request->property_assessed_value;
+        $data['property_rate_without_gst']=$request->property_assessed_value;
         $data['net_property_assessed_value']=$request->net_property_assessed_value;
         $data['taxable_property_value']=$request->taxbale_property_value;
         $data['property_tax_payable_2024']=$request->property_tax_payable_2024;
