@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 
 
-
+Route::post('change_password', 'APIV2\General\PropertyController@change_password');
 Route::get('update/assessments', 'APIV2\General\PropertyController@updatePropertyAssessmentDetail');
 Route::post('update/pensiondiscount', 'APIV2\General\PropertyController@updatePropertyAssessmentPensionDiscount');
 Route::get('update/disabilitydiscount', 'APIV2\General\PropertyController@updatePropertyAssessmentDisabilityDiscount');

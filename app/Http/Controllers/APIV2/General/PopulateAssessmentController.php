@@ -22,11 +22,39 @@ use App\Models\District;
 use App\Models\PropertyCharacteristicValue;
 use App\Models\PropertyWindowType;
 use App\Models\UserTitleTypes;
+use Illuminate\Support\Facades\DB;
 
 class PopulateAssessmentController extends ApiController
 {
     public function populateField()
     {
+        // $districts = District::select('area')->get();
+        // for($i=0; $i<count($districts);$i++)
+        // {
+        //     $districts_array = json_decode($districts[$i]);
+        //      $abc = json_decode($districts_array->area);
+        //     for ($j=0; $j <count($abc); $j++) { 
+        //         // echo $abc[$j];
+        //         // echo "<br>";
+
+        //         $check_streetname = \DB::table('meta_values')->where('name','area')->where('value',$abc[$j])->first();
+        //    if (!$check_streetname) {
+        //      DB::table('meta_values')->insert([
+        //            'name'=>'area',
+        //            'value' => $abc[$j]
+        //      ]);
+        //      }
+
+        //     }
+        // }
+
+
+        
+        
+        // echo count($district);
+        // die;
+
+        // for()
 
         $result['property_categories']      = PropertyCategory::select('id', 'label', 'value')->where('is_active', 1)->get();
         $result['property_wall_materials']  = PropertyWallMaterials::select('id', 'label', 'value','good_value','avg_value','bad_value')->where('is_active', 1)->get();
@@ -42,6 +70,22 @@ class PopulateAssessmentController extends ApiController
         $result['sigma_pay_url']            = getSystemConfig(SystemConfig::SIGMA_PAY_URL);
         $result['property_inaccessible']    = PropertyInaccessible::select('id as value', 'label')->where('is_active', 1)->get();
         $result['district']                 = District::select('*', 'sq_meter_value as value')->get();
+// return $result['district'];
+        $get_area_meta = \DB::table('meta_values')->select('value')->where('name', 'area')->get();
+
+        $get_area_meta_decoded = json_decode(json_encode($get_area_meta));
+        $resultArray = array();
+
+        foreach ($get_area_meta_decoded as $item) {
+            $resultArray[] = $item->value;
+        }
+
+        // return $resultArray;
+
+        $result['district'][0]->area = json_encode($resultArray);
+
+
+
         $result['property_window_types']    = PropertyWindowType::select('id','label','value','good_value','value','bad_value','avg_value',)->get();
         $result['user_title_types']         = UserTitleTypes::select('id','label')->get();
 

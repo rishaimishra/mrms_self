@@ -17,6 +17,7 @@ class PaymentController extends Controller
 {
     public function show(Request $request)
     {
+        // return "sd";
         $property = [];
         $last_payment = null;
         $paymentInQuarter = [];
@@ -84,12 +85,14 @@ class PaymentController extends Controller
 
 
         $digital_address = PropertyGeoRegistry::distinct()->orderBy('property_id')->pluck('digital_address', 'digital_address')->sort()->prepend('Select Digital Address', '');
-
+        // return "asdfdsa";
+        // return $property;
         return view('admin.payments.view', compact('property', 'digital_address', 'paymentInQuarter', 'history','pensioner_image_path','disability_image_path'));
     }
 
     public function store($id, Request $request)
     {
+        // return $request;
         $property = Property::with('landlord')->findOrFail($id);
 
         $this->validate($request, [
@@ -120,7 +123,8 @@ class PaymentController extends Controller
         $data = $request->only([
             'payment_type',
             'cheque_number',
-            'payee_name'
+            'payee_name',
+            'payment_fulfilment_type'
         ]);
 
         $data['assessment'] = number_format($property->assessment->getCurrentYearTotalDue(), 0, '.', '');
@@ -129,7 +133,8 @@ class PaymentController extends Controller
         $data['amount'] = $t_amount;
         $data['balance'] = $data['assessment']; // For Activity log tracking
         //$data['penalty'] = $t_penalty;
-
+      $data['payment_fulfilment'] = $request->payment_fulfilment_type;
+    //   return $data;
         $payment = $property->payments()->create($data);
         $payment->save();
 
@@ -374,5 +379,90 @@ class PaymentController extends Controller
         //$this->updatePayments($property, $id);
 
         return back()->with($this->setMessage('Payment successfully deleted', 2));
+    }
+    public function reverse($id){
+        
+       $payment = PropertyPayment::findOrFail($id);
+       if($payment->reverse == 1){
+        return back()->with($this->setMessage('Payment reverse already', 2));
+       }
+       else{
+        $payment->reverse= 1;
+        $payment->save();
+        return back()->with($this->setMessage('Payment reverse successfully', 1));
+       }
+  
+       
+    }
+    public function show_reverse(Request $request){
+        $property = [];
+        $last_payment = null;
+        $paymentInQuarter = [];
+        $history = [];
+
+        if (
+            $request->input('digital_address')
+            || $request->input('old_digital_address')
+            || $request->input('property_id')
+        ) {
+
+            $address = explode('%', $request->input('digital_address') ? $request->input('digital_address') : $request->input('old_digital_address'));
+
+            if ($request->filled('property_id')) {
+                $address[0] = $request->input('property_id');
+            }
+
+            $PropertyGeoRegistry = PropertyGeoRegistry::with(['property'])->whereHas('property', function ($query) use ($request, $address) {
+                return $query->where('id', $address[0]);
+            })->first();
+
+            if ($PropertyGeoRegistry && $request->input('old_digital_address') && $address[1] != $PropertyGeoRegistry->digital_address && $PropertyGeoRegistry->old_digital_address != $PropertyGeoRegistry->digital_address) {
+                return redirect()->route('admin.payment')->with($this->setMessage('Digital Address has been updated. Please print new demand draft and search by new digital address.', self::MESSAGE_SUCCESS));
+            }
+            if (request()->user()->hasRole('Super Admin')) {
+                if ($PropertyGeoRegistry) {
+                    $property = Property::with([
+                        'landlord',
+                        'occupancy',
+                        'assessment',
+                        'geoRegistry',
+                        'assessmentHistory'
+                    ])->find($PropertyGeoRegistry->property->id);
+                    if ($property) {
+                        $paymentInQuarter = $property->getPaymentsInQuarter();
+                    }
+                } else {
+                    $property = new Property();
+                    $paymentInQuarter = array();
+                }
+            } else {
+                if ($PropertyGeoRegistry) {
+                    $property = Property::where('district', request()->user()->assign_district)->with([
+                        'landlord',
+                        'occupancy',
+                        'assessment',
+                        'geoRegistry',
+                        'assessmentHistory'
+                    ])->find($PropertyGeoRegistry->property->id);
+                    if ($property) {
+                        $paymentInQuarter = $property->getPaymentsInQuarter();
+                    }
+                } else {
+                    $property = new Property();
+                    $paymentInQuarter = array();
+                }
+            }
+        }
+
+        $propertyId = $request->input('property_id');
+
+        $pensioner_image_path = PropertyPayment::where('property_id','=',$propertyId)->whereNotNull('pensioner_discount_image')->orderBy('created_at','desc')->first();
+
+        $disability_image_path = PropertyPayment::where('property_id','=',$propertyId)->whereNotNull('disability_discount_image')->orderBy('created_at','desc')->first();
+
+
+        $digital_address = PropertyGeoRegistry::distinct()->orderBy('property_id')->pluck('digital_address', 'digital_address')->sort()->prepend('Select Digital Address', '');
+
+        return view('admin.payments.reverse_view', compact('property', 'digital_address', 'paymentInQuarter', 'history','pensioner_image_path','disability_image_path'));
     }
 }

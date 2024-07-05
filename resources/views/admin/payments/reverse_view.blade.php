@@ -1,4 +1,3 @@
-
 @extends('admin.layout.main')
 @push('stylesheets')
     {{--    <link href="{{ url('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css') }}" rel="stylesheet"/>--}}
@@ -40,7 +39,7 @@
             <div class="card">
                 <div class="header bg-green">
                     <h2>
-                        Search Property
+                        Search Property of reverse payment
                     </h2>
                 </div>
                 <div class="body">
@@ -54,7 +53,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="col-sm-4">
+                        {{--  <div class="col-sm-4">
                             <div class="form-group">
                                 <div class="form-line">
                                     <label>Old Digital Address</label>
@@ -69,7 +68,7 @@
                                     <div id="digital_address" class="form-control"></div>
                                 </div>
                             </div>
-                        </div> -->
+                        </div>  --}}
                         <div class="col-sm-1">
                             <button type="submit" class="btn btn-primary m-t-15 waves-effect">Search</button>
                         </div>
@@ -88,8 +87,9 @@
 
 
 
+
     @if(!empty($property))
-    
+
     <!-- && ($property->assessment->pensioner_discount == 0) -->
     @if((!empty($property->payments[$property->payments->count() -1]->disability_discount_image_path) || !empty($property->payments[$property->payments->count() -1]->pensioner_discount_image_path) )  )
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -159,348 +159,107 @@
 
 
         @if(!empty($property->getAttributes()))
-            <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <div class="card">
-                        <div class="header bg-orange">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <h2>
-                                        Payment
-
-                                    </h2>
-                                </div>
-                                <div class="col-md-4">
-                                    <h2>Property ID : {{$property->id}}</h2>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="body">
-                            {!! Form::open(['id' => 'forgot_password', 'route' => ['admin.payment.store', $property->id]]) !!}
-
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <label
-                                        for="email_address">{{ \Carbon\Carbon::parse($property->assessment->created_at)->format('Y') }}
-                                        Assessment</label>
-                                    <div class="form-group">
-                                        <div class="form-line">
-                                            <input type="text" id="assessment"
-                                                   value="{{ old('assessment', number_format($property->assessment->getCurrentYearAssessmentAmount(),0,'',',')) }}"
-                                                   disabled class="form-control" placeholder="Assessment"
-                                                   style="background-color: #eee;padding-left: 5px;">
-                                        </div>
-                                        {!! $errors->first('assessment', '<span class="error">:message</span>') !!}
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-3">
-                                    <label
-                                        for="arrear_due">Arrear Due</label>
-                                    <div class="form-group">
-                                        <div class="form-line">
-                                            <input type="text" id="assessment"
-                                                   value="{{ old('arrear_due', number_format($property->assessment->getPastPayableDue(),0,'',',')) }}"
-                                                   disabled class="form-control" placeholder="Arrear Due"
-                                                   style="background-color: #eee;padding-left: 5px;">
-                                        </div>
-                                        {!! $errors->first('arrear_due', '<span class="error">:message</span>') !!}
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-3">
-                                    <label
-                                        for="penalty">Penalty</label>
-                                    <div class="form-group">
-                                        <div class="form-line">
-                                            <input type="text" id="penalty"
-                                                   value="{{ old('penalty', number_format($property->assessment->getPenalty(),0,'',',')) }}"
-                                                   disabled class="form-control" placeholder="Penalty"
-                                                   style="background-color: #eee;padding-left: 5px;">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-3">
-                                    <label for="amount_paid">Amount
-                                        Paid({{ $property->assessment->created_at->format('Y') }})</label>
-                                    <div class="form-group">
-                                        <div class="form-line">
-                                            <input type="text" id="amount_paid" name="amount_paid"
-                                                   value="{{ old('amount_paid', number_format($property->assessment->getCurrentYearTotalPayment(),0,'',',')) }}"
-                                                   class="form-control"
-                                                   style="background-color: #eee;padding-left: 5px;"
-                                                   placeholder="Enter Amount Paid" disabled>
-                                        </div>
-                                        {!! $errors->first('amount_paid', '<span class="error">:message</span>') !!}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <label for="balance">Balance</label>
-                                    <div class="form-group">
-                                        <div class="form-line">
-                                            <input type="text" id="balance"
-                                                   value="{{ old('balance', (number_format(max($property->assessment->getCurrentYearTotalDue(), 0),0,'',','))) }}"
-                                                   name="balance"
-                                                   class="form-control"
-                                                   style="background-color: #eee;padding-left: 5px;"
-                                                   placeholder="Enter Balance" disabled>
-                                        </div>
-                                        {!! $errors->first('balance', '<span class="error">:message</span>') !!}
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <label for="amount">Paying Amount</label>
-                                            <div class="form-group">
-                                                <div class="form-line">
-                                                    <input type="text" id="amount"
-                                                           value="{{ old('amount') }}"
-                                                           name="amount" class="form-control"
-                                                           placeholder="Enter Amount Paying"
-                                                           onkeyup="javascript:this.value=Comma(this.value);"
-                                                    >
-                                                </div>
-                                                <span
-                                                    class="small">Pre-Calculated : {{number_format($property->assessment->getCurrentInstallmentDueAmount(),0,'',',')}}</span>
-                                                {!! $errors->first('amount', '<span class="error">:message</span>') !!}
-                                            </div>
-
-                                        </div>
-
-{{--                                        <div class="col-md-4">--}}
-{{--                                            <label for="amount">Penalty</label>--}}
-{{--                                            <div class="form-group">--}}
-{{--                                                <div class="form-line">--}}
-{{--                                                    <input type="text" id="penalty"--}}
-{{--                                                           value="{{ old('amount') }}"--}}
-{{--                                                           name="penalty" class="form-control"--}}
-{{--                                                           placeholder="Enter Amount Paying"--}}
-{{--                                                           onkeyup="javascript:this.value=Comma(this.value);"--}}
-{{--                                                    >--}}
-{{--                                                </div>--}}
-{{--                                                <span--}}
-{{--                                                    class="small">Pre-Calculated : {{number_format($property->getPenalty(),0,'',',')}}</span>--}}
-{{--                                                {!! $errors->first('penalty', '<span class="error">:message</span>') !!}--}}
-{{--                                            </div>--}}
-{{--                                        </div>--}}
-
-                                        <div class="col-md-4">
-                                            <label for="amount">Total Amount</label>
-                                            <div class="form-group">
-                                                <div class="form-line">
-                                                    <input type="text" id="total"
-                                                           value="{{ old('amount') }}" disabled
-                                                           class="form-control"
-                                                           style="background-color: #eee;padding-left: 5px;"
-                                                           placeholder=""
-                                                           onchange="javascript:this.value=Comma(this.value);">
-                                                </div>
-                                                <span
-                                                    class="small">Pre-Calculated : {{number_format($property->assessment->getCurrentInstallmentDueAmount(),0,'',',')}}</span>
-                                                {!! $errors->first('amount', '<span class="error">:message</span>') !!}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label for="payment_type">Payment Type</label>
-                                            <div class="form-group">
-                                                <div class="form-line">
-                                                    {!! Form::select('payment_type', ['' => 'Select', 'cash' => 'Cash', 'cheque'=> 'Cheque'], old('payment_type'), ['class' => 'form-control']) !!}
-                                                </div>
-                                                {!! $errors->first('payment_type', '<span class="error">:message</span>') !!}
-                                            </div>
-                                        </div>
-
-                                        <div class="col-sm-6">
-                                            <label for="email_address">Cheque No</label>
-                                            <div class="form-group">
-                                                <div class="form-line">
-                                                    <input type="text" id="cheque_number"
-                                                           value="{{ old('cheque_number') }}"
-                                                           name="cheque_number" class="form-control"
-                                                           placeholder="Cheque Number">
-                                                </div>
-                                                {!! $errors->first('cheque_number', '<span class="error">:message</span>') !!}
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-
-                                <div class="col-sm-3">
-                                    <label for="email_address">Payee Name</label>
-                                    <div class="form-group">
-                                        <div class="form-line" id="payee_name">
-                                            <input type="text" id="payee_name" value="{{ old('payee_name') }}"
-                                                   name="payee_name" class="form-control"
-                                                   placeholder="Payee Name">
-                                        </div>
-                                        {!! $errors->first('payee_name', '<span class="error">:message</span>') !!}
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <label for="email_address" class="text-danger">Payment Fulfilment</label>
-                                    <div class="form-group">
-                                        <div class="form-line" id="payemnt_fulfilment">
-                                            <input type="text" id="payment_fulfilment"  value=""
-                                                   name="payment_fulfilment_type" class="form-control"
-                                                   placeholder="Payment Fulfilment">
-                                        </div>
-                                        {!! $errors->first('payment_fulfilment', '<span class="error">:message</span>') !!}
-                                    </div>
-                                </div>
-                                <div class="clearfix"></div>
-                                <div class="col-sm-6">
-                                    <div class="row">
-
-                                        @for($i = 0; $i <= 1; $i++)
-                                            <div class="col-md-6">
-                                                <div class="text-center"
-                                                     style="min-height: 105px; border: 1px solid #eee; padding: 10px; background-color: {{ $property->assessment->getQuarter()  == ($i + 1) ? '#eee' : ''}}">
-                                                    <h5>{!!  \App\Models\PropertyPayment::numberToWord($i + 1) !!}
-                                                        Installment Date</h5>
-                                                        @if($i == 0)
-                                                    <h4>30-06-2024</h4>
-                                                    @elseif($i == 1)
-                                                    <h4>31-12-2024</h4>
-                                                    @else
-                                                    @endelse
-                                                    @endif
-                                                    {{--@if($i==3)
-                                                        <h6>{!! number_format($property->getAssessment()) !!}</h6>
-                                                        @else--}}
-                                                    <h6>{!! isset($paymentInQuarter[$i+1]) ?  number_format($paymentInQuarter[$i+1]) : '-' !!}</h6>
-                                                    {{-- @endif--}}
-                                                </div>
-
-                                            </div>
-                                        @endfor
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6 text-left">
-                                    <button type="submit" class="btn btn-primary m-t-15 waves-effect btn-lg">Save
-                                    </button>
-                                </div>
-                            </div>
-
-
-                            {!! Form::close() !!}
-                        </div>
-                    </div>
-                </div>
+           
 
 
                 @if($property->payments()->count())
-                  
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <div class="card">
-                            <div class="header bg-orange">
-                                <h2>
-                                    Transactions
-                                </h2>
-                            </div>
-                            <div class="body"  style=" overflow-x: scroll; ">
-                                <table class="table">
-                                    <thead>
-                                    <th>Property ID</th>
-                                    <th>Transaction ID</th>
-                                    <th>Payment Made</th>
-                                    <th>Cashier Name</th>
-                                    <th>Amount Due</th>
-                                    {{-- <th>Paying Amount</th>
-                                    <th>Penalty</th> --}}
-                                    <th>Amount Paid</th>
-                                    <th>Remaining Balance</th>
-                                    <th>Payment Type</th>
-                                    <!-- <th>Cheque Number</th> -->
-                                    <th>Payee Name</th>
-                                    <th>Transaction Date</th>
-                                    <th>Receipt</th>
-                                    @hasanyrole('Super Admin|Admin')
-                                    <th>View</th>
-                                    <!-- <th>Reverse Payment</th> -->
-                                    @endhasanyrole
-                                    </thead>
-                                    <tbody>
-                                    @foreach($property->payments()->latest()->get() as $payment)
-                                        <tr>
-                                            <td>{{ $payment->property_id }}</td>
-                                            <td>{{ $payment->id }}</td>
-                                            <td>{{ $payment->payment_made_year == null ? '---' :  $payment->payment_made_year }}</td>
-                                            <td>{{ $payment->admin->getName() }}</td>
-                                            <td>{{ number_format($payment->assessment) }}</td>
-                                            {{-- <td>{{ number_format($payment->amount) }}</td>
-                                            <td>{{ number_format($payment->penalty) }}</td> --}}
-                                            <td>{{ number_format($payment->total) }}</td>
-                                            <td>{{ number_format($payment->balance < 0 ? 0 : $payment->balance) }}</td>
-                                            <td>{{ ucwords($payment->payment_type) }}</td>
-                                            <!-- <td>{{ $payment->cheque_number }}</td> -->
-                                            <td>{{ $payment->payee_name }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($payment->created_at)->format('M d, Y') }}</td>
-                                            <td>
-                                                @if(!empty($payment->physical_receipt_image_path))
-                                               <img class="zoom_receipt" src="{{ $payment->physical_receipt_image_path }}" alt="" width="80" height="60">
-                                               @else
-                                               <p>No Receipt Uploaded</p>
-                                               @endif
-                                            </td>
-                                            @hasanyrole('Super Admin|Admin')
-                                            <td>
-                                            <!-- <a class=""
-                                                   href="{{ route('admin.payment.verify', $payment->id) }}"><i
-                                                        style="font-size: 25px;" class="material-icons">fact_check</i>
-                                                </a> -->
 
-                                                <a class=""
-                                                   href="{{ route('admin.payment.edit', $payment->id) }}"><i
-                                                        style="font-size: 25px;" class="material-icons">visibility</i>
-                                                </a>
-                                                   <!-- <a href="{{ route('admin.payment.delete', $payment->id) }}"
-                                                                  id="delete-payment">
-                                                                  <i style="font-size: 25px;"
-                                                                                         class="material-icons">delete</i></a> -->
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="card">
+        <div class="header bg-red">
+            <h2>
+               Reverse Transactions
+            </h2>
+        </div>
+        <div class="body"  style=" overflow-x: scroll; ">
+            <table class="table">
+                <thead>
+                <th>Property ID</th>
+                <th>Transaction ID</th>
+                <th>Payment Made</th>
+                <th>Cashier Name</th>
+                <th>Amount Due</th>
+                {{-- <th>Paying Amount</th>
+                <th>Penalty</th> --}}
+                <th>Amount Paid</th>
+                <th>Remaining Balance</th>
+                <th>Payment Type</th>
+                <!-- <th>Cheque Number</th> -->
+                <th>Payee Name</th>
+                <th>Transaction Date</th>
+                <th>Receipt</th>
+                @hasanyrole('Super Admin|Admin')
+                <th>View</th>
+                <!-- <th>Reverse Payment</th> -->
+                @endhasanyrole
+                </thead>
+                <tbody>
+                @foreach($property->payments()->where('reverse', '1')->latest()->get() as $payment)
+                    <tr>
+                        <td>{{ $payment->property_id }}</td>
+                        <td>{{ $payment->id }}</td>
+                        <td>{{ $payment->payment_made_year == null ? '---' :  $payment->payment_made_year }}</td>
+                        <td>{{ $payment->admin->getName() }}</td>
+                        <td>{{ number_format($payment->assessment) }}</td>
+                        {{-- <td>{{ number_format($payment->amount) }}</td>
+                        <td>{{ number_format($payment->penalty) }}</td> --}}
+                        <td>{{ number_format($payment->total) }}</td>
+                        <td>{{ number_format($payment->balance < 0 ? 0 : $payment->balance) }}</td>
+                        <td>{{ ucwords($payment->payment_type) }}</td>
+                        <!-- <td>{{ $payment->cheque_number }}</td> -->
+                        <td>{{ $payment->payee_name }}</td>
+                        <td>{{ \Carbon\Carbon::parse($payment->created_at)->format('M d, Y') }}</td>
+                        <td>
+                            @if(!empty($payment->physical_receipt_image_path))
+                           <img class="zoom_receipt" src="{{ $payment->physical_receipt_image_path }}" alt="" width="80" height="60">
+                           @else
+                           <p>No Receipt Uploaded</p>
+                           @endif
+                        </td>
+                        @hasanyrole('Super Admin|Admin')
+                        <td>
+                        <!-- <a class=""
+                               href="{{ route('admin.payment.verify', $payment->id) }}"><i
+                                    style="font-size: 25px;" class="material-icons">fact_check</i>
+                            </a> -->
 
-                                               </td>
+                            <a class=""
+                               href="{{ route('admin.payment.edit', $payment->id) }}"><i
+                                    style="font-size: 25px;" class="material-icons">visibility</i>
+                            </a>
+                               <!-- <a href="{{ route('admin.payment.delete', $payment->id) }}"
+                                              id="delete-payment">
+                                              <i style="font-size: 25px;"
+                                                                     class="material-icons">delete</i></a> -->
 
-                                               @endhasanyrole
-                                            {{--<th>
-                                                <a class="btn btn-primary btn-xs"
-                                                   href="{{ route('admin.payment.edit', $payment->id) }}"><i
-                                                        style="font-size: 14px;" class="material-icons">colorize</i>Edit
-                                                </a> &nbsp;&nbsp;
-                                                <a class="btn btn-danger btn-xs"
-                                                   href="{{ route('admin.payment.delete', $payment->id) }}"
-                                                   id="delete-payment"><i style="font-size: 14px;"
-                                                                          class="material-icons">delete</i>Delete</a>
-                                                <a style="margin-left: 10px;" class="btn btn-success btn-xs"
-                                                   href="{{ route('admin.payment.pos.receipt', ['id' => $property->id, 'payment_id' => $payment->id]) }}"><i
-                                                        style="font-size: 14px;"
-                                                        class="material-icons">print</i>Print</a>
-                                            </th>--}}
-                                                <!-- <td>
-                                                    <a href="{{route('admin.reverse', $payment->id)}}" class="btn btn-primary m-t-15 waves-effect btn-lg">Reverse Payment</a>
-                                                </td> -->
-                                    @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                           </td>
 
-                @endif
-              
+                           @endhasanyrole
+                        {{--<th>
+                            <a class="btn btn-primary btn-xs"
+                               href="{{ route('admin.payment.edit', $payment->id) }}"><i
+                                    style="font-size: 14px;" class="material-icons">colorize</i>Edit
+                            </a> &nbsp;&nbsp;
+                            <a class="btn btn-danger btn-xs"
+                               href="{{ route('admin.payment.delete', $payment->id) }}"
+                               id="delete-payment"><i style="font-size: 14px;"
+                                                      class="material-icons">delete</i>Delete</a>
+                            <a style="margin-left: 10px;" class="btn btn-success btn-xs"
+                               href="{{ route('admin.payment.pos.receipt', ['id' => $property->id, 'payment_id' => $payment->id]) }}"><i
+                                    style="font-size: 14px;"
+                                    class="material-icons">print</i>Print</a>
+                        </th>--}}
+                            <!-- <td>
+                                <a href="{{route('admin.reverse', $payment->id)}}" class="btn btn-primary m-t-15 waves-effect btn-lg">Reverse Payment</a>
+                            </td> -->
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@endif
 
                 @if($property->assessmentHistory->count())
 
@@ -620,7 +379,7 @@
                                         <h6>Id Number</h6>
                                         <p>{{$property->landlord->id_number}}</p>
                                     </div> --}}
-                                    {{-- <div class="col-sm-3">
+                                    {{--  <div class="col-sm-3">
                                         <div id="aniimated-thumbnials"
                                              class="list-unstyled row clearfix aniimated-thumbnials">
                                             <h6>Image</h6>
@@ -629,7 +388,7 @@
                                                      src="{{$property->landlord->getImageUrl(100,100)}}">
                                             </a>
                                         </div>
-                                    </div> --}}
+                                    </div>  --}}
                                 @endif
                                 <div class="col-sm-3">
                                     <h6>Ward</h6>
@@ -1072,14 +831,7 @@
             return x1 + x2;
         }
     </script>
-@php
-if($property){
-    if($property->assessment){
-      //  $preCalculatedAmount = $property->assessment->getCurrentInstallmentDueAmount()??0;
-        $preCalculatedAmount = $property->assessment->getCurrentYearTotalDue()??0;
-    }
-}
-@endphp
+
     <script>
         jQuery("#amount, #penalty").on('keyup', function () {
             var amount = jQuery("#amount").val();
@@ -1099,18 +851,7 @@ if($property){
             var total = parseInt(amount);
 
             jQuery("#total").val(Comma(total));
-            
-            let preCalculatedAmount = '{{$preCalculatedAmount??0}}';
-            console.log(preCalculatedAmount)
-            console.log(amount)
-            if (parseInt(amount) >= parseInt(preCalculatedAmount)) {
-               // alert("if")
-                jQuery("#payment_fulfilment").val('Complete Amount');
-        } else {
-           // alert("else")
-            jQuery("#payment_fulfilment").val('Partial');
-            
-        }
+
         });
     </script>
     @if(!empty($property))

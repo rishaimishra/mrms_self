@@ -218,8 +218,10 @@
                         </div>
                         <div class="clearfix"></div>
 
-
                         <div class="col-sm-6 text-left">
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <a href="{{route('admin.reverse', $payment->id)}}" class="btn btn-primary m-t-15 waves-effect btn-lg">Reverse Payment</a>
                             <!-- <button type="submit" class="btn btn-primary m-t-15 waves-effect btn-lg">Save</button> -->
                         </div>
                     </div>

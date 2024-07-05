@@ -179,7 +179,8 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Disability (10%)</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->disability_discount ? 'Yes' : 'No') !!}</td>
+                                {{--  <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->disability_discount ? 'Yes' : 'No') !!}</td>  --}}
+                                <td style="border:1px solid #606060; color: #484848;">NLe {!! $assessment->disability_discount ? number_format($assessment->getDisabilityDiscount(),0,'',',') : 0 !!}</td>
                                 <!-- <td style="border-top:1px solid #606060; border-right:1px solid #606060; border-bottom:1px solid #606060; font-weight: bold;text-align: left; color:#303030;" >2021</td> -->
                             </tr>
                             <tr>
@@ -194,7 +195,8 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Pensioners (10%)</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->pensioner_discount ? 'Yes' : 'No') !!}</td>
+                                {{--  <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->pensioner_discount ? 'Yes' : 'No') !!}</td>  --}}
+                                <td style="border:1px solid #606060; color: #484848;">NLe {!! $assessment->pensioner_discount ? number_format($assessment->getPensionerDiscount(),0,'',',') : 0 !!}</td>
                                  {{--  <td style="border-left:1px solid  #606060; border-bottom:1px solid  #606060; border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px;width:15%; color:#303030;">VALUE (LE)</td>   --}}
                             </tr>
                             <tr>

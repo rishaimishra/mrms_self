@@ -79,10 +79,10 @@
                     <table class="table table-bordered" style=" width:100%;margin-bottom:15px;">
                         <thead>
                         <tr>
-                            <th style="border:1px solid #ccc; text-align: center;" scope="col" width="20%">PROPERTY TYPE</th>
-                             <th style="border:1px solid #ccc;" scope="col" width="16%">HABITABLE FLOOR(S)</th> 
+                            <th style="border:1px solid #ccc; text-align: center;" scope="col" width="16%">PROPERTY TYPE</th>
+                             <th style="border:1px solid #ccc;" scope="col" width="15%">HABITABLE FLOOR(S)</th> 
                             <th style="border:1px solid #ccc;white-space: pre" scope="col">FLOOR AREA (Ft<sup>2</sup>)</th>
-                            <th style="border:1px solid #ccc;" scope="col" width="20%">WALL MATERIAL</th>
+                            <th style="border:1px solid #ccc;" scope="col" width="16%">WALL MATERIAL</th>
                             <th style="border:1px solid #ccc;" scope="col">ROOF MATERIAL</th>
                             <th style="border:1px solid #ccc;" scope="col" width="16%">WINDOW TYPE</th>
                         </tr>
@@ -138,7 +138,7 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <td style="border:1px solid lightgray;">{{ strtoupper($assessment->valuesAdded->pluck('label')->implode(', ')) }} </td>
+                            <td style="border:1px solid lightgray;">{{ strtoupper($assessment->valuesAdded->pluck('label')->implode(', ')) }} , {{ strtoupper(optional($assessment)->gated_community ? 'GATED COMMUNITY' : ' ') }} , {{ strtoupper(optional($property->beach_front)  ? 'BEACH FRONT' : ' ') }} </td>
                             <td style="border:1px solid lightgray; ">{{ strtoupper(optional(App\Models\PropertySanitationType::find($assessment->sanitation))->label) }}</td> 
                             <td style="border:1px solid lightgray; ">{{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->label) }}</td>
                             

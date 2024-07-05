@@ -2,19 +2,17 @@
 
 namespace App\Grids;
 
-use App\Models\User;
 use Closure;
-use Illuminate\Support\HtmlString;
 use Leantony\Grid\Grid;
 
-class PropertiesGrid extends Grid implements PropertiesGridInterface
+class GuestUsersGrid extends Grid implements GuestUsersGridInterface
 {
     /**
      * The name of the grid
      *
      * @var string
      */
-    protected $name = 'Properties';
+    protected $name = 'guest_user';
 
     /**
      * List of buttons to be generated on the grid
@@ -22,8 +20,10 @@ class PropertiesGrid extends Grid implements PropertiesGridInterface
      * @var array
      */
     protected $buttonsToGenerate = [
+        'create',
+        'view',
         'delete',
-        'view'
+        'refresh',
     ];
 
     /**
@@ -42,82 +42,102 @@ class PropertiesGrid extends Grid implements PropertiesGridInterface
     public function setColumns()
     {
         $this->columns = [
-            "id" => [
-                "label" => "ID",
-                "styles" => [
-                    "column" => "grid-w-10"
-                ],
-                'presenter' => function ($columnData, $columnName) {
-                    return new HtmlString(
-                        '<div class="demo-checkbox">
-                                <input type="checkbox" name="selected_properties[]" class="filled-in filtered-property" value="' . $columnData->id . '" id="basic_checkbox_' . $columnData->id . '"  />
-                                <label for="basic_checkbox_' . $columnData->id . '">' . $columnData->id . ($columnData->created_from ? '/' . $columnData->created_from : '') . '</label></div>'
-                    );
-                },
-            ],
-            "landlord" => [
+            "username" => [
                 "search" => [
                     "enabled" => true
                 ],
-                'presenter' => function ($columnData, $columnName) {
-                    return (($columnData->organization_name && $columnData->is_organization == 1)  ? $columnData->organization_name : ($columnData->landlord->first_name . ' ' . $columnData->landlord->middle_name . ' ' . $columnData->landlord->surname));
-                },
+                "filter" => [
+                    "enabled" => true,
+                    "operator" => "like"
+                ]
             ],
-            "app_user" => [
-                "sort" => false,
+            "email" => [
                 "search" => [
                     "enabled" => true
                 ],
-                'presenter' => function ($columnData, $columnName) {
-                    return optional($columnData->user)->name;
-                },
+                "filter" => [
+                    "enabled" => true,
+                    "operator" => "like"
+                ]
             ],
+            "name" => [
+                "search" => [
+                    "enabled" => true
+                ],
+                "filter" => [
+                    "enabled" => true,
+                    "operator" => "like"
+                ]
+            ],
+            // "last_name" => [
+            //     "search" => [
+            //         "enabled" => true
+            //     ],
+            //     "filter" => [
+            //         "enabled" => true,
+            //         "operator" => "like"
+            //     ]
+            // ],
+            "ward" => [
+                "search" => [
+                    "enabled" => true
+                ],
+                "filter" => [
+                    "enabled" => true,
+                    "operator" => "like"
+                ]
+            ],
+
             "section" => [
                 "search" => [
                     "enabled" => true
                 ],
+                "filter" => [
+                    "enabled" => true,
+                    "operator" => "like"
+                ]
             ],
-            "chiefdom" => [
+
+            "district" => [
                 "search" => [
                     "enabled" => true
                 ],
-
+                "filter" => [
+                    "enabled" => true,
+                    "operator" => "like"
+                ]
             ],
             "province" => [
                 "search" => [
                     "enabled" => true
                 ],
-
+                "filter" => [
+                    "enabled" => true,
+                    "operator" => "like"
+                ]
             ],
-            "postcode" => [
-                "search" => [
-                    "enabled" => true
-                ],
-
-            ],
-            "is_completed" => [
-                'label' => "Completed",
-                "search" => [
-                    "enabled" => true
-                ],
-                'presenter' => function ($columnData, $columnName) {
-                    return (($columnData->is_completed && $columnData->is_draft_delivered) ? 'Yes' : 'No');
-                },
-
-            ],
-            "rate payable" => [
-                "search" => [
-                    "enabled" => true
+            // "user_type"=>[
+            //     'presenter' => function ($columnData, $columnName) {
+            //         return $columnData->getRoleNames()[0];
+            //     },
+            // ],
+            "is_active" => [
+                "label" => "status",
+                "styles" => [
+                    "column" => "grid-w-10"
                 ],
                 'presenter' => function ($columnData, $columnName) {
-                    return 'Le ' . number_format($columnData->assessment->getPropertyTaxPayable(), 0, '', ',');
+                    return $columnData->is_active ? 'Active' : 'Inactive';
                 },
             ],
             "created_at" => [
-                "sort" => false
-            ],
-            "updated_at" => [
-                "sort" => false
+                "sort" => false,
+                "date" => "true",
+                "filter" => [
+                    "enabled" => true,
+                    "type" => "date",
+                    "operator" => "<="
+                ]
             ]
         ];
     }
@@ -130,12 +150,12 @@ class PropertiesGrid extends Grid implements PropertiesGridInterface
     public function setRoutes()
     {
         // searching, sorting and filtering
-        $this->setIndexRouteName('admin.properties');
+        $this->setIndexRouteName('admin.guest-user.list');
 
         // crud support
-        $this->setCreateRouteName('admin.properties.create');
-        $this->setViewRouteName('admin.properties.show');
-        $this->setDeleteRouteName('admin.properties.destroy');
+        $this->setCreateRouteName('admin.guest-user.create');
+        $this->setViewRouteName('admin.guest-user.show');
+        $this->setDeleteRouteName('admin.guest-user.delete');
 
         // default route parameter
         $this->setDefaultRouteParameter('id');
@@ -160,8 +180,17 @@ class PropertiesGrid extends Grid implements PropertiesGridInterface
      */
     public function configureButtons()
     {
+        $this->editRowButton('delete', [
+            'class' => 'delete-confirm data-remote grid-row-button btn btn-outline-danger btn-sm',
+        ]);
 
+        $this->editRowButton('view', [
+            'name' => 'Edit',
+        ]);
 
+        $this->editRowButton('view', [
+            'name' => 'Edit',
+        ]);
 
         // call `addRowButton` to add a row button
         // call `addToolbarButton` to add a toolbar button

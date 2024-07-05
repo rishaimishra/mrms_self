@@ -1412,6 +1412,8 @@
         }
 
         function SetValues() {
+
+
             $($("#assessment-button")[0]).click();
            // $('#assessment-button').click();
             var area = measuretool.area;
@@ -1457,9 +1459,9 @@
             //         property_length: length,
             //         property_breadth: breadth,
             //     });
-            $('#assessment-save').click();
+           // $('#assessment-save').click();
             const url_dev = "/mrms_git/mrms/public/apiv2/update/assessments";
-            const url_local = "/apiv2/update/assessments";
+            const url_local = "/back-admin/assessment/update";
             $.ajax({
                 url: url_local,
                 type: "get", //send it through get method
@@ -1472,11 +1474,13 @@
                     is_map_set: 1
                 },
                 success: function(response) {
-                   // location.reload();
+                    location.reload();
+                  // return false;
                     console.log(response);
                     //Do Something
                 },
                 error: function(xhr) {
+                    alert("something went wrong with assessment");
                     //Do Something to handle error
                 }
             });

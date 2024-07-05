@@ -574,11 +574,23 @@
         <div class="col-sm-3">
             <h6>value added</h6>
             <p>
-                {{ Form::select('property_value_added[]', $value_added , $assessment->valuesAdded->pluck('id'), ['class' => 'form-control','data-live-search'=>'true','id'=>'property_value_added','multiple']) }}</p>
+                @php
+                $existingarray = [];
+                foreach ($assessment->valuesAdded as $valueadd){
+                    $existingarray[] = $valueadd->id.",a,".$valueadd->value ;
+                }
+                
+                @endphp
+                {{--  {{ json_encode($existingarray) }}  --}}
+                {{ Form::select('property_value_added[]', $value_added , $assessment->valuesAdded->pluck('id'), ['class' => 'form-control','data-live-search'=>'true','id'=>'property_value_added','multiple','onchange' => 'getValueaddedqulaityoptions(this)']) }}</p>
             @if ($errors->has('property_value_added'))
                 <label class="error">{{ $errors->first('property_value_added') }}</label>
             @endif
+            {{--  <span id="append_selected_value_added"></span>  --}}
+            <input type="hidden" name="property_value_added_percentage" >
+            <input type="hidden" name="property_value_added_type[]" value="{{ $assessment->roof_material_type }}">
         </div>
+        
         <div class="col-sm-3">
             <h6>Property Sanitation</h6>
             <p>{!! Form::select('property_sanitation', $sanitation , $assessment->sanitation, ['class' => 'form-control','data-live-search'=>'true','id'=>'property_sanitation'.'_'. $assessment->created_at->format('Y')]) !!}</p>
@@ -638,22 +650,22 @@
                 <label class="error">{{ $errors->first('no_of_mast') }}</label>
             @endif
         </div> -->
-        <div class="col-sm-3 {{$assessment->no_of_compound_house==null?'hidden':''}}"
+        {{--  <div class="col-sm-3 {{$assessment->no_of_compound_house==null?'hidden':''}}"
              id="div_no_of_compound_house">
             <h6> Number Of Compound House</h6>
             <p>{!! Form::text('no_of_compound_house',$assessment->no_of_compound_house,['class'=>'form-control','id'=>'no_of_compound_house']) !!}</p>
             @if ($errors->has('no_of_compound_house'))
                 <label class="error">{{ $errors->first('no_of_compound_house') }}</label>
             @endif
-        </div>
-        <div class="col-sm-3 {{$assessment->compound_name==null?'hidden':''}}"
+        </div>  --}}
+        {{--  <div class="col-sm-3 {{$assessment->compound_name==null?'hidden':''}}"
              id="div_compound_name">
             <h6> Compound Name</h6>
             <p>{!! Form::text('compound_name',$assessment->compound_name,['class'=>'form-control','id'=>'compound_name']) !!}</p>
             @if ($errors->has('compound_name'))
                 <label class="error">{{ $errors->first('compound_name') }}</label>
             @endif
-        </div>
+        </div>  --}}
     </div>
     <div class="row">
         <div class="col-sm-3">
@@ -790,6 +802,16 @@
             }
         });
     }
+
+    let previousValues = [];
+
+    // Initialize previousValues with current selected values on page load
+    $(document).ready(function() {
+        previousValues = $('#property_value_added').val() || [];
+    });
+
+    
+    
     function get_material_values(select){
         $select = $(select)
         let val =$select.val()
@@ -820,6 +842,65 @@
           const content = `${val},${per}`;
         $("#append_selected_window").html(content)
     }
+    existing='{{ json_encode($existingarray) }}';
+    existing = existing.replace(/&quot;/g, '"');
+    $multi=JSON.parse(existing)
+    $("#append_selected_value_added").html(JSON.stringify($multi))
+    $('input[name="property_value_added_percentage"]').val(JSON.stringify($multi));
+    function get_value_addedd_multiple(select){
+        $select = $(select)
+        let val =$select.val()
+        const selectedOption = $select.find('option:selected');
+        let per =selectedOption.data('percentage')
+        let id =selectedOption.data('vid')
+        const item = `${id},${val},${per}`;
+        $multi.push(item)
+        $('input[name="property_value_added_percentage"]').val(JSON.stringify($multi));
+       // $('input[name="property_value_added_type"]').val(val);
+        $("#append_selected_value_added").html(JSON.stringify($multi))
+    }
+    function getValueaddedqulaityoptions(selectElement) {
+        // Get current selected values
+        let currentValues = $(selectElement).val() || [];
+    
+        // Determine newly selected values
+        let newlySelected = currentValues.filter(val => !previousValues.includes(val));
+    
+        // Determine unselected values
+        let unselected = previousValues.filter(val => !currentValues.includes(val))[0];
+        selectedValues = $multi.filter(item => !item.startsWith(unselected + ','));
+        $multi=selectedValues
+        console.log(selectedValues)
+        $("#append_selected_value_added").html(JSON.stringify(selectedValues))
+        $('input[name="property_value_added_percentage"]').val(JSON.stringify($multi));
+        // Log the changes
+        console.log('Newly selected:', newlySelected);
+        console.log('Unselected:', unselected);
+    
+        // Update previousValues with currentValues for next comparison
+        previousValues = currentValues.slice(); // Make a copy to avoid reference issues
+    
+        // Check if there are newly selected values
+        if (newlySelected.length > 0) {
+            // Make an AJAX request
+            $.ajax({
+               url: "{{ route('admin.get_value_added') }}", // Replace with your endpoint URL
+               type: 'POST',
+               data: {
+                   value: newlySelected,
+                   _token: '{{ csrf_token() }}' // Include CSRF token if needed
+               },
+               success: function(response) {
+                   console.log('Server response:', response);
+                   $("#models").html(response);
+                   $('#valueaddedmyModal').modal('show');
+               },
+               error: function(xhr, status, error) {
+                   console.error('AJAX error:', status, error);
+               }
+           });
+        }
+    }
     {{--  $(document).ready(function() {
         $('#property_wall_materials_{{ $assessment->created_at->format('Y') }}').on('change', function() {
            
@@ -836,3 +917,25 @@
         });
     });  --}}
 </script>
+{{--  <script>
+    $('.extra-fields-customer').click(function() {
+        $('.customer_records').clone().appendTo('.customer_records_dynamic');
+        $('.customer_records_dynamic .customer_records').addClass('single remove customer_records');
+        $('.single .extra-fields-customer').remove();
+        $('.single').append('<a href="#" class="remove-field btn-remove-customer">Remove Fields</a>');
+        $('.customer_records_dynamic > .single').attr("class", "remove");
+      
+        $('.customer_records_dynamic input').each(function() {
+          var count = 0;
+          var fieldname = $(this).attr("name");
+          $(this).attr('name', fieldname + count);
+          count++;
+        });
+      
+      });
+      
+      $(document).on('click', '.remove-field', function(e) {
+        $(this).parent('.remove').remove();
+        e.preventDefault();
+      });
+</script>  --}}

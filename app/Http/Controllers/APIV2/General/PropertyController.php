@@ -38,6 +38,8 @@ use App\Models\Adjustment;
 use App\Models\MillRate;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 
 class PropertyController extends ApiController
@@ -47,6 +49,8 @@ class PropertyController extends ApiController
     public function save(Request $request)
     {
         // return $request;
+      
+    //   die;
         $assessment_images = new PropertyAssessmentDetail();
         \Illuminate\Support\Facades\Log::debug($request->all());
         $this->propertyId = $request->input('property_id');
@@ -493,6 +497,33 @@ class PropertyController extends ApiController
                 ]
 
              ];
+             $check_additional_address = \DB::table('additional_address')->where('title',$request->property_additional_address_id)->first();
+             if (!$check_additional_address) {
+               DB::table('additional_address')->insert([
+                   'title' => $request->property_additional_address_id
+               ]);
+           }
+           $check_first_name = \DB::table('meta_values')->where('name','first_name')->where('value',$request->landlord_first_name)->first();
+           if (!$check_first_name) {
+             DB::table('meta_values')->insert([
+                   'name'=>'first_name',
+                   'value' => $request->landlord_first_name
+             ]);
+         }
+         $check_surname = \DB::table('meta_values')->where('name','surname')->where('value',$request->landlord_surname)->first();
+         if (!$check_surname) {
+           DB::table('meta_values')->insert([
+                 'name'=>'surname',
+                 'value' => $request->landlord_surname
+           ]);
+           }
+           $check_streetname = \DB::table('meta_values')->where('name','street_name')->where('value',$request->landlord_street_name)->first();
+           if (!$check_streetname) {
+             DB::table('meta_values')->insert([
+                   'name'=>'street_name',
+                   'value' => $request->landlord_street_name
+             ]);
+             }
 
         return $this->success([
             'property_id' => $property->id,
@@ -1722,5 +1753,33 @@ public function createInAccessibleProperties(Request $request)
             DB::rollBack();
             return response()->json(['error' => 'Failed to update property: ' . $e->getMessage()], 500);
         }
+    }
+
+    public function change_password(Request $request){
+        // return $request;
+          // Validate the request
+          $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+         // Check if validation fails
+         if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors(),
+            ], 422);
+        }
+         // Retrieve the user by ID
+         $user = User::find($request->user_id);
+
+         // Update the user's password
+         $user->password = Hash::make($request->password);
+         $user->new_user = 1;
+         $user->save();
+ 
+         return response()->json([
+             'status' => 'success',
+             'message' => 'Password updated successfully',
+         ]);
     }
 }

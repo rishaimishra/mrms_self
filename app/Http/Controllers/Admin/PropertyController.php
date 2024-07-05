@@ -54,9 +54,12 @@ class PropertyController extends Controller
 
     public function list(PropertiesGrid $usersGrid, Request $request)
     {
-        // return "sdf";
+        // return "sas";
+        // return $request;
         // dd($request->all());
+       
         $organizationTypes = collect(json_decode(file_get_contents(storage_path('data/organizationTypes.json')), true))->pluck('label', 'value');
+        $schoolTypes = collect(json_decode(file_get_contents(storage_path('data/schoolTypes.json')), true))->pluck('label', 'value');
 
 
         // $data['excel_data_properties'] = Property::with(['images', 'occupancy', 'assessment', 'geoRegistry', 'registryMeters', 'payments', 'landlord', 'assessment.typesTotal:id,label,value', 'assessment.types:id,label,value', 'assessment.valuesAdded:id,label,value', 'occupancies:id,occupancy_type,property_id', 'assessment.categories:id,label,value', 'propertyInaccessible:id,label'])
@@ -116,6 +119,15 @@ class PropertyController extends Controller
         } else {
             !$request->start_date ?: $this->properties->whereBetween('properties.created_at', [Carbon::parse($request->start_date), Carbon::now()]);
             !$request->end_date ?: $this->properties->whereBetween('properties.created_at', [Carbon::now()->subYear(5), Carbon::parse($request->end_date)->endOfDay()]);
+        }
+        if ($request->dc_start_date && $request->dc_end_date) {
+            $this->properties->whereBetween('properties.created_at', [
+                Carbon::parse($request->dc_start_date)->startOfDay(),
+                Carbon::parse($request->dc_end_date)->endOfDay()
+            ]);
+        } else {
+            !$request->dc_start_date ?: $this->properties->whereBetween('properties.created_at', [Carbon::parse($request->dc_start_date), Carbon::now()]);
+            !$request->dc_end_date ?: $this->properties->whereBetween('properties.created_at', [Carbon::now()->subYear(5), Carbon::parse($request->dc_end_date)->endOfDay()]);
         }
 
         if ($request->unpaid_start_date && $request->unpaid_end_date) {
@@ -271,14 +283,31 @@ class PropertyController extends Controller
             return $query->where('name', 'like', '%' . $request->name . '%');
         });
 
-        if ($request->input('is_organization') == 1 && $request->input('organization_type')) {
-            $this->properties->where('organization_type', $request->input('organization_type'))->where('is_organization', true);
-        }
+// echo $request->input('is_organization');
+// echo $request->input('organization_type');
+// die;
+        if ($request->input('is_organization') == 1 && $request->input('organization_type') || $request->input('school_type')) {
+            // return "if first";
+            if($request->input('school_type')){
+// return "1"; 
+                $this->properties->where('organization_school_type', $request->input('school_type'));
+            }else{
+             $this->properties->where('organization_type', $request->input('organization_type'))->where('is_organization', true);
+            }
+            
 
+        }
         if ($request->input('is_organization') && $request->input('is_organization') == 0) {
+            return "if second";
             $this->properties->where('is_organization', false);
         }
-
+        // if ($request->input('is_organization') == 1 && $request->input('organization_type') && $request->input('school_type')) {
+        //     return "if 3rd";
+        //     $this->properties->where('properties.organization_school_type', $request->input('school_type'));
+        // }
+// print_r($this->properties->get());
+//         die;
+        
 
         $data['types'] = PropertyCategory::pluck('label', 'id')->prepend('Select', '');
 
@@ -311,9 +340,14 @@ class PropertyController extends Controller
 
         $data['street_names'] = Property::distinct('street_name')->orderBy('street_name')->pluck('street_name', 'street_name')->sort()->prepend('Select street name', '');
         $data['street_numbers'] = Property::distinct('street_number')->orderBy('street_number')->pluck('street_number', 'street_number')->sort()->prepend('Select street number', '');
+        $data['additional_address'] = Property::distinct('additional_address_id')->orderBy('additional_address_id')->pluck('additional_address_id', 'additional_address_id')->sort()->prepend('Select additional address', '');
+        $data['propertyArea'] = Property::distinct('propertyArea')->orderBy('propertyArea')->pluck('propertyArea', 'propertyArea')->sort()->prepend('Select area', '');
         $data['postcodes'] = Property::distinct('postcode')->orderBy('postcode')->pluck('postcode', 'postcode')->sort()->prepend('Select post code', '');
         $data['organizationTypes'] = $organizationTypes;
-
+        $data['schoolTypes'] = $schoolTypes;
+        $data['first_name'] = LandlordDetail::distinct('first_name')->orderBy('first_name')->pluck('first_name', 'first_name')->sort()->prepend('Select owner name', '');
+        $data['middle_name'] = LandlordDetail::distinct('middle_name')->orderBy('middle_name')->pluck('middle_name', 'middle_name')->sort()->prepend('Select owner middle name', '');
+        $data['surname'] = LandlordDetail::distinct('surname')->orderBy('surname')->pluck('surname', 'surname')->sort()->prepend('Select owner last name', '');
         //return view('admin.payments.bulk-receipt')->with(['properties' => $this->properties->latest()->get()]);
 
         if ($request->download_pdf_in_bulk && $request->download_pdf_in_bulk == 1) {
@@ -549,7 +583,7 @@ class PropertyController extends Controller
          $property->generateAssessments();
 
         // load sub modals
-         $property->load([
+        $property->load([
             'images',
             'occupancy',
             'assessments' => function ($query) {
@@ -1059,10 +1093,64 @@ class PropertyController extends Controller
 
         return redirect()->back()->with('success', 'Occupancy details Updated Successfully !');
     }
+    public function calculateAssessment($request){
+        // return $request;
+        $onetownlotincat = 250000;
+        $onetownlot = 3750;
+        $persquare = 67;
+        $floorarea = $request->length * $request->breadth;
+        $floorareavalue = $persquare * $floorarea;
+        $category = PropertyCategory::find($request->property_categories[0]??0);
+       if ($category) {
+        $cat_value = $category->value;
+       }
+       $wall_value = $request->property_wall_materials_percentage;
+       $roof_value = $request->property_roof_materials_percentage;
+       $window_type_value = $request->property_window_materials_percentage;
+        $sanitation = PropertySanitationType::find($request->property_sanitation);
+       if ($sanitation) {
+         $san_value = $sanitation->value;
+       }
+       $habitable_floor = PropertyType::find($request->property_types[0]??0);
+       if ($habitable_floor) {
+        $hab_value = $habitable_floor->value;
+       }
+       $property_use = PropertyUse::find($request->property_use);
+       if ($property_use) {
+         $prop_use_value = $property_use->value;
+       }
+       $zone= 1;
+       $valuesArray = json_decode($request->property_value_added_percentage, true);
+        // Initialize the sum variable
+        $sum = 0;
 
+        // Iterate through the array and sum the numeric parts
+        foreach ($valuesArray as $value) {
+            $parts = explode(',', $value);
+            if (isset($parts[2])) {
+                $sum += (int)$parts[2]; // Convert to integer and add to sum
+            }
+        }
+
+    // Save the sum in a variable
+     $totalValueAdded = $sum;
+
+    $additions = $wall_value + $roof_value + $window_type_value +  $totalValueAdded ;
+    $multipliers = $prop_use_value * $san_value * $cat_value * $zone * $hab_value; 
+
+     $calculatedassessedvalue = ($floorareavalue + $additions) * $multipliers ;
+      $counciladjustment = AdjustmentValue::whereIn('adjustment_id',$request->property_council_adjustments)->where('id','<',10)->sum('percentage');
+       $actualadjustment = $counciladjustment / 100 ;
+
+       $calculatedNetAssessedvalue = $calculatedassessedvalue - ($actualadjustment * $calculatedassessedvalue);
+      return ['newassessmentvalue'=>$calculatedassessedvalue, 'newnetassessedvalue'=> $calculatedNetAssessedvalue];
+    }
     public function saveAssessment(Request $request)
     {
         // return $request;
+          $assessmentValue = $this->calculateAssessment($request);
+           $assessmentValue['newassessmentvalue'];
+           $assessmentValue['newnetassessedvalue'];
         $request->validate([
             "assessment_id" => "required|integer",
             "property_id" => "required|integer",
@@ -1167,9 +1255,9 @@ class PropertyController extends Controller
         $data['wall_material_percentage']=$request->property_wall_materials_percentage;
         $data['roof_material_percentage']=$request->property_roof_materials_percentage;
         $data['window_type_percentage']=$request->property_window_materials_percentage;
-        $data['property_assessed_value']=$request->property_assessed_value;
-        $data['property_rate_without_gst']=$request->property_assessed_value;
-        $data['net_property_assessed_value']=$request->net_property_assessed_value;
+        $data['property_assessed_value']= $assessmentValue['newassessmentvalue'];
+        $data['property_rate_without_gst']= $assessmentValue['newassessmentvalue'];
+        $data['net_property_assessed_value']=$assessmentValue['newnetassessedvalue'];
         $data['taxable_property_value']=$request->taxbale_property_value;
         $data['property_tax_payable_2024']=$request->property_tax_payable_2024;
         $data['discounted_rate_payable']=$request->discounted_rate_payable;
@@ -1195,6 +1283,57 @@ class PropertyController extends Controller
         $assessment->valuesAdded()->sync($valuesAdded);
 
         return redirect()->back()->with('success', 'Assessment details Updated Successfully!');
+    }
+    public function updatePropertyAssessmentDetail(Request $request)
+    {
+        $detail = PropertyAssessmentDetail::with('types','typesTotal','valuesAdded','categories')->where('id', '=', $request->assessment_id)->firstOrFail();
+       
+        $onetownlotincat = 250000;
+        $onetownlot = 3750;
+        $persquare = 67;
+        // return $request;
+        $floorareavalue = $request->area * $persquare;
+        $wall_value = $detail->wall_material_percentage;
+        $roof_value = $detail->roof_material_percentage;
+        $window_type_value = $detail->window_type_percentage;
+         $sanitation = PropertySanitationType::find($detail->sanitation);
+        if ($sanitation) {
+          $san_value = $sanitation->value;
+        }
+        $zone = 1;
+        $property_use = PropertyUse::find($detail->property_use);
+        if ($property_use) {
+          $prop_use_value = $property_use->value;
+        }
+        $property_type = $detail['types'][0]->value;
+        $va = 0; 
+        foreach ($detail['valuesAdded'] as $key => $value) {
+            $va += $value->value;
+         }
+          $va;
+          $property_cat = $detail['categories'][0]->value;
+          $additions = $wall_value + $roof_value + $window_type_value +  $va ;
+          $multipliers = $prop_use_value * $san_value * $property_cat * $zone * $property_type; 
+      
+           $calculatedassessedvalue = ($floorareavalue + $additions) * $multipliers ;
+          $actualadjustment = $detail->council_adjustments / 100 ;
+
+            $calculatedNetAssessedvalue = $calculatedassessedvalue - ($actualadjustment * $calculatedassessedvalue);
+        $property_id = $request->property_id;
+        $length = $request->length;
+        $breadth = $request->breadth;
+        $area = $request->area;
+        $is_map_set = $request->is_map_set;
+
+        $detail->square_meter = round($area,2);
+        $detail->length = round($length,2);
+        $detail->breadth = round($breadth,2);
+        $detail->is_map_set = $is_map_set;
+        $detail->property_assessed_value= $calculatedassessedvalue;
+        $detail->property_rate_without_gst= $calculatedassessedvalue;
+        $detail->net_property_assessed_value=$calculatedNetAssessedvalue;
+        $detail->save();
+         return response()->json("Assessment Updated successfully");
     }
 
     public function saveGeoRegistry(Request $request)
@@ -1456,6 +1595,12 @@ class PropertyController extends Controller
         $window_material = PropertyWindowType::where('id',$request->value)->first();
 
        return view('admin.properties.window_material_dropdown',compact('window_material'));
+    }
+    public function get_value_added(Request $request){
+        // return $request;
+        $value_added = PropertyValueAdded::where('id',$request->value)->first();
+        
+        return view('admin.properties.value_added_dropdown',compact('value_added'));
     }
     public function read_excel(){
         return "sdaf";

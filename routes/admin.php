@@ -59,6 +59,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::post('property/get_data_material', 'PropertyController@get_material')->name('get_material');
         Route::post('property/get_data_material_roof', 'PropertyController@get_material_roof')->name('get_material_roof');
         Route::post('property/get_data_material_window', 'PropertyController@get_material_window')->name('get_material_window');
+        Route::post('property/get_data_value_added', 'PropertyController@get_value_added')->name('get_value_added');
         Route::get('property/meter/delete/{id}', 'PropertyController@deleteMeter')->name('properties.meter.delete');
         //landlord Verification
         Route::get('verify/landlorddetails', 'PropertyController@verifyLandlord')->name('verify.landlord');
@@ -80,6 +81,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::post('property/save', 'PropertyController@saveProperty')->name('properties.property.save');
         Route::post('occupancy/save', 'PropertyController@saveOccupancy')->name('properties.occupancy.save');
         Route::post('assessment/save', 'PropertyController@saveAssessment')->name('properties.assessment.save');
+        Route::get('assessment/update', 'PropertyController@updatePropertyAssessmentDetail')->name('properties.assessment.update');
         Route::post('geo-registry/save', 'PropertyController@saveGeoRegistry')->name('properties.geo-registry.save');
         Route::post('landlord/send-sms', 'PropertyController@sensSmsLandlord')->name('properties.landlord.sendsms');
 
@@ -198,6 +200,8 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::group(['middleware' => ['role:Super Admin|Admin|manager|cashiers|supervisor']], function () {
         Route::post('payment/{id}', 'PaymentController@store')->name('payment.store');
         Route::get('payments', 'PaymentController@show')->name('payment');
+        Route::get('reverse_payments', 'PaymentController@show_reverse')->name('reverse_payment');
+        Route::get('reverse/{id}', 'PaymentController@reverse')->name('reverse');
         Route::get('/text-payer', 'TaxPayerController@index')->name('tax-payer');
         Route::group(['prefix' => 'account', 'as' => 'account.', 'namespace' => 'Account'], function () {
             Route::get('reset-password', 'ResetPasswordController')->name('reset-password');
