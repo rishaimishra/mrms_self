@@ -328,8 +328,8 @@
 
                 
 
-                <div class="col-md-3">
-                    {{-- <label for="">Created </label> --}}
+                {{--  <div class="col-md-3">
+                    <label for="">Created </label>
                     <div class="row">
 
                         <div class="col-sm-6">
@@ -352,7 +352,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>  --}}
 
                 
 

@@ -22,7 +22,7 @@
                     <div class="body" style=" overflow-x: scroll; ">
                         <table class="table">
                             <thead>
-                            <th>Assessment Year</th>
+                            <th>Year</th>
                             {{--  <th>Assessment amount</th>  --}}
                             <th>Assessed Value</th>
                             <th>Council Adjustments</th>
@@ -33,7 +33,7 @@
                             <th>Arrears</th>
                             <th>Penalty</th>
                             <th>Amount Paid</th>
-                            <th>Due</th>
+                            <th>Balance Due</th>
                             </thead>
                             <tbody>
 
@@ -264,16 +264,14 @@
                                 <p>{{$property->organization_tin}}</p>
                             </div> --}}
                             <div class="col-sm-3">
-                                <h6>Organization Address</h6>
-                                <p>{{$property->organization_addresss}}</p>
+                                <h6>Street Name</h6>
+                                <p>{{$property->landlord->street_name}}</p>
                             </div>
+                          
                         @endif
                     </div>
                     <div class="row">
-                        <div class="col-sm-3">
-                            <h6>Street Name</h6>
-                            <p>{{$property->landlord->street_name}}</p>
-                        </div>
+                       
                         <div class="col-sm-3">
                             <h6>Additional Street address</h6>
                             <p>{{$property->landlord->additional_address_id}}</p>
@@ -285,6 +283,10 @@
                         <div class="col-sm-3">
                             <h6>Ward</h6>
                             <p>{{$property->landlord->ward}}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <h6>Constituency</h6>
+                            <p>{{$property->landlord->constituency}}</p>
                         </div>
                         
                        
@@ -316,10 +318,7 @@
                     </div>
                     <div class="row">
                        
-                        <div class="col-sm-3">
-                            <h6>Constituency</h6>
-                            <p>{{$property->landlord->constituency}}</p>
-                        </div>
+                       
                         <div class="col-sm-3">
                             <h6>Section</h6>
                             <p>{{$property->landlord->section}}</p>
@@ -332,14 +331,15 @@
                             <h6>District</h6>
                             <p>{{$property->landlord->district}}</p>
                         </div>
-                    </div>
-
-                    <div class="row">
-                        
                         <div class="col-sm-3">
                             <h6>Province</h6>
                             <p>{{$property->landlord->province}}</p>
                         </div>
+                    </div>
+
+                    <div class="row">
+                        
+                       
                         <div class="col-sm-3">
                             <h6>Postcode</h6>
                             <p>{{$property->landlord->postcode}}</p>
@@ -352,15 +352,12 @@
                             <h6>Mobile Number 2</h6>
                             <p>{{$property->landlord->mobile_2}}</p>
                         </div>
-                    </div>
-                    <div class="row">
-                        
                         <div class="col-sm-3">
                             <h6>Email Address</h6>
                             <p>{{$property->landlord->email}}</p>
                         </div>
-                        
                     </div>
+                  
                 </div>
                 <div style="display: none;" class="body landlord-edit">
                     <div class="row">
@@ -1361,7 +1358,7 @@
        var measuretool = new MeasureTool(map, {
             showSegmentLength: true,
             tooltip: true,
-            unit: MeasureTool.UnitTypeId.METRIC
+            unit: MeasureTool.UnitTypeId.IMPERIAL
         });
 
         var infowindow = new google.maps.InfoWindow();

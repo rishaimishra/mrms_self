@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\Audit;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Spatie\Activitylog\Models\Activity;
-
+use App\Models\AssiegnedProperties;
 class PropertyLog extends Controller
 {
     public function index(Request $request)
@@ -103,5 +103,9 @@ class PropertyLog extends Controller
         $activity = $activity->latest()->paginate();
         $lastday = lastday();
         return view('admin.audit.property-registry-meter', compact('activity', 'lastday'));
+    }
+    public function property_assigned_officers(){
+        $activity = AssiegnedProperties::with('get_properties','get_user')->get();
+       return view('admin.audit.property-assign-officer', compact('activity'));
     }
 }

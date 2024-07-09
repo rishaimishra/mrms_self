@@ -212,7 +212,7 @@
                             </div>
 
                             <div class="col-sm-3">
-                            <label class="form-label">Assign District </label>
+                            <label class="form-label">Assign Council </label>
                             @hasrole('Super Admin')
                                 <select name="assign_district" id="assign_district" class="form-control show-tick">
 

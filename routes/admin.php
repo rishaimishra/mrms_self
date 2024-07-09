@@ -184,6 +184,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
 
         Route::get('payment/edit/{id}', 'PaymentController@edit')->name('payment.edit');
+        Route::get('payment_reverse/edit/{id}', 'PaymentController@reverse_edit')->name('payment_reverse.edit');
         Route::get('payment/verify/{id}', 'PaymentController@verify')->name('payment.verify');
         Route::post('payment/edit/{id}', 'PaymentController@update')->name('payment.update');
         Route::get('payment/delete/{id}', 'PaymentController@delete')->name('payment.delete');
@@ -238,6 +239,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
             Route::get('properti-occupancy-detail', 'PropertyLog@occupancyDetail')->name('property.occupancyDetail');
             Route::get('properti-geoRegistry', 'PropertyLog@geoRegistry')->name('property.geoRegistry');
             Route::get('properti-registry-meter', 'PropertyLog@registryMeter')->name('property.registryMeter');
+            Route::get('property_assigned_officers', 'PropertyLog@property_assigned_officers')->name('property.property_assigned_officers');
 
 
             Route::get('assessment/property-categories', 'AssessmentOptionsLog@propertyCategories')->name('assessment.property.categories');

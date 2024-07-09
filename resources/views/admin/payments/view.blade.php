@@ -224,7 +224,7 @@
 
                                 <div class="col-sm-3">
                                     <label for="amount_paid">Amount
-                                        Paid({{ $property->assessment->created_at->format('Y') }})</label>
+                                        Paid ({{ $property->assessment->created_at->format('Y') }})</label>
                                     <div class="form-group">
                                         <div class="form-line">
                                             <input type="text" id="amount_paid" name="amount_paid"
@@ -350,7 +350,7 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
-                                    <label for="email_address" class="text-danger">Payment Fulfilment</label>
+                                    <label for="email_address">Payment Fulfilment</label>
                                     <div class="form-group">
                                         <div class="form-line" id="payemnt_fulfilment">
                                             <input type="text" id="payment_fulfilment"  value=""
@@ -867,7 +867,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3">
-                                        <h6>Calculated Property Rate </h6>
+                                        <h6>Assessed Value </h6>
                                         <p>
                                             Le {{number_format($property->assessment->property_rate_without_gst,0,'',',')}}</p>
                                     </div>
@@ -915,40 +915,13 @@
 
                             </div>
                             <div class="body geo-registry-view">
-                                <div class="row">
-                                    @if($property->registryMeters->count())
-                                        @foreach($property->registryMeters as $key=>$value)
-                                            <div class="col-sm-3">
-                                                <h6>Meter Number {{$key+1}}</h6>
-                                                <p>{{$value->number}}</p>
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        <div class="col-sm-3">
-                                            <h6>Meter Number</h6>
-                                            <p></p>
-                                        </div>
-                                    @endif
+                               
 
-                                    <div class="col-sm-3">
-                                        <h6>Point 1</h6>
-                                        <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point1)}}</p>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <h6>Point 2</h6>
-                                        <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point2)}}</p>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <h6>Point 3</h6>
-                                        <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point3)}}</p>
-                                    </div>
-                                </div>
+
+
+
                                 <div class="row">
-                                    <div class="col-sm-3">
-                                        <h6>Point 4</h6>
-                                        <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point4)}}</p>
-                                    </div>
-                                    <div class="col-sm-3">
+                                    {{-- <div class="col-sm-3">
                                         <h6>Point 5</h6>
                                         <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point5)}}</p>
                                     </div>
@@ -960,43 +933,44 @@
                                         <h6>Point 7</h6>
                                         <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point7)}}</p>
                                     </div>
-                                </div>
-                                <div class="row">
                                     <div class="col-sm-3">
                                         <h6>Point 8</h6>
                                         <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point8)}}</p>
+                                    </div> --}}
+                                    <div class="clearfix"></div>
+                                    <div class="col-sm-3">
+                                        <h6>Dor Lat Long</h6>
+                                        <p>{{\App\Models\Property::getLatLong($property->geoRegistry->dor_lat_long)}}</p>
                                     </div>
+        
                                     <div class="col-sm-3">
                                         <h6>Digital Address</h6>
                                         <p>{{$property->geoRegistry->digital_address}}</p>
                                     </div>
+        
                                     <div class="col-sm-3">
                                         <h6>Open Location Code</h6>
-                                        <p>{{ $property->postcode }} {{$property->geoRegistry->open_location_code}}</p>
+                                        {{-- <p>{{ $property->postcode }} </p> --}}
+                                            
+                                            <p>{{$property->geoRegistry->open_location_code}}</p>
                                     </div>
                                 </div>
+        
                                 <div id="aniimated-thumbnials" class="list-unstyled row clearfix aniimated-thumbnials">
-
+        
                                     @if($property->registryMeters->count())
                                         @foreach($property->registryMeters as $key=>$image)
-                                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
                                                 <h6>Meter Image {{$key+1}}</h6>
-
+        
                                                 <a href="{{$image->getImageUrl(800,800)}}" data-sub-html="">
                                                     <img class="img-responsive thumbnail"
-                                                         src="{{$image->getImageUrl(100,100)}}">
+                                                         src="{{$image->getImageUrl(224,155)}}">
                                                 </a>
+                                                <p class="text-center"><strong>Meter Number: </strong> {{$image->number}}</p>
                                             </div>
-
+        
                                         @endforeach
-                                    @else
-                                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                                            <h6>Meter Image</h6>
-                                            <a href="{{asset('/images/No_Image_Available.jpg')}}" data-sub-html="">
-                                                <img style="width: 100px;height: 100px" class="img-responsive thumbnail"
-                                                     src="{{asset('/images/No_Image_Available.jpg')}}">
-                                            </a>
-                                        </div>
                                     @endif
                                 </div>
                             </div>

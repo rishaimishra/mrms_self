@@ -21,6 +21,7 @@ use App\Models\PropertyDimension;
 use App\Models\PropertyGeoRegistry;
 use App\Models\PropertyInaccessible;
 use App\Models\PropertyRoofsMaterials;
+use App\Models\AssiegnedProperties;
 use App\Models\PropertyType;
 use App\Models\PropertyUse;
 use App\Models\PropertyValueAdded;
@@ -844,6 +845,8 @@ class PropertyController extends Controller
 
     public function saveAssignProperty(Request $request)
     {
+        // return $request;
+        // return request()->user()->id;
         $this->validate($request, [
             'assessment_officer' => 'required|exists:users,id',
           //  'dor_lat_long' => 'required'
@@ -884,11 +887,17 @@ class PropertyController extends Controller
 
                         $geoRegistry->fill(['dor_lat_long' => $numbers[$i]]);
                         $geoRegistry->save();
-
+                        $assigned_prop = new AssiegnedProperties();
+       
+                        $assigned_prop->officer_id = $assessmentOfficer->id;
+                        $assigned_prop->latlong = $request->dor_lat_long;
+                        $assigned_prop->user_id = request()->user()->id;
+                        $assigned_prop->property_id = $property->id ? $property->id : null;
+                         $assigned_prop->save();
            }
         }else{
          // If User uploads a Excel file
-
+            // return "else";
         $assessmentOfficer = User::findOrFail($request->assessment_officer);
         $property = $assessmentOfficer->properties()->firstOrNew(['id' => null]);
         $property->is_admin_created = 1;
@@ -906,8 +915,13 @@ class PropertyController extends Controller
 
             $geoRegistry->fill(['dor_lat_long' => $request->dor_lat_long]);
             $geoRegistry->save();
-
-
+        $assigned_prop = new AssiegnedProperties();
+       
+        $assigned_prop->officer_id = $assessmentOfficer->id;
+        $assigned_prop->latlong = $request->dor_lat_long;
+        $assigned_prop->user_id = request()->user()->id;
+        $assigned_prop->property_id = $property->id ? $property->id : null;
+         $assigned_prop->save();
         }
 
         return redirect()->back()->with('success', 'New Property Assigned Successfully!');
@@ -4366,4 +4380,5 @@ class PropertyController extends Controller
     // return $csv;
     
     }
+    
 }

@@ -168,7 +168,7 @@
     <div class="card">
         <div class="header bg-red">
             <h2>
-               Reverse Transactions
+               Reversed Payments
             </h2>
         </div>
         <div class="body"  style=" overflow-x: scroll; ">
@@ -786,7 +786,106 @@
             <p>There is no result for this digital address</p>
         @endif
     @else
-        <p>There is no result for this digital address</p>
+       
+    
+        {{--  <p>There is no result for this digital address</p>  --}}
+        <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header bg-red">
+                    <h2>
+                       Reversed Payments
+                    </h2>
+                </div>
+                <div class="body"  style=" overflow-x: scroll; ">
+                    <table class="table">
+                        <thead>
+                        <th>Property ID</th>
+                        <th>Transaction ID</th>
+                        <th>Payment Made</th>
+                        <th>Cashier Name</th>
+                        <th>Amount Due</th>
+                        {{-- <th>Paying Amount</th>
+                        <th>Penalty</th> --}}
+                        <th>Amount Paid</th>
+                        <th>Remaining Balance</th>
+                        <th>Payment Type</th>
+                        <!-- <th>Cheque Number</th> -->
+                        <th>Payee Name</th>
+                        <th>Transaction Date</th>
+                        <th>Receipt</th>
+                        @hasanyrole('Super Admin|Admin')
+                        <th>View</th>
+                        <!-- <th>Reverse Payment</th> -->
+                        @endhasanyrole
+                        </thead>
+                        <tbody>
+                        @foreach($reverse_payments as $payment)
+                            <tr>
+                                <td>{{ $payment->property_id }}</td>
+                                <td>{{ $payment->transaction_id }}</td>
+                                <td>{{ $payment->payment_made_year == null ? '---' :  $payment->payment_made_year }}</td>
+                                <td>{{ $payment->admin->getName() }}</td>
+                                <td>{{ number_format($payment->assessment) }}</td>
+                                {{-- <td>{{ number_format($payment->amount) }}</td>
+                                <td>{{ number_format($payment->penalty) }}</td> --}}
+                                <td>{{ number_format($payment->total) }}</td>
+                                <td>{{ number_format($payment->balance < 0 ? 0 : $payment->balance) }}</td>
+                                <td>{{ ucwords($payment->payment_type) }}</td>
+                                <!-- <td>{{ $payment->cheque_number }}</td> -->
+                                <td>{{ $payment->payee_name }}</td>
+                                <td>{{ \Carbon\Carbon::parse($payment->created_at)->format('M d, Y') }}</td>
+                                <td>
+                                    @if(!empty($payment->physical_receipt_image_path))
+                                   <img class="zoom_receipt" src="{{ $payment->physical_receipt_image_path }}" alt="" width="80" height="60">
+                                   @else
+                                   <p>No Receipt Uploaded</p>
+                                   @endif
+                                </td>
+                                @hasanyrole('Super Admin|Admin')
+                                <td>
+                                <!-- <a class=""
+                                       href="{{ route('admin.payment.verify', $payment->id) }}"><i
+                                            style="font-size: 25px;" class="material-icons">fact_check</i>
+                                    </a> -->
+        
+                                    <a class=""
+                                       href="{{ route('admin.payment_reverse.edit', $payment->transaction_id) }}"><i
+                                            style="font-size: 25px;" class="material-icons">visibility</i>
+                                    </a>
+                                       <!-- <a href="{{ route('admin.payment.delete', $payment->id) }}"
+                                                      id="delete-payment">
+                                                      <i style="font-size: 25px;"
+                                                                             class="material-icons">delete</i></a> -->
+        
+                                   </td>
+        
+                                   @endhasanyrole
+                                {{--<th>
+                                    <a class="btn btn-primary btn-xs"
+                                       href="{{ route('admin.payment.edit', $payment->id) }}"><i
+                                            style="font-size: 14px;" class="material-icons">colorize</i>Edit
+                                    </a> &nbsp;&nbsp;
+                                    <a class="btn btn-danger btn-xs"
+                                       href="{{ route('admin.payment.delete', $payment->id) }}"
+                                       id="delete-payment"><i style="font-size: 14px;"
+                                                              class="material-icons">delete</i>Delete</a>
+                                    <a style="margin-left: 10px;" class="btn btn-success btn-xs"
+                                       href="{{ route('admin.payment.pos.receipt', ['id' => $property->id, 'payment_id' => $payment->id]) }}"><i
+                                            style="font-size: 14px;"
+                                            class="material-icons">print</i>Print</a>
+                                </th>--}}
+                                    <!-- <td>
+                                        <a href="{{route('admin.reverse', $payment->id)}}" class="btn btn-primary m-t-15 waves-effect btn-lg">Reverse Payment</a>
+                                    </td> -->
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+      
     @endif
 @stop
 
