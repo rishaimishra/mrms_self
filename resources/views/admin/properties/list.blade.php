@@ -1226,7 +1226,13 @@ jQuery("#is_paid_property_2").on('click', function () {
 
             }
 
-            $("#total_amount").text((str.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")));
+            str = str.toFixed(2);
+
+            // Add thousand separators
+            str = str.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            
+            // Update the text content of the target element
+            $("#total_amount").text(str);
             return false;
         }
     </script>

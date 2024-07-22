@@ -2,19 +2,19 @@
 
 namespace App\Grids;
 
-use App\Models\User;
+use App\Models\Complaint;
 use Closure;
 use Illuminate\Support\HtmlString;
 use Leantony\Grid\Grid;
 
-class PropertiesGrid extends Grid implements PropertiesGridInterface
+class GarbageGrid extends Grid implements GarbageGridInterface
 {
     /**
      * The name of the grid
      *
      * @var string
      */
-    protected $name = 'Properties';
+    protected $name = 'Garbage Collection';
 
     /**
      * List of buttons to be generated on the grid
@@ -50,75 +50,27 @@ class PropertiesGrid extends Grid implements PropertiesGridInterface
                 'presenter' => function ($columnData, $columnName) {
                     return new HtmlString(
                         '<div class="demo-checkbox">
-                                <input type="checkbox" name="selected_properties[]" class="filled-in filtered-property" value="' . $columnData->id . '" id="basic_checkbox_' . $columnData->id . '"  />
+                        <input type="checkbox" name="selected_properties[]" class="filled-in filtered-property" value="' . $columnData->id . '" id="basic_checkbox_' . $columnData->id . '"  />
                                 <label for="basic_checkbox_' . $columnData->id . '">' . $columnData->id . ($columnData->created_from ? '/' . $columnData->created_from : '') . '</label></div>'
                     );
                 },
             ],
-            "landlord" => [
+            "latitude longitude" => [
                 "search" => [
                     "enabled" => true
                 ],
                 'presenter' => function ($columnData, $columnName) {
-                    return (($columnData->organization_name && $columnData->is_organization == 1)  ? $columnData->organization_name : ($columnData->landlord->first_name . ' ' . $columnData->landlord->middle_name . ' ' . $columnData->landlord->surname));
+                    return ($columnData->latlng) ;
                 },
             ],
-            "app_user" => [
-                "sort" => false,
+            "user" => [
                 "search" => [
                     "enabled" => true
                 ],
                 'presenter' => function ($columnData, $columnName) {
-                    return optional($columnData->user)->name;
+                    return optional($columnData->get_user)->first_name;
                 },
             ],
-            "section" => [
-                "search" => [
-                    "enabled" => true
-                ],
-            ],
-            "chiefdom" => [
-                "search" => [
-                    "enabled" => true
-                ],
-
-            ],
-            "province" => [
-                "search" => [
-                    "enabled" => true
-                ],
-
-            ],
-            "postcode" => [
-                "search" => [
-                    "enabled" => true
-                ],
-
-            ],
-            "is_completed" => [
-                'label' => "Completed",
-                "search" => [
-                    "enabled" => true
-                ],
-                'presenter' => function ($columnData, $columnName) {
-                    return (($columnData->is_completed && $columnData->is_draft_delivered) ? 'Yes' : 'No');
-                },
-
-            ],
-            "rate payable" => [
-                "search" => [
-                    "enabled" => true
-                ],
-                'presenter' => function ($columnData, $columnName) {
-                    return 'Le ' . number_format($columnData->assessment->getPropertyTaxPayable(), 2, '.', ',');
-                },
-            ],
-            "created_at" => [
-                "sort" => false
-            ],
-            "updated_at" => [
-                "sort" => false
-            ]
         ];
     }
 
@@ -134,8 +86,8 @@ class PropertiesGrid extends Grid implements PropertiesGridInterface
 
         // crud support
         $this->setCreateRouteName('admin.properties.create');
-        $this->setViewRouteName('admin.properties.show');
-        $this->setDeleteRouteName('admin.properties.destroy');
+        $this->setViewRouteName('admin.garbage-collection');
+        $this->setDeleteRouteName('admin.complaint-listing-delete');
 
         // default route parameter
         $this->setDefaultRouteParameter('id');

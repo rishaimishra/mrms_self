@@ -150,7 +150,12 @@
                         <div class="col-sm-7">
                             <div class="form-group form-float">
                                 <div class="form-line">
+                                    @if($district->council_short_name == 'KCC' || $district->council_short_name =='FCC' || $district->council_short_name =='BMC' || $district->council_short_name =='BOCC' || $district->council_short_name =='MCC' || $district->council_short_name =='KNSCC' || $district->council_short_name =='PLCC')
+                                    <span class="image">Mayors Sign</span>
+                                    @else
                                     <span class="image">Ceo Sign</span>
+                                    @endif
+                                    
                                     <input type="file" name="ceo_sign">
 
                                 </div>

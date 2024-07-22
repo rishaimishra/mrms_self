@@ -129,7 +129,8 @@ class PropertyController extends ApiController
             // 'window_type_value' =>($request->window_type_condition)? $request->window_type_condition['value'] : null,
             'random_id' => $request->input('random_id'),
             'additional_address_id' => $request->property_additional_address_id ?: null,
-            'beach_front' => $request->beach_front ?: null,
+            'beach_front' => $request->beach_front == 'true' ? "true" : null,
+            'tenant_type' => $request->tenant_type ?: null,
             'organization_school_type' => $request->organization_school_type ?: null,
 
         ]);
@@ -497,33 +498,42 @@ class PropertyController extends ApiController
                 ]
 
              ];
-             $check_additional_address = \DB::table('additional_address')->where('title',$request->property_additional_address_id)->first();
-             if (!$check_additional_address) {
-               DB::table('additional_address')->insert([
-                   'title' => $request->property_additional_address_id
-               ]);
-           }
-           $check_first_name = \DB::table('meta_values')->where('name','first_name')->where('value',$request->landlord_first_name)->first();
-           if (!$check_first_name) {
-             DB::table('meta_values')->insert([
-                   'name'=>'first_name',
-                   'value' => $request->landlord_first_name
-             ]);
-         }
-         $check_surname = \DB::table('meta_values')->where('name','surname')->where('value',$request->landlord_surname)->first();
-         if (!$check_surname) {
-           DB::table('meta_values')->insert([
-                 'name'=>'surname',
-                 'value' => $request->landlord_surname
-           ]);
-           }
-           $check_streetname = \DB::table('meta_values')->where('name','street_name')->where('value',$request->landlord_street_name)->first();
-           if (!$check_streetname) {
-             DB::table('meta_values')->insert([
-                   'name'=>'street_name',
-                   'value' => $request->landlord_street_name
-             ]);
+             if (!empty($request->property_additional_address_id)) {
+                $check_additional_address = \DB::table('additional_address')->where('title',$request->property_additional_address_id)->first();
+                if (!$check_additional_address) {
+                  DB::table('additional_address')->insert([
+                      'title' => $request->property_additional_address_id
+                  ]);
+              }
              }
+           if (!empty($request->landlord_first_name)) {
+            $check_first_name = \DB::table('meta_values')->where('name','first_name')->where('value',$request->landlord_first_name)->first();
+            if (!$check_first_name) {
+              DB::table('meta_values')->insert([
+                    'name'=>'first_name',
+                    'value' => $request->landlord_first_name
+              ]);
+          }
+           }
+           if (!empty($request->landlord_surname)) {
+            $check_surname = \DB::table('meta_values')->where('name','surname')->where('value',$request->landlord_surname)->first();
+            if (!$check_surname) {
+              DB::table('meta_values')->insert([
+                    'name'=>'surname',
+                    'value' => $request->landlord_surname
+              ]);
+              }
+           }
+           if (!empty($request->landlord_street_name)) {
+            $check_streetname = \DB::table('meta_values')->where('name','street_name')->where('value',$request->landlord_street_name)->first();
+            if (!$check_streetname) {
+              DB::table('meta_values')->insert([
+                    'name'=>'street_name',
+                    'value' => $request->landlord_street_name
+              ]);
+              }
+           }
+         
 
         return $this->success([
             'property_id' => $property->id,
@@ -870,7 +880,7 @@ class PropertyController extends ApiController
 
         $result = \DB::table('boundary_delimitations')
             ->leftJoin('districts', 'boundary_delimitations.district', '=', 'districts.name')
-            ->select('boundary_delimitations.id', 'boundary_delimitations.ward', 'boundary_delimitations.constituency', 'boundary_delimitations.section', 'boundary_delimitations.chiefdom', 'boundary_delimitations.district', 'boundary_delimitations.province', 'boundary_delimitations.council', 'boundary_delimitations.prefix', 'districts.group_name')
+            ->select('boundary_delimitations.id', 'boundary_delimitations.ward', 'boundary_delimitations.constituency', 'boundary_delimitations.section', 'boundary_delimitations.chiefdom', 'boundary_delimitations.district', 'boundary_delimitations.province', 'boundary_delimitations.council', 'boundary_delimitations.prefix', 'districts.group_name','districts.sq_meter_value')
             ->where('boundary_delimitations.district', $request->user()->assign_district)
             ->groupBy('boundary_delimitations.ward')
             ->get();

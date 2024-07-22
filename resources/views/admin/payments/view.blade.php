@@ -242,12 +242,12 @@
                                     <label for="balance">Balance</label>
                                     <div class="form-group">
                                         <div class="form-line">
-                                            <input type="text" id="balance"
-                                                   value="{{ old('balance', (number_format(max($property->assessment->getCurrentYearTotalDue(), 0),0,'',','))) }}"
-                                                   name="balance"
-                                                   class="form-control"
-                                                   style="background-color: #eee;padding-left: 5px;"
-                                                   placeholder="Enter Balance" disabled>
+                                        <input type="text" id="balance"
+                                                value="{{ old('balance', number_format((float) max($property->assessment->getCurrentYearTotalDue(), 0), 2, '.', ',')) }}"
+                                                name="balance"
+                                                class="form-control"
+                                                style="background-color: #eee; padding-left: 5px;"
+                                                placeholder="Enter Balance" disabled>
                                         </div>
                                         {!! $errors->first('balance', '<span class="error">:message</span>') !!}
                                     </div>
@@ -529,7 +529,7 @@
                                             <td>{{ number_format($assessmentHistory->getPastPayableDue()) }}</td>
                                             <td>{{ number_format($assessmentHistory->getPenalty()) }}</td>
                                             <td>{{ number_format($assessmentHistory->getCurrentYearTotalPayment()) }}</td>
-                                            <td>{{ number_format($assessmentHistory->getCurrentYearTotalDue()) }}</td>
+                                            <td>{{ number_format((float)$assessmentHistory->getCurrentYearTotalDue(), 2, '.', ',') }}</td>
                                         </tr>
                                     @endforeach
                                     {{-- <tr>
@@ -538,7 +538,7 @@
                                         <td>{{ number_format($property->assessment->getPastPayableDue()) }}</td>
                                         <td>{{ number_format($property->assessment->getPenalty()) }}</td>
                                         <td>{{ number_format($property->assessment->getCurrentYearTotalPayment()) }}</td>
-                                        <td>{{ number_format($property->assessment->getCurrentYearTotalDue()) }}</td>
+                                        <td>{{ number_format((float)$property->assessment->getCurrentYearTotalDue(), 2, '.', ',') }}</td>
                                     </tr> --}}
                                     </tbody>
                                 </table>

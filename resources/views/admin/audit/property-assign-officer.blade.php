@@ -71,7 +71,7 @@
                                 @foreach($activity as $amd)
 
                                     <tr>
-                                        <td>{{ $amd->get_properties->id  }}</td>
+                                        <td>{{ $amd->property_id  }}</td>
                                         <td class="{{$amd->description}}">{{$amd->latlong}}</td>
                                         <td>{{ $amd->get_user->name  }}</td>
                                         @php
@@ -121,7 +121,8 @@
 
                     </div>
                 </div>
-
+            @else
+            <p>No Record Found</p>
             @endif
 
         </div>

@@ -596,7 +596,7 @@ class PropertyController extends Controller
             'propertyInaccessible'
         ]);
 
-
+        // return $property;
         if (request()->user()->hasRole('Super Admin')) {
             $data['town'] = BoundaryDelimitation::distinct()->orderBy('section')->pluck('section', 'section');
             $data['chiefdom'] = BoundaryDelimitation::distinct()->orderBy('chiefdom')->pluck('chiefdom', 'chiefdom')->sort();
@@ -1109,9 +1109,12 @@ class PropertyController extends Controller
     }
     public function calculateAssessment($request){
         // return $request;
-        $onetownlotincat = 250000;
+        $district_name = $request->district_name;
+        $district_value = District::where('name',$district_name)->first();
+        $onetownlotincat = $district_value->sq_meter_value;
+        // $onetownlotincat = 250000;
         $onetownlot = 3750;
-        $persquare = 67;
+        $persquare = $onetownlotincat / $onetownlot;
         $floorarea = $request->length * $request->breadth;
         $floorareavalue = $persquare * $floorarea;
         $category = PropertyCategory::find($request->property_categories[0]??0);
@@ -1300,11 +1303,13 @@ class PropertyController extends Controller
     }
     public function updatePropertyAssessmentDetail(Request $request)
     {
-        $detail = PropertyAssessmentDetail::with('types','typesTotal','valuesAdded','categories')->where('id', '=', $request->assessment_id)->firstOrFail();
-       
-        $onetownlotincat = 250000;
+        $detail = PropertyAssessmentDetail::with('property','types','typesTotal','valuesAdded','categories')->where('id', '=', $request->assessment_id)->firstOrFail();
+       $district_name = $detail->property->district;
+        $district_value = District::where('name',$district_name)->first();
+         $onetownlotincat = $district_value->sq_meter_value;
+        // $onetownlotincat = 250000;
         $onetownlot = 3750;
-        $persquare = 67;
+        $persquare = $onetownlotincat / $onetownlot;
         // return $request;
         $floorareavalue = $request->area * $persquare;
         $wall_value = $detail->wall_material_percentage;
@@ -1553,35 +1558,35 @@ class PropertyController extends Controller
     public function delete_selected_prop()
     {
 
-        $propertyIds = [
-            154, 527, 940, 1109, 1110, 2900, 3050, 3876, 4507, 7903, 7922, 9286, 
-            9387, 10774, 11461, 11600, 15524, 41839, 41840, 41844
-        ];
+        // $propertyIds = [
+        //     154, 527, 940, 1109, 1110, 2900, 3050, 3876, 4507, 7903, 7922, 9286, 
+        //     9387, 10774, 11461, 11600, 15524, 41839, 41840, 41844
+        // ];
     
-        if (empty($propertyIds)) {
-            return ['error' => 'No property IDs provided'];
-        }
+        // if (empty($propertyIds)) {
+        //     return ['error' => 'No property IDs provided'];
+        // }
     
         $propertiesToDelete = Property::get();
-        $propertiesToDelete = Property::whereNotIn('id', $propertyIds)->get();
+        // $propertiesToDelete = Property::whereNotIn('id', $propertyIds)->get();
     
         DB::beginTransaction();
     
         try {
             foreach ($propertiesToDelete as $property) {
                 // Delete associated assessment data
-                $property->assessment()->delete();
+                $property->assessment()->forceDelete();
     
                 // Delete associated payment data
-                $property->payments()->delete();
+                $property->payments()->forceDelete();
     
-                // Delete related landlords, occupancies, and registry
-                $property->landlord()->delete();
-                $property->occupancies()->delete();
-                $property->georegistry()->delete();
+                // forceDelete related landlords, occupancies, and registry
+                $property->landlord()->forceDelete();
+                $property->occupancies()->forceDelete();
+                $property->georegistry()->forceDelete();
     
-                // Delete property itself
-                $property->delete();
+                // forceDelete property itself
+                $property->forceDelete();
             }
     
             DB::commit();

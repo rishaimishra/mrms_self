@@ -83,7 +83,7 @@
                         </tr>
                     </table>
                     @if($district->collection_point)
-                    <p class="font-weight-bold">CONTACT CENTERS</p>
+                    <p class="font-weight-bold">CONTACT CENTER(S)</p>
 
                     @php
                         $maxNoOfTd = max(count(array_filter($district->collection_point)), count(array_filter($district->collection_point2)));
@@ -98,7 +98,7 @@
 
                             @foreach($district->collection_point as $ekey => $collection)
                                 @if ($loop->first)
-                                    <td style="border:1px solid lightgray;text-align: left;"><strong class="font-weight-bold special-text" style="font-size: 12px;font-weight:bold;">{{$collection}}</strong></td>
+                                    <td style="border:1px solid lightgray;text-align: left;"><strong class="font-weight-bold special-text" style="font-size: 12px;color:#696766;">{{$collection}}</strong></td>
                                 @else
                                     <td style="border:1px solid lightgray;">{{$collection}}</td>
                                 @endif
@@ -122,7 +122,7 @@
                         @endphp                            
                             @foreach(array_filter($district->collection_point2) as $ekey => $collection2)
                                 @if ($loop->first)
-                                    <td style="border:1px solid lightgray;text-align: left;"><strong class="font-weight-bold special-text" style="font-size: 12px;font-weight:bold;">{{$collection2}}</strong>
+                                    <td style="border:1px solid lightgray;text-align: left;"><strong class="font-weight-bold special-text" style="font-size: 12px;color:#696766;">{{$collection2}}</strong>
                                     </td>
                                 @else
                                     <td style="border:1px solid lightgray;">{{$collection2}}</td>
@@ -178,7 +178,7 @@
                                 "ON : ". ($property->is_organization ?  $property->organization_name :  (optional($property->landlord)->first_name . ' ' . optional($property->landlord)->middle_name . ' ' . optional($property->landlord)->surname)).
                                 ",\n DA : ". (optional($property->geoRegistry)->digital_address).
                                 ",\n RD : ". (number_format($assessment->getCurrentYearAssessmentAmount())).
-                                ",\n ARR : ". (number_format($assessment->getCurrentYearTotalDue())).
+                                ",\n ARR : ". number_format((float) $assessment->getCurrentYearTotalDue(), 2, '.', ',').
                                 ",\n PT : ". ($assessment->types->pluck('label')->implode(', ')).
                                 ",\n PD : ". ((optional(optional($assessment)->dimension)->label) . ' ' . (optional(optional($assessment)->dimension)->id == 1 ? '' : ' SQ METERS')) .
                                ",\n MOW : ". (optional(optional($assessment)->wallMaterial)->label) .
@@ -206,7 +206,11 @@
                                     LTD.)
                                 </td>   -->                              
                                 <td style=" text-align: right; margin-right: 30px;font-size: 12px">
+                                    @if($district->council_short_name == 'KCC' || $district->council_short_name =='FCC' || $district->council_short_name =='BMC' || $district->council_short_name =='BOCC' || $district->council_short_name =='MCC' || $district->council_short_name =='KNSCC' || $district->council_short_name =='PLCC')
+                                    <span style="margin-right: 35px;">MAYOR ({{  $district->council_short_name }})</span>
+                                    @else
                                     <span style="margin-right: 35px;">CHAIRMAN ({{  $district->council_short_name }})</span>
+                                    @endif
                                 </td>
                             </tr>
                         </table>

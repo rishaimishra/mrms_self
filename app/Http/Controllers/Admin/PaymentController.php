@@ -128,7 +128,15 @@ class PaymentController extends Controller
             'payment_fulfilment_type'
         ]);
 
-        $data['assessment'] = number_format($property->assessment->getCurrentYearTotalDue(), 0, '.', '');
+        $value = $property->assessment->getCurrentYearTotalDue();
+
+        // Ensure the value is numeric
+        if (!is_numeric($value)) {
+            $value = 0;
+        }
+        
+        // Format the value
+        $data['assessment'] = number_format((float) $value, 2, '.', ',');
         $data['admin_user_id'] = $admin->id;
         $data['total'] = $t_amount + $t_penalty;
         $data['amount'] = $t_amount;
@@ -140,7 +148,7 @@ class PaymentController extends Controller
         $payment->save();
 
         $property2 = Property::with('landlord')->findOrFail($id);
-        $t_balance = number_format($property2->assessment->getCurrentYearTotalDue(), 0, '.', '');
+        $t_balance = number_format($property2->assessment->getCurrentYearTotalDue(), 2, '.', ',');
 
         $payment->balance = $t_balance;
 

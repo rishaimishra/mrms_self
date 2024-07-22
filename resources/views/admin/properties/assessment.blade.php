@@ -269,7 +269,7 @@
 
         <div class="col-sm-3">
             <h6>Property Dimension(Sq. Feet)</h6>
-            <p id="property_dimensions">{{ $assessment->square_meter ? $assessment->square_meter ." Sq. Feet":"" }} </p>
+            <p id="property_dimensions">{{ $assessment->square_meter ? number_format($assessment->square_meter, 2,'.','') ." Sq. Feet":"" }} </p>
 
         </div>
         <div class="col-sm-3">
@@ -279,7 +279,7 @@
         </div>
         <div class="col-sm-3">
             <h6>Property Total Area(Feet)(Auto)</h6>
-            <p id="property_area_map">{{ $assessment->square_meter ? $assessment->square_meter ."Sq. Feet":"" }} </p>
+            <p id="property_area_map">{{ $assessment->square_meter ? number_format($assessment->square_meter, 2,'.','') ."Sq. Feet":"" }} </p>
         </div>
         <div class="col-sm-3">
             <h6>Value added </h6>
@@ -350,7 +350,7 @@
     $additions = $totalValueAdded + $totalPercentage;
 @endphp
             {{-- <p>NLe {{ ($assessment->getfloorAreaValueAttribute() + $additions) * $multipliers  }}</p> --}}
-             <p>NLe {{number_format($assessment->property_rate_without_gst,0,'',',')}}</p> 
+             <p>NLe {{number_format($assessment->property_rate_without_gst,2,'.',',')}}</p> 
              {{--  <p>{{number_format($additions) }}</p>
              <p>{{number_format($multipliers) }}</p>  --}}
         </div>
@@ -360,7 +360,7 @@
         {{--                        </div>--}}
         {{--                        <div class="col-sm-3">--}}
         {{--                            <h6>Property Calculation With GST</h6>--}}
-        {{--                            <p>Le {{number_format($assessment->property_rate_with_gst,0,'',',')}}</p>--}}
+        {{--                            <p>Le {{number_format($assessment->property_rate_with_gst,0,'.',',')}}</p>--}}
         {{--                        </div>--}}
 
         <div class="col-sm-3">
@@ -376,7 +376,7 @@
                 $council_adjustment = collect($council_adjusment_percentage100)->sum();
             @endphp
             {{-- <p>NLe {{ $assessed_value - ($assessed_value *$council_adjustment) }}</p> --}}
-             <p>NLe {{number_format($assessment->getNetPropertyAssessedValue(),0,'',',')}}</p> 
+             <p>NLe {{number_format($assessment->getNetPropertyAssessedValue(),2,'.',',')}}</p> 
         </div>
     </div>
 
@@ -386,7 +386,7 @@
         <div class="col-sm-3">
 
             <h6>Taxable Property Value</h6>
-            <p>NLe {{ number_format($assessment->geTaxablePropertyValue(),0,'',',')}}</p>
+            <p>NLe {{ number_format($assessment->geTaxablePropertyValue(),2,'.',',')}}</p>
         </div>
         <div class="col-sm-3">
             <h6>Mill Rate</h6>
@@ -394,7 +394,7 @@
         </div>
         <div class="col-sm-3">
             <h6>Property Tax Payable {{ $assessment->created_at->format('Y') }}</h6>
-            <p>NLe {!! number_format($assessment->getPropertyTaxPayable(),0,'',',') !!}</p>
+            <p>NLe {!! number_format($assessment->getPropertyTaxPayable(),2,'.',',') !!}</p>
         </div>
     </div>
 
@@ -406,23 +406,23 @@
 
               <!-- Pensioner -->
             </p>
-            <p id="pensioner__discount_{{$assessment->created_at->format('Y')}}" class="discountedamount__{{$assessment->created_at->format('Y')}}">NLe {!! $assessment->pensioner_discount ? number_format($assessment->getPensionerDiscount(),0,'',',') : 0 !!}</p>
+            <p id="pensioner__discount_{{$assessment->created_at->format('Y')}}" class="discountedamount__{{$assessment->created_at->format('Y')}}">NLe {!! $assessment->pensioner_discount ? number_format($assessment->getPensionerDiscount(),2,'.',',') : 0 !!}</p>
         </div>
         <div class="col-sm-3">
             <h6>Disability Discount</h6>
             <p><input type="checkbox" class="disability_disc_check" id="disability_disc_check_{{$assessment->created_at->format('Y')}}" data-year="{{$assessment->created_at->format('Y')}}" style="position:relative;left: 0px;opacity: 1;" @if($assessment->disability_discount == 1) checked @endif /></p>
-            <p id="disability__discount_{{$assessment->created_at->format('Y')}}" class="discountedamount__{{$assessment->created_at->format('Y')}}">NLe {!! $assessment->disability_discount ? number_format($assessment->getDisabilityDiscount(),0,'',',') : 0 !!}</p>
+            <p id="disability__discount_{{$assessment->created_at->format('Y')}}" class="discountedamount__{{$assessment->created_at->format('Y')}}">NLe {!! $assessment->disability_discount ? number_format($assessment->getDisabilityDiscount(),2,'.',',') : 0 !!}</p>
         </div>
 
         <div class="col-sm-3">
             <h6>Discounted Rate Payable</h6>
-            <p id="disability__discount_{{$assessment->created_at->format('Y')}}" class="discountedamount__{{$assessment->created_at->format('Y')}}">NLe {!! $assessment->getPensionerDisabilityDiscountActual() ? number_format($assessment->getPensionerDisabilityDiscountActual(),0,'',',') : 0 !!}</p>
+            <p id="disability__discount_{{$assessment->created_at->format('Y')}}" class="discountedamount__{{$assessment->created_at->format('Y')}}">NLe {!! $assessment->getPensionerDisabilityDiscountActual() ? number_format($assessment->getPensionerDisabilityDiscountActual(),2,'.',',') : 0 !!}</p>
         </div>
         <!-- <div class="col-sm-3 discountContainer_{{$assessment->created_at->format('Y')}}" style="display: block;">
             <h6>New Property Tax Payable After Pension and Disability Discount</h6>
-            <p id="pensioner_discount_{{$assessment->created_at->format('Y')}}" class="discountedamount_{{$assessment->created_at->format('Y')}}" style="display: block;">NLe {!! number_format($assessment->getPensionerDiscount(),0,'',',') !!}</p>
-            <p id="disability_discount_{{$assessment->created_at->format('Y')}}" class="discountedamount_{{$assessment->created_at->format('Y')}}" style="display: block;">NLe {!! number_format($assessment->getDisabilityDiscount(),0,'',',') !!}</p> -->
-            <!-- <p id="pensioner_disability_discount_{{$assessment->created_at->format('Y')}}" class="discountedamount_{{$assessment->created_at->format('Y')}}" style="display: block;">NLe {!! number_format($assessment->getPensionerNDisabilityDiscount(),0,'',',') !!}</p>
+            <p id="pensioner_discount_{{$assessment->created_at->format('Y')}}" class="discountedamount_{{$assessment->created_at->format('Y')}}" style="display: block;">NLe {!! number_format($assessment->getPensionerDiscount(),2,'.',',') !!}</p>
+            <p id="disability_discount_{{$assessment->created_at->format('Y')}}" class="discountedamount_{{$assessment->created_at->format('Y')}}" style="display: block;">NLe {!! number_format($assessment->getDisabilityDiscount(),2,'.',',') !!}</p> -->
+            <!-- <p id="pensioner_disability_discount_{{$assessment->created_at->format('Y')}}" class="discountedamount_{{$assessment->created_at->format('Y')}}" style="display: block;">NLe {!! number_format($assessment->getPensionerNDisabilityDiscount(),2,'.',',') !!}</p>
         </div>                         -->
     </div>
 
@@ -497,6 +497,7 @@
             <h1>Multipliers {{ $multipliers }}</h1>
             <h1>Net assessed value {{ $assessed_value - ($assessed_value * $council_adjustment) }}</h1>
             <h1>Assessed value {{ ($assessment->getfloorAreaValueAttribute() + $additions) * $multipliers  }}</h1>  --}}
+            <input type="hidden" name="district_name" value="{{$property->landlord->district}}">
             <input type="hidden" name="property_wall_materials_percentage" value="{{ $assessment->wall_material_percentage }}">
             <input type="hidden" name="property_wall_materials_type" value="{{ $assessment->wall_material_type }}">
             <input type="hidden" name="property_assessed_value" value="{{ ($assessment->getfloorAreaValueAttribute() + $additions) * $multipliers  }}">
@@ -670,13 +671,13 @@
     <div class="row">
         <div class="col-sm-3">
             <h6>Property Assessed Value</h6>
-            <p>NLe {{ $assessment->getCurrentYearAssessmentAmount()   }}</p>
-             {{-- <p class="property_rate_without_gst">Le {{number_format($assessment->property_rate_without_gst,0,'',',')}}</p>  --}}
+            <p>NLe {{ number_format($assessment->getCurrentYearAssessmentAmount(), 2, '.', ',')   }}</p>
+             {{-- <p class="property_rate_without_gst">Le {{number_format($assessment->property_rate_without_gst,2,'',',')}}</p>  --}}
         </div>
         <div class="col-sm-3">
             <h6>Net Property Assessed Value</h6>
             <p class="property_rate_without_gst_council">
-                NLe {{number_format($assessment->getNetPropertyAssessedValue(),0,'',',')}}</p>
+                NLe {{number_format($assessment->getNetPropertyAssessedValue(),2,'.',',')}}</p>
 
             {!! Form::hidden('property_rate_without_gst',$assessment->property_rate_without_gst) !!}
             {!! Form::hidden('property_rate_with_gst',$assessment->property_rate_with_gst) !!}

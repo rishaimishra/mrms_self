@@ -83,7 +83,8 @@ class Property extends Model
         'occupancy_organization_name',
         'additional_address_id',
         'organization_school_type',
-        'beach_front'
+        'beach_front',
+        'tenant_type'
     ];
 
     protected $casts = [
@@ -118,7 +119,7 @@ class Property extends Model
             $long = $latLong[1];
         }
 
-        return '<strong>Property ID: </strong>' . $this->id . '<br><br><strong>Name: </strong>' . $name . '<br><br><strong>Open location code: </strong>' . $this->newDigitalAddress() . '<br><br><strong>Assessment Amount: </strong> NLe ' . number_format($this->assessment->property_rate_without_gst, 0, '', ',') . '<br><br><strong>Address: </strong>' . $this->street_number . ', ' . $this->street_name . ', ' . $this->ward . ', ' . $this->section . ', ' . $this->district . ', ' . $this->province . '<br><br><strong>Enumerator Name: </strong>' . $this->user->name . '<br><br><a target="_blank" href="https://www.google.com/maps/?q=' . $lat . ',' . $long . '">Go To Map</a> <a return false;" style="margin-left:20px;text-decoration:underline;" href="' . route("admin.properties.show",['property'=>$this->id ,'ref'=>'property-grid']) . '">Go to property detail</a>';
+        return '<strong>Property ID: </strong>' . $this->id . '<br><br><strong>Name: </strong>' . $name . '<br><br><strong>Open location code: </strong>' . $this->newDigitalAddress() . '<br><br><strong>Rate Payable: </strong> NLe ' . number_format($this->assessment->getPropertyTaxPayable(), 2, '.', '') . '<br><br><strong>Address: </strong>' . $this->street_number . ', ' . $this->street_name . ', ' . $this->ward . ', ' . $this->section . ', ' . $this->district . ', ' . $this->province . '<br><br><strong>Enumerator Name: </strong>' . $this->user->name . '<br><br><a target="_blank" href="https://www.google.com/maps/?q=' . $lat . ',' . $long . '">Go To Map</a> <a return false;" style="margin-left:20px;text-decoration:underline;" href="' . route("admin.properties.show",['property'=>$this->id ,'ref'=>'property-grid']) . '">Go to property detail</a>';
     }
 
     public function getOnlyAddress()
@@ -324,20 +325,20 @@ class Property extends Model
         $quarters = [
             [
                 'start' => "01-01-{$year}",
-                'end' => "31-03-{$year}"
-            ],
-            [
-                'start' => "01-04-{$year}",
                 'end' => "30-06-{$year}"
             ],
             [
                 'start' => "01-07-{$year}",
-                'end' => "30-09-{$year}"
-            ],
-            [
-                'start' => "01-10-{$year}",
                 'end' => "31-12-{$year}"
             ]
+            // [
+            //     'start' => "01-07-{$year}",
+            //     'end' => "30-09-{$year}"
+            // ],
+            // [
+            //     'start' => "01-10-{$year}",
+            //     'end' => "31-12-{$year}"
+            // ]
         ];
 
         $payments = $this->payments()->whereYear('created_at', $year)->get();

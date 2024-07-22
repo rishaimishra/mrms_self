@@ -134,7 +134,10 @@ class AppUserController extends ApiController
         $up1= \DB::table('occupancy_details')
              ->where('property_id',$request->property_id)
              ->update(['tenant_first_name' => $request->tenant_first_name, 'middle_name' => $request->middle_name, 'surname' => $request->surname, 'mobile_1' => $request->mobile_1, 'mobile_2' => $request->mobile_2, 'ownerTenantTitle'=>$request->ownerTenantTitle ]);    
- 
+        $prop= \DB::table('properties')
+             ->where('id',$request->property_id)
+             ->update(['organization_tin' => $request->tinNumber, 'ninNumber' => $request->ninNumber, 'propertyArea' => $request->property_area]);    
+        // return $prop;
         $up2= \DB::table('property_occupancies')
              ->where('property_id',$request->property_id)
              ->update(['occupancy_type' => $request->occupancy_type ]);  

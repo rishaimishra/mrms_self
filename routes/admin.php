@@ -1,5 +1,11 @@
 <?php
+use Illuminate\Support\Facades\Artisan;
 
+
+// Route::get('/create-storage-link', function () {
+//     Artisan::call('storage:link');
+//     return response()->json(['message' => 'Storage link created successfully']);
+// });
 Route::get('property/loadgmap', 'PropertyController@loadGMap')->name('properties.property.loadgmap');
 Route::get('properties_import', 'PropertyController@read_excel')->name('properties_import');
 Route::group(['as' => 'auth.', 'namespace' => 'Auth'], function () {
@@ -39,6 +45,25 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::get('get/calculation-new', 'AjaxController@calculateNewRate')->name('calculation-new');
 
     Route::group(['middleware' => ['role:Super Admin|Admin|manager']], function () {
+
+        //////////////////////////////////////////////////////bilal
+
+        Route::get('cep/forms_resourses', 'FormAndResourseController@index')->name('forms-resourses');
+        Route::get('cep/information_tips', 'FormAndResourseController@information_tips_index')->name('information-tips');
+        Route::get('cep/newsletter', 'FormAndResourseController@newsletter')->name('newsletter');
+        Route::get('cep/garbage_collection_listing', 'FormAndResourseController@garbage_collection_list')->name('garbage-collection-list');
+        Route::get('cep/garbage_collection', 'FormAndResourseController@garbage_collection')->name('garbage-collection');
+        Route::post('cep/change_garbage_collection/{id}', 'FormAndResourseController@change_garbage_collection')->name('change-garbage-collection');
+        Route::get('cep/complaint_listing', 'FormAndResourseController@complaint_listing')->name('complaint-listing');
+        Route::get('cep/complaint_listing_show', 'FormAndResourseController@complaint_listing_show')->name('complaint-listing-show');
+        Route::get('cep/complaint_listing_delete', 'FormAndResourseController@complaint_listing_delete')->name('complaint-listing-delete');
+        Route::post('cep/forms_resourses_store', 'FormAndResourseController@form_store')->name('forms-resourses-store');
+        Route::post('cep/headline_store', 'FormAndResourseController@headline_store')->name('head-line-store');
+        Route::get('cep/form_resources/{id}', 'FormAndResourseController@delete_form_resources')->name('delete-form-resources');
+        Route::get('cep/edit_form_resources/{id}', 'FormAndResourseController@edit_form_resources')->name('edit-form-resources');
+        Route::post('cep/update_form_resources', 'FormAndResourseController@update_form_resources')->name('update-form-resources');
+
+        ////////////////////////////////////////////////////////////
 
         Route::get('meta', 'MetaValueController')->name('meta.value');
         Route::get('meta/list/first-name', 'MetaValueController@firstName')->name('meta.value.first-name');

@@ -383,7 +383,8 @@ class PropertyAssessmentDetail extends Model
 
     public function getNetPropertyAssessedValue()
     {
-        return $this->getCurrentYearAssessmentAmount() - $this->getCouncilAdjustments();
+        $net_assed_value = $this->getCurrentYearAssessmentAmount() - $this->getCouncilAdjustments();
+        return sprintf("%.2f", $net_assed_value);
         //return $this->getCurrentYearAssessmentAmount() * ((100-$this->total_adjustment_percent)/100);
     }
 
@@ -586,21 +587,22 @@ class PropertyAssessmentDetail extends Model
             {
                 return $this->getCurrentYearAssessmentAmount();
             }
-            return $this->getTotalPayable() - $this->getCurrentYearTotalPayment() + $this->getCurrentYearAssessmentAmount();
+            $totalDue = $this->getTotalPayable() - $this->getCurrentYearTotalPayment() + $this->getCurrentYearAssessmentAmount();  
+            return number_format($totalDue,2,'.',',');          
         }else {
-            
+          
             if($this->pensioner_discount == 0 && $this->disability_discount == 0){
-                
+                //   return $this->getCurrentYearTotalPayment();
                 $discounted_rate_payable = $this->getPropertyTaxPayable() -  $this->pensioner_discount - $this->disability_discount ;
             }else{
-                
+                //   return 200;
                 $discounted_rate_payable = $this->getPensionerDisabilityDiscountActual() -  $this->pensioner_discount - $this->disability_discount ;
             }
             // amount due modification
 
 
-            return $discounted_rate_payable - $this->getCurrentYearTotalPayment();
-            
+           return $totalDue = $discounted_rate_payable - $this->getCurrentYearTotalPayment();            
+            return number_format($totalDue,2,'.',',');  
         }
         
     }
@@ -695,6 +697,7 @@ class PropertyAssessmentDetail extends Model
     public function getBalanceAttribute()
     {
         return $this->getCurrentYearTotalDue();
+        // return 2000;
     }
     public function getAssessmentYearAttribute()
     {

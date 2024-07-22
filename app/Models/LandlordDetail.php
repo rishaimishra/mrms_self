@@ -58,7 +58,7 @@ class LandlordDetail extends Model
     protected static $logOnlyDirty = true;
     protected static $logName = 'property-landlord';
 
-    protected $appends = ['original', 'small_preview', 'large_preview', 'phone_number', 'document_image_path','address_image_path','conveyance_image_path'];
+    protected $appends = ['property_area','nin_number','original', 'small_preview', 'large_preview', 'phone_number', 'document_image_path','address_image_path','conveyance_image_path'];
 
     public function property()
     {
@@ -88,6 +88,14 @@ class LandlordDetail extends Model
     public function getPhoneNumberAttribute()
     {
         return $this->mobile_1;
+    }
+    public function getNinNumberAttribute()
+    {
+        return $this->property->ninNumber;
+    }
+    public function getPropertyAreaAttribute()
+    {
+        return $this->property->propertyArea;
     }
 
     public function getSmallPreviewAttribute()

@@ -39,7 +39,7 @@ return [
                     'role' => 'Super Admin|Admin|manager|cashiers|supervisor',
                 ],
                 [
-                    'label' => 'Reverse Payments',
+                    'label' => 'Reversed Payments',
                     'icon' => 'payment',
                     'route' => 'admin.reverse_payment',
                     'role' => 'Super Admin|Admin|Finance|Auditor',
@@ -154,23 +154,23 @@ return [
                         ],
                     ]
                 ],
-                [
-                    'label' => 'Assessment Parameter Conditions',
-                    'icon' => 'apps',
-                    'role' => 'Super Admin',
-                    'children' => [
-                        [
-                            'label' => 'Characteristic',
-                            'route' => 'admin.propertyCharacteristics.index',
+                // [
+                //     'label' => 'Assessment Parameter Conditions',
+                //     'icon' => 'apps',
+                //     'role' => 'Super Admin',
+                //     'children' => [
+                //         [
+                //             'label' => 'Characteristic',
+                //             'route' => 'admin.propertyCharacteristics.index',
         
-                        ],
-                        [
-                            'label' => 'Characteristic Values',
-                            'route' => 'admin.propertyCharacteristicValues.index',
+                //         ],
+                //         [
+                //             'label' => 'Characteristic Values',
+                //             'route' => 'admin.propertyCharacteristicValues.index',
         
-                        ],
-                    ]
-                ],
+                //         ],
+                //     ]
+                // ],
                 [
                     'label' => 'Assessment Parameters',
                     'icon' => 'assessment',
@@ -324,6 +324,11 @@ return [
                             'route' => 'admin.audit.property.landlord',
         
                         ],
+                        [
+                            'label' => 'Property Assigned officer Trail',
+                            'route' => 'admin.audit.property.property_assigned_officers',
+        
+                        ],
                         // [
                         //     'label' => 'Property Occupancy Trail',
                         //     'route' => 'admin.audit.property.occupancy',
@@ -400,17 +405,17 @@ return [
                     'role' => 'Super Admin',
                     'children' => [
                         [
-                            'label' => 'Council warning 1 - None Payment',
+                            'label' => 'Council Reminder1 - None Payment',
                             'route' => '',
         
                         ],
                         [
-                            'label' => 'Council warning 2 - None Payment',
+                            'label' => 'Council Reminder2 - None Payment',
                             'route' => '',
         
                         ],
                         [
-                            'label' => 'Council warning 3 - None Payment',
+                            'label' => 'Council Warning 3 - None Payment',
                             'route' => '',
         
                         ],
@@ -425,7 +430,7 @@ return [
         
                         ],
                         [
-                            'label' => 'Legal  Retainer Notice Payment',
+                            'label' => 'Legal  Retainer Notice - None Payment',
                             'route' => '',
         
                         ],
@@ -447,27 +452,27 @@ return [
                 ],
                 [
                     'label' => 'Complaints listing',
-                    'route' => '',
+                    'route' => 'admin.complaint-listing',
 
                 ],
                 [
                     'label' => 'Forms resources upload',
-                    'route' => '',
+                    'route' => 'admin.forms-resourses',
 
                 ],
                 [
                     'label' => 'Information & Tips',
-                    'route' => '',
+                    'route' => 'admin.information-tips',
 
                 ],
                 [
                     'label' => 'Newsletter',
-                    'route' => '',
+                    'route' => 'admin.newsletter',
 
                 ],
                 [
                     'label' => 'garbage collection',
-                    'route' => '',
+                    'route' => 'admin.garbage-collection-list',
 
                 ],
                 [

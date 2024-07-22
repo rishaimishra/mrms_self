@@ -73,8 +73,9 @@ class PaymentController extends Controller
 
        $disability_image_path = PropertyPayment::where('property_id','=',$propertyId)->whereNotNull('disability_discount_image')->orderBy('created_at','desc')->first();
        
+       $property->assessment->property_rate_without_gst = number_format($property->assessment->property_rate_without_gst,2,'.','');
        $property->assessment->{"rate_payable"} = number_format($property->assessment->getPropertyTaxPayable(),2,'.','');
-       $property->assessment->{"property_net_assessed_vaue"} = number_format($property->assessment->getNetPropertyAssessedValue(),0,'',',');
+       $property->assessment->{"property_net_assessed_vaue"} = number_format($property->assessment->getNetPropertyAssessedValue(),2,'.',',');
 
        if($property->assessment->swimming == null)
        {    
@@ -114,7 +115,7 @@ class PaymentController extends Controller
             @$property->assessment->{"discounted_value"} =$property->assessment->pensioner_discount ? number_format($property->assessment->getPensionerDiscount(),0,'',',') : 0;
 
         }
-        $property->assessment->{"balance"} =$property->assessment->getCurrentYearTotalDue();
+        $property->assessment->{"balance_due"} = number_format($property->assessment->getCurrentYearTotalDue(),2,'.',',');
 
                
        $property->assessment->{"pensioner_discount"} = number_format($pensioner_discount,2,'.','');
@@ -122,7 +123,7 @@ class PaymentController extends Controller
 
        $discounted_value = number_format($property->assessment->getPensionerDisabilityDiscountActual());
       
-       $property_taxable_value = number_format($property->assessment->geTaxablePropertyValue(),0,'',',');
+       $property_taxable_value = number_format($property->assessment->geTaxablePropertyValue(),2,'.',',');
 
 
 
@@ -133,24 +134,24 @@ class PaymentController extends Controller
 
                 if($property->assessment->water_percentage != 0 )
                 {
-                    array_push($council_adjusment_labels,'Water Supply');
+                    array_push($council_adjusment_labels,'No Water Supply');
                     
                 }
                 if($property->assessment->electricity_percentage != 0 )
                 {
-                    array_push($council_adjusment_labels,'Electricity');
+                    array_push($council_adjusment_labels,'No Electricity');
                     
                 }
                 if($property->assessment->waste_management_percentage != 0 )
                 {
                    
-                    array_push($council_adjusment_labels,'Waste Management Services/Points/Locations');
+                    array_push($council_adjusment_labels,'No Waste Management Services/Points/Locations');
                     
                 }
                 if($property->assessment->market_percentage != 0 )
                 {
                   
-                    array_push($council_adjusment_labels,'Market');
+                    array_push($council_adjusment_labels,'No Market');
                    
                 }
                 if($property->assessment->hazardous_precentage != 0 )
@@ -174,13 +175,13 @@ class PaymentController extends Controller
                 if($property->assessment->paved_tarred_street_percentage != 0 )
                 {
                    
-                    array_push($council_adjusment_labels,'Paved/Tarred Road/Street');
+                    array_push($council_adjusment_labels,'Unpaved/Untarred Road/Street');
                     
                 }
                 if($property->assessment->drainage_percentage != 0 )
                 {
                    
-                    array_push($council_adjusment_labels,'Drainage');
+                    array_push($council_adjusment_labels,'No Drainage');
                    
                 }
         
@@ -198,7 +199,7 @@ class PaymentController extends Controller
                 // $property->assessment->{"council_adjustments_parameters"} = ($property->assessment->property_rate_without_gst * $property->assessment->{"council_adjustments_parameters"})/100;
                 // $property->assessment->{"council_adjustments_parameters"} = number_format($property->assessment->{"council_adjustments_parameters"},0,'',',');
 //getCouncilAdjustments
-$property->assessment->{"council_adjustments_parameters"}  = number_format($property->assessment->getCouncilAdjustments(),0,'',',');
+$property->assessment->{"council_adjustments_parameters"}  = number_format($property->assessment->getCouncilAdjustments(),2,'.',',');
         //$property['currentYearAssessmentAmount'] = $property->assessment->getCurrentYearAssessmentAmount();
         //$property['arrearDue'] = $property->assessment->getPastPayableDue();
         //$property['penalty'] = $property->assessment->getPenalty();
@@ -377,6 +378,7 @@ $property->assessment->{"council_adjustments_parameters"}  = number_format($prop
 
     public function storeLandLord($id, Request $request)
     {
+        // return $id;
         $property = Property::with('landlord')->findOrFail($id);
         $landlord_data = $property->landlord()->firstOrNew([]);
 
@@ -407,8 +409,13 @@ $property->assessment->{"council_adjustments_parameters"}  = number_format($prop
             'verified' => 0,
             'requested_by' => $request->requested_by
         ]);
-
+        $property->fill([
+            'organization_tin' => $request->tinNumber, 
+            'ninNumber' => $request->ninNumber, 
+            'propertyArea' => $request->property_area
+        ]);
         $landlord_data->save();
+        $property->save();
         return response()->json(['status' => 'success','image'=>$verification_document, 'address'=>$address_document],201);
     }
 }
