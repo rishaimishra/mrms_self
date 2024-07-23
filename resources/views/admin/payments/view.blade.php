@@ -1,3 +1,4 @@
+
 @extends('admin.layout.main')
 @push('stylesheets')
     {{--    <link href="{{ url('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css') }}" rel="stylesheet"/>--}}
@@ -53,7 +54,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <!-- <div class="col-sm-4">
                             <div class="form-group">
                                 <div class="form-line">
                                     <label>Old Digital Address</label>
@@ -68,7 +69,7 @@
                                     <div id="digital_address" class="form-control"></div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="col-sm-1">
                             <button type="submit" class="btn btn-primary m-t-15 waves-effect">Search</button>
                         </div>
@@ -87,9 +88,8 @@
 
 
 
-
     @if(!empty($property))
-
+    
     <!-- && ($property->assessment->pensioner_discount == 0) -->
     @if((!empty($property->payments[$property->payments->count() -1]->disability_discount_image_path) || !empty($property->payments[$property->payments->count() -1]->pensioner_discount_image_path) )  )
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -224,7 +224,7 @@
 
                                 <div class="col-sm-3">
                                     <label for="amount_paid">Amount
-                                        Paid({{ $property->assessment->created_at->format('Y') }})</label>
+                                        Paid ({{ $property->assessment->created_at->format('Y') }})</label>
                                     <div class="form-group">
                                         <div class="form-line">
                                             <input type="text" id="amount_paid" name="amount_paid"
@@ -242,12 +242,12 @@
                                     <label for="balance">Balance</label>
                                     <div class="form-group">
                                         <div class="form-line">
-                                            <input type="text" id="balance"
-                                                   value="{{ old('balance', (number_format(max($property->assessment->getCurrentYearTotalDue(), 0),0,'',','))) }}"
-                                                   name="balance"
-                                                   class="form-control"
-                                                   style="background-color: #eee;padding-left: 5px;"
-                                                   placeholder="Enter Balance" disabled>
+                                        <input type="text" id="balance"
+                                                value="{{ old('balance', number_format((float) max($property->assessment->getCurrentYearTotalDue(), 0), 2, '.', ',')) }}"
+                                                name="balance"
+                                                class="form-control"
+                                                style="background-color: #eee; padding-left: 5px;"
+                                                placeholder="Enter Balance" disabled>
                                         </div>
                                         {!! $errors->first('balance', '<span class="error">:message</span>') !!}
                                     </div>
@@ -338,7 +338,7 @@
                                 </div>
 
 
-                                <div class="col-sm-6">
+                                <div class="col-sm-3">
                                     <label for="email_address">Payee Name</label>
                                     <div class="form-group">
                                         <div class="form-line" id="payee_name">
@@ -349,18 +349,34 @@
                                         {!! $errors->first('payee_name', '<span class="error">:message</span>') !!}
                                     </div>
                                 </div>
-
+                                <div class="col-sm-3">
+                                    <label for="email_address">Payment Fulfilment</label>
+                                    <div class="form-group">
+                                        <div class="form-line" id="payemnt_fulfilment">
+                                            <input type="text" id="payment_fulfilment"  value=""
+                                                   name="payment_fulfilment_type" class="form-control"
+                                                   placeholder="Payment Fulfilment">
+                                        </div>
+                                        {!! $errors->first('payment_fulfilment', '<span class="error">:message</span>') !!}
+                                    </div>
+                                </div>
                                 <div class="clearfix"></div>
                                 <div class="col-sm-6">
                                     <div class="row">
 
-                                        @for($i = 0; $i <= 3; $i++)
-                                            <div class="col-md-3">
+                                        @for($i = 0; $i <= 1; $i++)
+                                            <div class="col-md-6">
                                                 <div class="text-center"
                                                      style="min-height: 105px; border: 1px solid #eee; padding: 10px; background-color: {{ $property->assessment->getQuarter()  == ($i + 1) ? '#eee' : ''}}">
                                                     <h5>{!!  \App\Models\PropertyPayment::numberToWord($i + 1) !!}
                                                         Installment Date</h5>
-                                                    <h4>{!! $property->assessment->installmentDates($i) !!}</h4>
+                                                        @if($i == 0)
+                                                    <h4>30-06-2024</h4>
+                                                    @elseif($i == 1)
+                                                    <h4>31-12-2024</h4>
+                                                    @else
+                                                    @endelse
+                                                    @endif
                                                     {{--@if($i==3)
                                                         <h6>{!! number_format($property->getAssessment()) !!}</h6>
                                                         @else--}}
@@ -387,7 +403,7 @@
 
 
                 @if($property->payments()->count())
-
+                  
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="card">
                             <div class="header bg-orange">
@@ -413,7 +429,8 @@
                                     <th>Transaction Date</th>
                                     <th>Receipt</th>
                                     @hasanyrole('Super Admin|Admin')
-                                    <th>Action</th>
+                                    <th>View</th>
+                                    <!-- <th>Reverse Payment</th> -->
                                     @endhasanyrole
                                     </thead>
                                     <tbody>
@@ -472,7 +489,9 @@
                                                         style="font-size: 14px;"
                                                         class="material-icons">print</i>Print</a>
                                             </th>--}}
-
+                                                <!-- <td>
+                                                    <a href="{{route('admin.reverse', $payment->id)}}" class="btn btn-primary m-t-15 waves-effect btn-lg">Reverse Payment</a>
+                                                </td> -->
                                     @endforeach
                                     </tbody>
                                 </table>
@@ -481,6 +500,7 @@
                     </div>
 
                 @endif
+              
 
                 @if($property->assessmentHistory->count())
 
@@ -509,17 +529,17 @@
                                             <td>{{ number_format($assessmentHistory->getPastPayableDue()) }}</td>
                                             <td>{{ number_format($assessmentHistory->getPenalty()) }}</td>
                                             <td>{{ number_format($assessmentHistory->getCurrentYearTotalPayment()) }}</td>
-                                            <td>{{ number_format($assessmentHistory->getCurrentYearTotalDue()) }}</td>
+                                            <td>{{ number_format((float)$assessmentHistory->getCurrentYearTotalDue(), 2, '.', ',') }}</td>
                                         </tr>
                                     @endforeach
-                                    <tr>
+                                    {{-- <tr>
                                         <td>{{ \Carbon\Carbon::parse($property->assessment->created_at)->format('Y') }}</td>
                                         <td>{{ number_format($property->assessment->getCurrentYearAssessmentAmount()) }}</td>
                                         <td>{{ number_format($property->assessment->getPastPayableDue()) }}</td>
                                         <td>{{ number_format($property->assessment->getPenalty()) }}</td>
                                         <td>{{ number_format($property->assessment->getCurrentYearTotalPayment()) }}</td>
-                                        <td>{{ number_format($property->assessment->getCurrentYearTotalDue()) }}</td>
-                                    </tr>
+                                        <td>{{ number_format((float)$property->assessment->getCurrentYearTotalDue(), 2, '.', ',') }}</td>
+                                    </tr> --}}
                                     </tbody>
                                 </table>
                             </div>
@@ -600,7 +620,7 @@
                                         <h6>Id Number</h6>
                                         <p>{{$property->landlord->id_number}}</p>
                                     </div> --}}
-                                    <div class="col-sm-3">
+                                    {{-- <div class="col-sm-3">
                                         <div id="aniimated-thumbnials"
                                              class="list-unstyled row clearfix aniimated-thumbnials">
                                             <h6>Image</h6>
@@ -609,7 +629,7 @@
                                                      src="{{$property->landlord->getImageUrl(100,100)}}">
                                             </a>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 @endif
                                 <div class="col-sm-3">
                                     <h6>Ward</h6>
@@ -847,7 +867,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3">
-                                        <h6>Calculated Property Rate </h6>
+                                        <h6>Assessed Value </h6>
                                         <p>
                                             Le {{number_format($property->assessment->property_rate_without_gst,0,'',',')}}</p>
                                     </div>
@@ -895,40 +915,13 @@
 
                             </div>
                             <div class="body geo-registry-view">
-                                <div class="row">
-                                    @if($property->registryMeters->count())
-                                        @foreach($property->registryMeters as $key=>$value)
-                                            <div class="col-sm-3">
-                                                <h6>Meter Number {{$key+1}}</h6>
-                                                <p>{{$value->number}}</p>
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        <div class="col-sm-3">
-                                            <h6>Meter Number</h6>
-                                            <p></p>
-                                        </div>
-                                    @endif
+                               
 
-                                    <div class="col-sm-3">
-                                        <h6>Point 1</h6>
-                                        <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point1)}}</p>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <h6>Point 2</h6>
-                                        <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point2)}}</p>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <h6>Point 3</h6>
-                                        <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point3)}}</p>
-                                    </div>
-                                </div>
+
+
+
                                 <div class="row">
-                                    <div class="col-sm-3">
-                                        <h6>Point 4</h6>
-                                        <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point4)}}</p>
-                                    </div>
-                                    <div class="col-sm-3">
+                                    {{-- <div class="col-sm-3">
                                         <h6>Point 5</h6>
                                         <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point5)}}</p>
                                     </div>
@@ -940,43 +933,44 @@
                                         <h6>Point 7</h6>
                                         <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point7)}}</p>
                                     </div>
-                                </div>
-                                <div class="row">
                                     <div class="col-sm-3">
                                         <h6>Point 8</h6>
                                         <p>{{\App\Models\Property::getLatLong($property->geoRegistry->point8)}}</p>
+                                    </div> --}}
+                                    <div class="clearfix"></div>
+                                    <div class="col-sm-3">
+                                        <h6>Dor Lat Long</h6>
+                                        <p>{{\App\Models\Property::getLatLong($property->geoRegistry->dor_lat_long)}}</p>
                                     </div>
+        
                                     <div class="col-sm-3">
                                         <h6>Digital Address</h6>
                                         <p>{{$property->geoRegistry->digital_address}}</p>
                                     </div>
+        
                                     <div class="col-sm-3">
                                         <h6>Open Location Code</h6>
-                                        <p>{{ $property->postcode }} {{$property->geoRegistry->open_location_code}}</p>
+                                        {{-- <p>{{ $property->postcode }} </p> --}}
+                                            
+                                            <p>{{$property->geoRegistry->open_location_code}}</p>
                                     </div>
                                 </div>
+        
                                 <div id="aniimated-thumbnials" class="list-unstyled row clearfix aniimated-thumbnials">
-
+        
                                     @if($property->registryMeters->count())
                                         @foreach($property->registryMeters as $key=>$image)
-                                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                                            <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
                                                 <h6>Meter Image {{$key+1}}</h6>
-
+        
                                                 <a href="{{$image->getImageUrl(800,800)}}" data-sub-html="">
                                                     <img class="img-responsive thumbnail"
-                                                         src="{{$image->getImageUrl(100,100)}}">
+                                                         src="{{$image->getImageUrl(224,155)}}">
                                                 </a>
+                                                <p class="text-center"><strong>Meter Number: </strong> {{$image->number}}</p>
                                             </div>
-
+        
                                         @endforeach
-                                    @else
-                                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                                            <h6>Meter Image</h6>
-                                            <a href="{{asset('/images/No_Image_Available.jpg')}}" data-sub-html="">
-                                                <img style="width: 100px;height: 100px" class="img-responsive thumbnail"
-                                                     src="{{asset('/images/No_Image_Available.jpg')}}">
-                                            </a>
-                                        </div>
                                     @endif
                                 </div>
                             </div>
@@ -1052,7 +1046,14 @@
             return x1 + x2;
         }
     </script>
-
+@php
+if($property){
+    if($property->assessment){
+      //  $preCalculatedAmount = $property->assessment->getCurrentInstallmentDueAmount()??0;
+        $preCalculatedAmount = $property->assessment->getCurrentYearTotalDue()??0;
+    }
+}
+@endphp
     <script>
         jQuery("#amount, #penalty").on('keyup', function () {
             var amount = jQuery("#amount").val();
@@ -1072,7 +1073,18 @@
             var total = parseInt(amount);
 
             jQuery("#total").val(Comma(total));
-
+            
+            let preCalculatedAmount = '{{$preCalculatedAmount??0}}';
+            console.log(preCalculatedAmount)
+            console.log(amount)
+            if (parseInt(amount) >= parseInt(preCalculatedAmount)) {
+               // alert("if")
+                jQuery("#payment_fulfilment").val('Complete Amount');
+        } else {
+           // alert("else")
+            jQuery("#payment_fulfilment").val('Partial');
+            
+        }
         });
     </script>
     @if(!empty($property))

@@ -2,8 +2,11 @@
 
 use Illuminate\Http\Request;
 
-
-
+Route::get('get_form_resources', 'APIV2\General\EcpController@get_formresources');
+Route::get('get_complaints', 'APIV2\General\EcpController@get_complaints');
+Route::post('add_complain', 'APIV2\General\EcpController@add_complain');
+Route::post('change_password', 'APIV2\General\PropertyController@change_password');
+Route::post('add_garbage_collection', 'APIV2\General\EcpController@garbage_collection');
 Route::get('update/assessments', 'APIV2\General\PropertyController@updatePropertyAssessmentDetail');
 Route::post('update/pensiondiscount', 'APIV2\General\PropertyController@updatePropertyAssessmentPensionDiscount');
 Route::get('update/disabilitydiscount', 'APIV2\General\PropertyController@updatePropertyAssessmentDisabilityDiscount');
@@ -69,7 +72,7 @@ Route::group(['prefix' => 'landlord', 'middleware' => 'auth:landlord-api', 'name
     Route::post('propertyapprove/{id}', 'Landlord\PaymentController@storeProperty');
     Route::post('search-property', 'Landlord\PaymentController@show');
     Route::get('payment/receipt/{id}/{year?}', 'Landlord\PaymentController@getReceipt');
-    Route::get('current-pay/receipt', 'Landlord\PaymentController@getPayReceipt');
+    Route::get('current-pay/receipt/{id}/{year?}', 'Landlord\PaymentController@getPayReceipt');
 
 });
 
@@ -84,3 +87,6 @@ Route::get('deleteproperties', 'APIV2\General\PropertyController@deleteProperty'
 
 
 Route::get('getcount', 'APIV2\General\PropertyController@getCount');
+Route::get('payment/receipt-name/{id}/{year?}', 'APIV2\Landlord\PaymentController@getReceiptName');
+
+

@@ -59,7 +59,7 @@
                                 <div class="form-group">
                                     <label>Assessment Officer</label>
                                     <div class="form-line">
-                                        {!! Form::select('assessment_officer', $assessmentOfficer ,$request->assessment_officer, ['class' => 'form-control']) !!}
+                                        {!! Form::select('assessment_officer', $assessmentOfficer ,$request->assessment_officer, ['class' => 'form-control','data-live-search'=>'true']) !!}
                                     </div>
                                     {!! $errors->first('assessment_officer', '<span class="error">:message</span>'); !!}
                                 </div>

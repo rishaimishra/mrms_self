@@ -105,12 +105,12 @@ class PropertiesGrid extends Grid implements PropertiesGridInterface
                 },
 
             ],
-            "assessment" => [
+            "rate payable" => [
                 "search" => [
                     "enabled" => true
                 ],
                 'presenter' => function ($columnData, $columnName) {
-                    return 'Le ' . number_format($columnData->assessment->property_rate_without_gst, 0, '', ',');
+                    return 'Le ' . number_format($columnData->assessment->getPropertyTaxPayable(), 2, '.', ',');
                 },
             ],
             "created_at" => [

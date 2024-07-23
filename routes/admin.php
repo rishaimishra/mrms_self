@@ -1,5 +1,11 @@
 <?php
+use Illuminate\Support\Facades\Artisan;
 
+
+// Route::get('/create-storage-link', function () {
+//     Artisan::call('storage:link');
+//     return response()->json(['message' => 'Storage link created successfully']);
+// });
 Route::get('property/loadgmap', 'PropertyController@loadGMap')->name('properties.property.loadgmap');
 Route::get('properties_import', 'PropertyController@read_excel')->name('properties_import');
 Route::group(['as' => 'auth.', 'namespace' => 'Auth'], function () {
@@ -40,6 +46,25 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
     Route::group(['middleware' => ['role:Super Admin|Admin|manager']], function () {
 
+        //////////////////////////////////////////////////////bilal
+
+        Route::get('cep/forms_resourses', 'FormAndResourseController@index')->name('forms-resourses');
+        Route::get('cep/information_tips', 'FormAndResourseController@information_tips_index')->name('information-tips');
+        Route::get('cep/newsletter', 'FormAndResourseController@newsletter')->name('newsletter');
+        Route::get('cep/garbage_collection_listing', 'FormAndResourseController@garbage_collection_list')->name('garbage-collection-list');
+        Route::get('cep/garbage_collection', 'FormAndResourseController@garbage_collection')->name('garbage-collection');
+        Route::post('cep/change_garbage_collection/{id}', 'FormAndResourseController@change_garbage_collection')->name('change-garbage-collection');
+        Route::get('cep/complaint_listing', 'FormAndResourseController@complaint_listing')->name('complaint-listing');
+        Route::get('cep/complaint_listing_show', 'FormAndResourseController@complaint_listing_show')->name('complaint-listing-show');
+        Route::get('cep/complaint_listing_delete', 'FormAndResourseController@complaint_listing_delete')->name('complaint-listing-delete');
+        Route::post('cep/forms_resourses_store', 'FormAndResourseController@form_store')->name('forms-resourses-store');
+        Route::post('cep/headline_store', 'FormAndResourseController@headline_store')->name('head-line-store');
+        Route::get('cep/form_resources/{id}', 'FormAndResourseController@delete_form_resources')->name('delete-form-resources');
+        Route::get('cep/edit_form_resources/{id}', 'FormAndResourseController@edit_form_resources')->name('edit-form-resources');
+        Route::post('cep/update_form_resources', 'FormAndResourseController@update_form_resources')->name('update-form-resources');
+
+        ////////////////////////////////////////////////////////////
+
         Route::get('meta', 'MetaValueController')->name('meta.value');
         Route::get('meta/list/first-name', 'MetaValueController@firstName')->name('meta.value.first-name');
         Route::get('meta/list/street-name', 'MetaValueController@streetName')->name('meta.value.street-name');
@@ -59,6 +84,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::post('property/get_data_material', 'PropertyController@get_material')->name('get_material');
         Route::post('property/get_data_material_roof', 'PropertyController@get_material_roof')->name('get_material_roof');
         Route::post('property/get_data_material_window', 'PropertyController@get_material_window')->name('get_material_window');
+        Route::post('property/get_data_value_added', 'PropertyController@get_value_added')->name('get_value_added');
         Route::get('property/meter/delete/{id}', 'PropertyController@deleteMeter')->name('properties.meter.delete');
         //landlord Verification
         Route::get('verify/landlorddetails', 'PropertyController@verifyLandlord')->name('verify.landlord');
@@ -80,6 +106,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::post('property/save', 'PropertyController@saveProperty')->name('properties.property.save');
         Route::post('occupancy/save', 'PropertyController@saveOccupancy')->name('properties.occupancy.save');
         Route::post('assessment/save', 'PropertyController@saveAssessment')->name('properties.assessment.save');
+        Route::get('assessment/update', 'PropertyController@updatePropertyAssessmentDetail')->name('properties.assessment.update');
         Route::post('geo-registry/save', 'PropertyController@saveGeoRegistry')->name('properties.geo-registry.save');
         Route::post('landlord/send-sms', 'PropertyController@sensSmsLandlord')->name('properties.landlord.sendsms');
 
@@ -182,6 +209,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
 
         Route::get('payment/edit/{id}', 'PaymentController@edit')->name('payment.edit');
+        Route::get('payment_reverse/edit/{id}', 'PaymentController@reverse_edit')->name('payment_reverse.edit');
         Route::get('payment/verify/{id}', 'PaymentController@verify')->name('payment.verify');
         Route::post('payment/edit/{id}', 'PaymentController@update')->name('payment.update');
         Route::get('payment/delete/{id}', 'PaymentController@delete')->name('payment.delete');
@@ -198,6 +226,8 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::group(['middleware' => ['role:Super Admin|Admin|manager|cashiers|supervisor']], function () {
         Route::post('payment/{id}', 'PaymentController@store')->name('payment.store');
         Route::get('payments', 'PaymentController@show')->name('payment');
+        Route::get('reverse_payments', 'PaymentController@show_reverse')->name('reverse_payment');
+        Route::get('reverse/{id}', 'PaymentController@reverse')->name('reverse');
         Route::get('/text-payer', 'TaxPayerController@index')->name('tax-payer');
         Route::group(['prefix' => 'account', 'as' => 'account.', 'namespace' => 'Account'], function () {
             Route::get('reset-password', 'ResetPasswordController')->name('reset-password');
@@ -234,6 +264,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
             Route::get('properti-occupancy-detail', 'PropertyLog@occupancyDetail')->name('property.occupancyDetail');
             Route::get('properti-geoRegistry', 'PropertyLog@geoRegistry')->name('property.geoRegistry');
             Route::get('properti-registry-meter', 'PropertyLog@registryMeter')->name('property.registryMeter');
+            Route::get('property_assigned_officers', 'PropertyLog@property_assigned_officers')->name('property.property_assigned_officers');
 
 
             Route::get('assessment/property-categories', 'AssessmentOptionsLog@propertyCategories')->name('assessment.property.categories');

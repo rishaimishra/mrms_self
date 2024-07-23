@@ -69,24 +69,24 @@
                             <div class="form-group">
                                 <label>Owner Fname</label>
 
-                                <div id="owner_first_name" style="width: 100%; overflow: hidden;"></div>
-
+                                
+                                {!! Form::select('owner_first_name', $first_name, $request->owner_first_name, ['class' => 'form-control','data-live-search'=>'true']) !!}
                             </div>
                         </div>
                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Owner Mname</label>
 
-                                <div id="owner_middle_name" style="width: 100%; overflow: hidden;"></div>
-
+                              
+                                {!! Form::select('owner_middle_name', $middle_name, $request->owner_middle_name, ['class' => 'form-control','data-live-search'=>'true']) !!}
                             </div>
                         </div> 
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Owner Lname</label>
 
-                                <div id="owner_last_name" style="width: 100%; overflow: hidden;"></div>
-
+                               
+                                {!! Form::select('owner_last_name', $surname, $request->owner_last_name, ['class' => 'form-control','data-live-search'=>'true']) !!}
                             </div>
                         </div>
                     </div>
@@ -125,7 +125,7 @@
                     <div class="form-group">
                         <label>Street No.</label>
                         
-                            {!! Form::select('street_number', $street_numbers, $request->street_number, ['class' => 'form-control']) !!}
+                            {!! Form::select('street_number', $street_numbers, $request->street_number, ['class' => 'form-control','data-live-search'=>'true']) !!}
                        
                     </div>
                 </div>
@@ -135,7 +135,7 @@
                     <div class="form-group">
                         <label>Street Name</label>
                        
-                            {!! Form::select('street_name', $street_names, $request->street_name, ['class' => 'form-control']) !!}
+                            {!! Form::select('street_name', $street_names, $request->street_name, ['class' => 'form-control','data-live-search'=>'true']) !!}
                        
                     </div>
                 </div>
@@ -143,7 +143,7 @@
                     <div class="form-group">
                         <label>Additional Address</label>
                        
-                            {!! Form::select('addition_address', $street_names, $request->street_name, ['class' => 'form-control']) !!}
+                            {!! Form::select('addition_address', $additional_address, $request->additional_address_id, ['class' => 'form-control','data-live-search'=>'true']) !!}
                        
                     </div>
                 </div>
@@ -151,7 +151,7 @@
                     <div class="form-group">
                         <label>Area</label>
                        
-                            {!! Form::select('area', $street_names, $request->street_name, ['class' => 'form-control']) !!}
+                            {!! Form::select('area', $propertyArea, $request->propertyArea, ['class' => 'form-control','data-live-search'=>'true']) !!}
                        
                     </div>
                 </div>
@@ -328,8 +328,8 @@
 
                 
 
-                <div class="col-md-3">
-                    {{-- <label for="">Created </label> --}}
+                {{--  <div class="col-md-3">
+                    <label for="">Created </label>
                     <div class="row">
 
                         <div class="col-sm-6">
@@ -352,11 +352,11 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>  --}}
 
                 
 
-                <div class="col-md-3">
+                {{--  <div class="col-md-3">
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -378,9 +378,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>  --}}
 
-                <div class="col-md-3">
+                {{--  <div class="col-md-3">
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -402,7 +402,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>  --}}
 
                
 
@@ -426,7 +426,7 @@
 
                 <div class="col-sm-12">
                     <div class="row">
-                            <div class="col-sm-2">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     <label>Printed Demand Notes</label>
                                     <div class="demo-radio-button">
@@ -447,7 +447,7 @@
                 {{--                        <div id="open_location_code" style="width: 100%;"></div>--}}
                 {{--                    </div>--}}
                 {{--                </div>--}}
-                            <div class="col-sm-2">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     <label>Gated Community</label>
                                     <div class="demo-radio-button">
@@ -485,7 +485,7 @@
                             </div>
 
                            
-                            <div class="col-sm-2">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     <label>Delivered Demand Notes</label>
                                     <div class="demo-radio-button">
@@ -502,7 +502,7 @@
 
                                 <div class="dd {{$request->is_draft_delivered == 1 ?:"hidden"}}">
                                     <div class="row">
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-12">
                                             <div class="form-group">
                                                 <div class="form-line">
                                                     <label>Start Date</label>
@@ -512,7 +512,7 @@
                                             </div>
                                         </div>
                 
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-12">
                                             <div class="form-group">
                                                 <div class="form-line">
                                                     <label>End Date</label>
@@ -524,7 +524,46 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-2">
+                             <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>Date created</label>
+                                    <div class="demo-radio-button">
+                                        <input name="is_date_created"
+                                            {{ $request->is_date_created ? 'checked' : ''  }}
+                                            type="radio" id="is_date_created" value="1"/>
+                                        <label for="is_date_created" style="min-width: auto">Yes</label>
+                                        <input name="is_date_created"
+                                            {{ ($request->is_date_created === "0") ? 'checked' : ''  }}
+                                            type="radio" id="is_date_created_2" value="0"/>
+                                        <label for="is_date_created_2" style="min-width: auto">No</label>
+                                    </div>
+                                </div>
+
+                                <div class="dc {{$request->is_date_created == 1 ?:"hidden"}}">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <div class="form-line">
+                                                    <label>Start Date</label>
+                                                    {!! Form::text('dc_start_date', $request->dc_start_date, ['class' => 'form-control datepicker']) !!}
+                                                </div>
+                                                {!! $errors->first('dc_start_date', '<div class="error">:message</div>') !!}
+                                            </div>
+                                        </div>
+                
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <div class="form-line">
+                                                    <label>End Date</label>
+                                                    {!! Form::text('dc_end_date', $request->dc_end_date, ['class' => 'form-control datepicker']) !!}
+                                                </div>
+                                                {!! $errors->first('dc_end_date', '<div class="error">:message</div>') !!}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     <label>Payments</label>
                                     <div class="demo-radio-button">
@@ -538,10 +577,57 @@
                                         <label for="is_paid_property_2" style="min-width: auto">No</label>
                                     </div>
                                 </div>
+                                 <div class="pp {{$request->paid == 'paid' ?:"hidden"}}">
+                                     <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <div class="form-line">
+                                                    <label>Start Date</label>
+                                                    {!! Form::text('paid_start_date', $request->paid_start_date, ['class' => 'form-control datepicker']) !!}
+                                                </div>
+                                                {!! $errors->first('paid_start_date', '<div class="error">:message</div>') !!}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <div class="form-line">
+                                                    <label>End Date</label>
+                                                    {!! Form::text('paid_end_date', $request->paid_end_date, ['class' => 'form-control datepicker']) !!}
+                                                </div>
+                                                {!! $errors->first('paid_end_date', '<div class="error">:message</div>') !!}
+                                            </div>
+                                        </div>
+                                    </div>
+                                 </div>
+                                    <div class="up {{$request->paid == 'unpaid' ?:"hidden"}}">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <div class="form-line">
+                                                        <label>Start Date</label>
+                                                        {!! Form::text('unpaid_start_date', $request->unpaid_start_date, ['class' => 'form-control datepicker']) !!}
+                                                    </div>
+                                                    {!! $errors->first('unpaid_start_date', '<div class="error">:message</div>') !!}
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <div class="form-line">
+                                                        <label>End Date</label>
+                                                        {!! Form::text('unpaid_end_date', $request->unpaid_end_date, ['class' => 'form-control datepicker']) !!}
+                                                    </div>
+                                                    {!! $errors->first('unpaid_end_date', '<div class="error">:message</div>') !!}
+                                                </div>
+                                            </div>
+                                        </div>
+                                 </div>
                             </div>
-                            <div class="col-sm-2">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     <label>Inaccessible Properties</label>
+                                    <br>
                                     <div class="demo-radio-button" style="display: inline-block;">
                                         <input name="is_accessible"
                                                {{ $request->is_accessible ? 'checked' : ''  }} class="input-inaccessible"
@@ -556,9 +642,10 @@
                                     {!! Form::select('property_inaccessible', $property_inaccessibles , $request->property_inaccessible, ['class' => 'form-control dropdown-inaccessible','data-live-search'=>'true']) !!}
                                 </div>
                             </div>
-                            <div class="col-sm-2">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     <label>Organization Properties</label>
+                                    <br>
                                     <div class="demo-radio-button" style="display: inline-block">
                                         <input name="is_organization"
                                                {{ $request->is_organization == 1 ? 'checked' : ''  }} class="input-is-organization"
@@ -571,6 +658,9 @@
                                     </div>
                                     <div id="sub-input" style="display: {{ $request->is_organization == 1 ? 'block' : 'none' }}">
                                         {!! Form::select('organization_type', $organizationTypes ,$request->organization_type, ['class' => 'form-control', 'data-live-search'=>'true', 'placeholder' => 'Organization Type']) !!}
+                                    </div>
+                                    <div id="sub-school" style="display: {{ $request->is_organization == 1 ? 'block' : 'none' }}">
+                                        {!! Form::select('school_type', $schoolTypes ,$request->school_type, ['class' => 'form-control', 'data-live-search'=>'true', 'placeholder' => 'Select school Type']) !!}
                                     </div>
                                 </div>
             
@@ -748,11 +838,41 @@
 
             }
         });
+        jQuery("#is_date_created").on('click', function () {
+
+            if (jQuery(this).is(':checked')) {
+                jQuery(".dc").removeClass('hidden');
+
+            } else {
+                jQuery(".dc").addClass('hidden');
+
+            }
+        });
+        jQuery("#is_date_created_2").on('click', function () {
+
+             jQuery(".dc").addClass('hidden');
+        });
         jQuery("#is_draft_delivered_2").on('click', function () {
 
              jQuery(".dd").addClass('hidden');
         });
+      jQuery("#is_paid_property_1").on('click', function () {
+    if (jQuery(this).is(':checked')) {
+        jQuery(".pp").removeClass('hidden');
+        jQuery(".up").addClass('hidden');
+    } else {
+        jQuery(".pp").addClass('hidden');
+    }
+});
 
+jQuery("#is_paid_property_2").on('click', function () {
+    if (jQuery(this).is(':checked')) {
+        jQuery(".up").removeClass('hidden');
+        jQuery(".pp").addClass('hidden');
+    } else {
+        jQuery(".up").addClass('hidden');
+    }
+});
 
         jQuery("#is_gated_community_1").on('click', function () {
 
@@ -868,29 +988,11 @@
                 name: "name"
             });
 
-            owner_first_name = new dhtmlXCombo({
-                parent: "owner_first_name",
-                width: 230,
-                filter: "{{route('admin.first-name')}}",
-                filter_cache: true,
-                name: "owner_first_name"
-            });
+         
 
-            owner_last_name = new dhtmlXCombo({
-                parent: "owner_last_name",
-                width: 230,
-                filter: "{{route('admin.last-name')}}",
-                filter_cache: true,
-                name: "owner_last_name"
-            });
+           
 
-            owner_middle_name = new dhtmlXCombo({
-                parent: "owner_middle_name",
-                width: 230,
-                filter: "{{route('admin.middle-name')}}",
-                filter_cache: true,
-                name: "owner_middle_name"
-            });
+           
 
             tenant_first_name = new dhtmlXCombo({
                 parent: "tenant_first_name",
@@ -1088,13 +1190,24 @@
         });
 
         jQuery("body .input-is-organization").on('change', function () {
+            
             if ($(this).val() == 1) {
                 $(this).closest('.form-group').find('#sub-input').show();
             } else {
                 $(this).closest('.form-group').find('#sub-input').hide();
+                $(this).closest('.form-group').find('#sub-school').hide();
+            }
+           
+        });
+        jQuery("#sub-input").on('change', function() {
+           // alert("sdfsd");
+          //  console.log('text: ', $('#sub-input .selected a .text').text());
+            if ($('#sub-input .selected a .text').text() === 'School') {
+                jQuery(this).closest('.form-group').find('#sub-school').show();
+            } else {
+                jQuery(this).closest('.form-group').find('#sub-school').hide();
             }
         });
-
         totalAssessment();
 
         function totalAssessment()
@@ -1113,7 +1226,13 @@
 
             }
 
-            $("#total_amount").text((str.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")));
+            str = str.toFixed(2);
+
+            // Add thousand separators
+            str = str.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            
+            // Update the text content of the target element
+            $("#total_amount").text(str);
             return false;
         }
     </script>

@@ -196,11 +196,11 @@
                                 <select name="user_role" id="user_role" class="form-control show-tick">
                                     <option value="">-- Select User Type --</option>
                                     @hasrole('Super Admin')
-                                        @foreach(Spatie\Permission\Models\Role::select('name')->where('id','!=',1)->get() as $role)
+                                        @foreach(Spatie\Permission\Models\Role::select('name')->where('id','!=',1)->where('guard_name','!=',"guest_user")->get() as $role)
                                             <option value="{{$role['name']}}" {{ old('user_role')==$role['name']?'selected': ''}}>{{ucfirst($role['name'])}}</option>
                                         @endforeach
                                     @else
-                                        @foreach(Spatie\Permission\Models\Role::select('name')->where('id','!=',1)->where('id','!=',2)->get() as $role)
+                                        @foreach(Spatie\Permission\Models\Role::select('name')->where('id','!=',1)->where('guard_name','!=',"guest_user")->where('id','!=',2)->get() as $role)
                                             <option value="{{$role['name']}}" {{ old('user_role')==$role['name']?'selected': ''}}>{{ucfirst($role['name'])}}</option>
                                         @endforeach
                                     @endhasrole
@@ -212,7 +212,7 @@
                             </div>
 
                             <div class="col-sm-3">
-                            <label class="form-label">Assign District </label>
+                            <label class="form-label">Assign Council </label>
                             @hasrole('Super Admin')
                                 <select name="assign_district" id="assign_district" class="form-control show-tick">
 

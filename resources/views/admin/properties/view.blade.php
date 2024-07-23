@@ -22,7 +22,7 @@
                     <div class="body" style=" overflow-x: scroll; ">
                         <table class="table">
                             <thead>
-                            <th>Assessment Year</th>
+                            <th>Year</th>
                             {{--  <th>Assessment amount</th>  --}}
                             <th>Assessed Value</th>
                             <th>Council Adjustments</th>
@@ -33,42 +33,39 @@
                             <th>Arrears</th>
                             <th>Penalty</th>
                             <th>Amount Paid</th>
-                            <th>Due</th>
+                            <th>Balance Due</th>
                             </thead>
                             <tbody>
 
                                 @if($property->assessmentHistory->count())
-                                    @foreach($property->assessmentHistory as $assessmentHistory)
-                                        <tr>
-                                            <td>{{ $assessmentHistory->created_at->format('Y') }}</td>
-                                             <td>{{ number_format($assessmentHistory->getCurrentYearAssessmentAmount()) }}</td> 
-                                            {{-- <td>{{ $assessmentHistory->property_assessed_value }}</td> --}}
-                                            <td>{{ number_format($assessmentHistory->getCouncilAdjustments()) }}</td>
-
-                                            <td>{{ number_format($assessmentHistory->getNetPropertyAssessedValue()) }}</td>
-                                             <td>{!! number_format($assessmentHistory->getPropertyTaxPayable(),0,'',',') !!}</td> 
-                                            {{-- <td>{{( ($assessmentHistory->property_assessed_value-$assessmentHistory->getCouncilAdjustments()) *2.50)/1000}}</td> --}}
-                                            @if ( $assessmentHistory->pensioner_discount && $assessmentHistory->disability_discount)
-                                                <td> {{  number_format($assessmentHistory->getPensionerDiscount()) + number_format($assessmentHistory->getDisabilityDiscount())  }}</td>
-                                               @else
-                                                <td>{!! $assessmentHistory->pensioner_discount ? number_format($assessmentHistory->getPensionerDiscount(),0,'',',') : 0 !!}</td>
-                                            @endif
-                                           
-                                            
-                                            <td>{!! $assessmentHistory->getPensionerDisabilityDiscountActual() ? number_format($assessmentHistory->getPensionerDisabilityDiscountActual(),0,'',',') : 0 !!}</td>
-                                            <td>{{ number_format($assessmentHistory->getPastPayableDue()) }}</td>
-                                            <td>{{ number_format($assessmentHistory->getPenalty()) }}</td>
-                                            <td>{{ number_format($assessmentHistory->getCurrentYearTotalPayment()) }}</td>
-                                            <td>{{ number_format($assessmentHistory->getCurrentYearTotalDue()) }}</td>
-                                        </tr>
-                                    @endforeach
-                                @endif
+                                @foreach($property->assessmentHistory as $assessmentHistory)
+                                    <tr>
+                                        <td>{{ $assessmentHistory->created_at->format('Y') }}</td>
+                                        <td>{{ number_format(floatval($assessmentHistory->getCurrentYearAssessmentAmount()), 2, '.', ',') }}</td> 
+                                        {{-- <td>{{ $assessmentHistory->property_assessed_value }}</td> --}}
+                                        <td>{{ number_format(floatval($assessmentHistory->getCouncilAdjustments()), 2, '.', ',') }}</td>
+                                        <td>{{ number_format(floatval($assessmentHistory->getNetPropertyAssessedValue()), 2, '.', ',') }}</td>
+                                        <td>{{ number_format(floatval($assessmentHistory->getPropertyTaxPayable()), 2, '.', ',') }}</td>
+                                        {{-- <td>{{( ($assessmentHistory->property_assessed_value-$assessmentHistory->getCouncilAdjustments()) *2.50)/1000}}</td> --}}
+                                        @if ($assessmentHistory->pensioner_discount && $assessmentHistory->disability_discount)
+                                            <td>{{ number_format(floatval($assessmentHistory->getPensionerDiscount()), 2, '.', ',') + number_format(floatval($assessmentHistory->getDisabilityDiscount()), 2, '.', ',') }}</td>
+                                        @else
+                                            <td>{!! $assessmentHistory->pensioner_discount ? number_format(floatval($assessmentHistory->getPensionerDiscount()), 2, '.', ',') : 0 !!}</td>
+                                        @endif
+                                        <td>{!! $assessmentHistory->getPensionerDisabilityDiscountActual() ? number_format(floatval($assessmentHistory->getPensionerDisabilityDiscountActual()),2,'.',',') : 0 !!}</td>
+                                        <td>{{ number_format(floatval($assessmentHistory->getPastPayableDue()), 2, '.', ',') }}</td>
+                                        <td>{{ number_format(floatval($assessmentHistory->getPenalty()), 2, '.', ',') }}</td>
+                                        <td>{{ number_format(floatval($assessmentHistory->getCurrentYearTotalPayment()), 2, '.', ',') }}</td>
+                                        <td>{{ number_format(floatval($assessmentHistory->getCurrentYearTotalDue()), 2, '.', ',') }}</td>
+                                    </tr>
+                                @endforeach
+                            @endif
                                 <!-- <tr>
                                     <td>{{ \Carbon\Carbon::parse($property->assessment->created_at)->format('Y') }}</td>
-                                    <td>{{ number_format($property->assessment->getCurrentYearAssessmentAmount()) }}</td>
-                                    <td>{{ number_format($property->assessment->getPastPayableDue()   ) }}</td>
+                                    <td>{{ number_format($property->assessment->getCurrentYearAssessmentAmount(), 2, '.', ',') }}</td>
+                                    <td>{{ number_format($property->assessment->getPastPayableDue(), 2, '.', ','   ) }}</td>
                                     <td>{{ number_format(($property->assessment->getPastPayableDue() + ($property->assessment->getPenalty()/2)) *.25) < 0 ? 0 : number_format(($property->assessment->getPastPayableDue() + ($property->assessment->getPenalty()/2)) *.25) }}</td>
-                                    <td>{{ number_format($property->assessment->getCurrentYearTotalPayment()) }}</td>
+                                    <td>{{ number_format($property->assessment->getCurrentYearTotalPayment(), 2, '.', ',') }}</td>
                                     <td>{{ number_format($property->assessment->getCurrentYearAssessmentAmount()+ (($property->assessment->getPastPayableDue() + ($property->assessment->getPenalty()/2)) *.25) + $property->assessment->getPastPayableDue() + ($property->assessment->getPenalty()/2)) }}</td>
                                 </tr> -->
                             </tbody>
@@ -120,12 +117,12 @@
                                         <td>{{ $payment->property_id }}</td>
                                         <td>{{ $payment->id }}</td>
                                         <td>{{ $payment->admin->getName() }}</td>
-                                        <td>{{ number_format($payment->assessment) }}</td>
+                                        <td>{{ number_format($payment->assessment), 2, '.', ',' }}</td>
                                         {{-- <td>{{ number_format($payment->amount) }}</td>
                                         <td>{{ number_format($payment->penalty) }}</td> --}}
-                                        <td>{{ number_format($payment->total) }}</td>
+                                        <td>{{ number_format($payment->total), 2, '.', ',' }}</td>
                                         <td>{{ number_format($payment->balance < 0 ? 0 : $payment->balance) }}</td>
-                                        <td>{{ ucwords($payment->payment_type) }}</td>
+                                        <td>{{ ucwords($payment->payment_type)}}</td>
                                         <td>{{ $payment->cheque_number }}</td>
                                         <td>{{ $payment->payee_name }}</td>
                                         <th>{{ \Carbon\Carbon::parse($payment->created_at)->format('Y M, d H:i A') }}</th>
@@ -244,7 +241,7 @@
                             </div>
                             <div class="col-sm-3">
                                 <h6>NIN</h6>
-                                <p>{{$property->landlord->sex}}</p>
+                                <p>{{$property->ninNumber}}</p>
                             </div>
                             <div class="col-sm-3">
                                 <h6>Street Number</h6>
@@ -259,21 +256,19 @@
                                 <h6>Organization Type</h6>
                                 <p>{{$property->organization_type}}</p>
                             </div>
-                            {{-- <div class="col-sm-3">
+                            <div class="col-sm-3">
                                 <h6>Organization Tin Number</h6>
                                 <p>{{$property->organization_tin}}</p>
-                            </div> --}}
-                            <div class="col-sm-3">
-                                <h6>Organization Address</h6>
-                                <p>{{$property->organization_addresss}}</p>
                             </div>
+                            <div class="col-sm-3">
+                                <h6>Street Name</h6>
+                                <p>{{$property->landlord->street_name}}</p>
+                            </div>
+                          
                         @endif
                     </div>
                     <div class="row">
-                        <div class="col-sm-3">
-                            <h6>Street Name</h6>
-                            <p>{{$property->landlord->street_name}}</p>
-                        </div>
+                       
                         <div class="col-sm-3">
                             <h6>Additional Street address</h6>
                             <p>{{$property->landlord->additional_address_id}}</p>
@@ -285,6 +280,10 @@
                         <div class="col-sm-3">
                             <h6>Ward</h6>
                             <p>{{$property->landlord->ward}}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <h6>Constituency</h6>
+                            <p>{{$property->landlord->constituency}}</p>
                         </div>
                         
                        
@@ -316,10 +315,7 @@
                     </div>
                     <div class="row">
                        
-                        <div class="col-sm-3">
-                            <h6>Constituency</h6>
-                            <p>{{$property->landlord->constituency}}</p>
-                        </div>
+                       
                         <div class="col-sm-3">
                             <h6>Section</h6>
                             <p>{{$property->landlord->section}}</p>
@@ -332,14 +328,15 @@
                             <h6>District</h6>
                             <p>{{$property->landlord->district}}</p>
                         </div>
-                    </div>
-
-                    <div class="row">
-                        
                         <div class="col-sm-3">
                             <h6>Province</h6>
                             <p>{{$property->landlord->province}}</p>
                         </div>
+                    </div>
+
+                    <div class="row">
+                        
+                       
                         <div class="col-sm-3">
                             <h6>Postcode</h6>
                             <p>{{$property->landlord->postcode}}</p>
@@ -352,15 +349,12 @@
                             <h6>Mobile Number 2</h6>
                             <p>{{$property->landlord->mobile_2}}</p>
                         </div>
-                    </div>
-                    <div class="row">
-                        
                         <div class="col-sm-3">
                             <h6>Email Address</h6>
                             <p>{{$property->landlord->email}}</p>
                         </div>
-                        
                     </div>
+                  
                 </div>
                 <div style="display: none;" class="body landlord-edit">
                     <div class="row">
@@ -1361,7 +1355,7 @@
        var measuretool = new MeasureTool(map, {
             showSegmentLength: true,
             tooltip: true,
-            unit: MeasureTool.UnitTypeId.METRIC
+            unit: MeasureTool.UnitTypeId.IMPERIAL
         });
 
         var infowindow = new google.maps.InfoWindow();
@@ -1412,6 +1406,8 @@
         }
 
         function SetValues() {
+
+
             $($("#assessment-button")[0]).click();
            // $('#assessment-button').click();
             var area = measuretool.area;
@@ -1457,9 +1453,9 @@
             //         property_length: length,
             //         property_breadth: breadth,
             //     });
-            $('#assessment-save').click();
+           // $('#assessment-save').click();
             const url_dev = "/mrms_git/mrms/public/apiv2/update/assessments";
-            const url_local = "/apiv2/update/assessments";
+            const url_local = "/back-admin/assessment/update";
             $.ajax({
                 url: url_local,
                 type: "get", //send it through get method
@@ -1472,11 +1468,13 @@
                     is_map_set: 1
                 },
                 success: function(response) {
-                   // location.reload();
+                    location.reload();
+                  // return false;
                     console.log(response);
                     //Do Something
                 },
                 error: function(xhr) {
+                    alert("something went wrong with assessment");
                     //Do Something to handle error
                 }
             });

@@ -9,6 +9,7 @@ use App\Models\PropertyGeoRegistry;
 use App\Models\PropertyRoofsMaterials;
 use App\Models\PropertyType;
 use App\Models\PropertyUse;
+use App\Models\MetaValue;
 use App\Models\PropertyValueAdded;
 use App\Models\PropertyWallMaterials;
 use App\Models\PropertyZones;
@@ -307,6 +308,52 @@ class PropertyController extends ApiController
             );
         }
 
+    
+            $check_first_name = MetaValue::where('name','first_name')->where('value',$request->landlord_first_name)->first();
+            if(!$check_first_name){
+                $meta_value = new MetaValue();
+                $meta_value->first_name = $request->landlord_first_name;
+                $property->save();
+            }
+
+            $check_surname = MetaValue::where('name','surname')->where('value',$request->landlord_surname)->first();
+            if(!$check_surname){
+                $meta_value = new MetaValue();
+                $meta_value->surname = $request->landlord_surname;
+                $property->save();
+            }
+
+            $check_street_name = MetaValue::where('name','street_name')->where('value',$request->landlord_street_name)->first();
+            if(!$check_street_name){
+                $meta_value = new MetaValue();
+                $meta_value->street_name = $request->landlord_street_name;
+                $property->save();
+            }
+
+            $check_property_street_name = MetaValue::where('name','street_name')->where('value',$request->property_street_name)->first();
+            if(!$check_property_street_name){
+                $meta_value = new MetaValue();
+                $meta_value->street_name = $request->property_street_name;
+                $property->save();
+            }
+
+
+            $check_occupancy_tenant_first_name = MetaValue::where('name','first_name')->where('value',$request->occupancy_tenant_first_name)->first();
+            if(!$check_occupancy_tenant_first_name){
+                $meta_value = new MetaValue();
+                $meta_value->street_name = $request->occupancy_tenant_first_name;
+                $property->save();
+            }
+
+            $check_occupancy_surname = MetaValue::where('name','surname')->where('value',$request->occupancy_surname)->first();
+            if(!$check_occupancy_surname){
+                $meta_value = new MetaValue();
+                $meta_value->street_name = $request->occupancy_surname;
+                $property->save();
+            }
+
+
+            
 
         return $this->success([
             'property_id' => $property->id,

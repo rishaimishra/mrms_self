@@ -36,6 +36,7 @@ class PaymentController extends Controller
 
     public function show(Request $request)
     {
+        // return $request;
         $property = [];
         $last_payment = null;
         $paymentInQuarter = [];
@@ -45,7 +46,7 @@ class PaymentController extends Controller
         $landlord = $request->user('landlord-api');
 
 
-        $property = Property::with([
+          $property = Property::with([
             'landlord',
             'landlord.titles',
             'occupancy',
@@ -70,57 +71,51 @@ class PaymentController extends Controller
             return $query->where('mobile_1', 'like', '%' . $landlord->mobile . '%')->orWhere('mobile_2', 'like', '%' . $landlord->mobile . '%');
         })->get();
         // dd($property[0]->assessmentHistory);
+        
+        if ( $property[0]->assessment->pensioner_discount && $property[0]->assessment->disability_discount){
+            @$property[0]->assessment->{"discounted_value"} = number_format($property[0]->assessment->getPensionerDiscount(),2,'.',',') + number_format($property[0]->assessment->getDisabilityDiscount(),2,'.',',');
+           }
+            else{
+                @$property[0]->assessment->{"discounted_value"} =$property[0]->assessment->pensioner_discount ? number_format($property[0]->assessment->getPensionerDiscount(),2,'.',',') : 0;
+    
+            }
+            $property[0]->assessment->{"balance_due"} = number_format($property[0]->assessment->getCurrentYearTotalDue(),2,'.',',');
+    
         $properties_discount_pensioner_images = [];
         foreach( $property as $pr)
         {
                 $propertyId = $pr->id; 
-                $discounted_value = 0;
-                $pensioner_discount = 0;
-                $disability_discount = 0;
+                // $pensioner_discount = 0;
+                // $disability_discount = 0;
                 $property_tax_payable = (float)$pr->assessment->getPropertyTaxPayable();
-                if($pr->assessment->pensioner_discount && $pr->assessment->disability_discount)
-                {
-                    $discounted_value = $property_tax_payable * ((20)/100);
-                    $pensioner_discount = $property_tax_payable * (10/100);
-                    $disability_discount = $property_tax_payable * (10/100);
-                }else if( $pr->assessment->pensioner_discount && $pr->assessment->disability_discount != 1)
-                {
-                    $discounted_value = $property_tax_payable * ((10)/100);
-                    $pensioner_discount = $property_tax_payable * (10/100);
-
-                }else if ($pr->assessment->pensioner_discount != 1 && $pr->assessment->disability_discount)
-                {
-                    $discounted_value = $property_tax_payable * ((10)/100);   
-                    $disability_discount = $property_tax_payable * (10/100);
-                }else
-                {
-                    $discounted_value = 0; 
-                }
+               
                 // dd($pr->assessment->discounted_value);
                 // $pr->assessment->property_rate_without_gst = number_format((float)$pr->assessment->getPropertyTaxPayable(), 2, '.', '');
+               
                 $pr->assessment->property_rate_without_gst = number_format((float)$pr->assessment->property_rate_without_gst, 2, '.', '');
-                $pr->assessment->{"discounted_value"} = number_format($discounted_value,2,'.','');
-                $pr->assessment->{"pensioner_discount"} = number_format($pensioner_discount,2,'.','');
-                $pr->assessment->{"disability_discount"} = number_format($disability_discount,2,'.','');
+                // $pr->assessment->{"discounted_value"} = number_format($discounted_value,2,'.','');
+                $pr->assessment->{"pensioner_discount"} = number_format($pr->assessment->pensioner_discount);
+                $pr->assessment->{"disability_discount"} = number_format($pr->assessment->disability_discount);
                 $pr->assessment->{"rate_payable"} = number_format((float)$pr->assessment->getPropertyTaxPayable(),2,'.','');
-                $pr->assessment->{"property_net_assessed_vaue"} = number_format($pr->assessment->getNetPropertyAssessedValue(),0,'',',');
+                $pr->assessment->{"property_net_assessed_vaue"} = number_format($pr->assessment->getNetPropertyAssessedValue(),2,'.',',');
+                $pr->assessment->{"discounted_rate_payable"} = number_format($pr->assessment->getPensionerDisabilityDiscountActual(),2,'.',',');
                 $council_adjusment_labels = array();
         
                 // dd($pr->assessment->water_percentage);
                 if($pr->assessment->water_percentage != 0 )
                 {
-                    array_push($council_adjusment_labels,'Water Supply');
+                    array_push($council_adjusment_labels,'No Water Supply');
                     
                 }
                 if($pr->assessment->electricity_percentage != 0 )
                 {
-                    array_push($council_adjusment_labels,'Electricity');
+                    array_push($council_adjusment_labels,'No Electricity');
                     
                 }
                 if($pr->assessment->waste_management_percentage != 0 )
                 {
                    
-                    array_push($council_adjusment_labels,'Waste Management Services/Points/Locations');
+                    array_push($council_adjusment_labels,'No Waste Management Services/Points/Locations');
                     
                 }
                 if($pr->assessment->market_percentage != 0 )
@@ -150,13 +145,13 @@ class PaymentController extends Controller
                 if($pr->assessment->paved_tarred_street_percentage != 0 )
                 {
                    
-                    array_push($council_adjusment_labels,'Paved/Tarred Road/Street');
+                    array_push($council_adjusment_labels,'No Paved/Tarred Road/Street');
                     
                 }
                 if($pr->assessment->drainage_percentage != 0 )
                 {
                    
-                    array_push($council_adjusment_labels,'Drainage');
+                    array_push($council_adjusment_labels,'No Drainage');
                    
                 }
                 
@@ -172,23 +167,18 @@ class PaymentController extends Controller
                                                                         $pr->assessment->drainage_percentage;
                 
                 $pr->assessment->{"council_adjustments_parameters"} = ($pr->assessment->property_rate_without_gst * $pr->assessment->{"council_adjustments_parameters"})/100;
-                $pr->assessment->{"council_adjustments_parameters"} = number_format($pr->assessment->{"council_adjustments_parameters"},0,'',',');
+                $pr->assessment->{"council_adjustments_parameters"} = number_format($pr->assessment->{"council_adjustments_parameters"},2,'.',',');
 
-                if ( $pr->assessment->pensioner_discount && $pr->assessment->disability_discount){
-                    @$pr->assessment->{"discounted_value"} = number_format($pr->assessment->getPensionerDiscount()) + number_format($pr->assessment->getDisabilityDiscount());
-                   }
-                    else{
-                        @$pr->assessment->{"discounted_value"} =$pr->assessment->pensioner_discount ? number_format($pr->assessment->getPensionerDiscount(),0,'',',') : 0;
-            
-                    }
+               
+
                 $pensioner_image_path = PropertyPayment::where('property_id','=',$propertyId)->whereNotNull('pensioner_discount_image')->orderBy('created_at','desc')->first();
                 $disability_image_path = PropertyPayment::where('property_id','=',$propertyId)->whereNotNull('disability_discount_image')->orderBy('created_at','desc')->first();
                 $data = [
                     'property_id' => $pr->id,
-                    'property_rate_without_gst' => number_format($pr->assessment->getPropertyTaxPayable(),0,'',','),
+                    'property_rate_without_gst' => number_format($pr->assessment->getPropertyTaxPayable(),2,'',','),
                     'pensioner_image_path' => $pensioner_image_path,
                     'disability_image_path' => $disability_image_path,
-                    'property_taxable_value' => number_format($pr->assessment->geTaxablePropertyValue(),0,'',',')
+                    'property_taxable_value' => number_format($pr->assessment->geTaxablePropertyValue(),2,'',',')
                 ];
 
             array_push($properties_discount_pensioner_images, $data);
@@ -312,11 +302,21 @@ class PaymentController extends Controller
 
 
     }
-    
-    
-    public function getPayReceipt()
+
+    public function getReceiptName($id, $year = null)
     {
-        $id = '41839';
+        $property = Property::with('assessment', 'occupancy', 'types', 'geoRegistry', 'user')->findOrFail($id);
+        // dd($property);
+        $assessment = $property->assessments->first();
+        return response()->json(['recipient_name' => $assessment->demand_note_recipient_name]);
+        
+
+    }
+    
+    
+    public function getPayReceipt($id, $year = null)
+    {
+        // $id = '2';
         $year = '2024';
         $year = !$year ? date('Y') : $year;
 

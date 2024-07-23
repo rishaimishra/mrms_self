@@ -104,9 +104,9 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Floor Area</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Floor Area (Sq. ft.)</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(number_format(optional($assessment)->square_meter, 2,'.','')) }} {{ (optional($assessment)->square_meter) ? ' SQ FEET' : '' }}</td>
+                                <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(number_format(optional($assessment)->square_meter, 2,'.','')) }}</td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">No Electricity</th>
                                 </td>
@@ -120,8 +120,13 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Rate Per Sq Feet</th>
                                 </td>
+                                @php 
+                                $district_value = $district->sq_meter_value;
+                                $value = 3750;
+                                $valuePerSquare = $district->sq_meter_value / 3750;
+                            @endphp
                                 {{--  <td style="border:1px solid #606060; color: #484848;">NLe {{ number_format($district->sq_meter_value) }}</td>  --}}
-                                <td style="border:1px solid #606060; color: #484848;">NLe 67</td>
+                                <td style="border: 1px solid #606060; color: #484848;">NLe {{ number_format($valuePerSquare, 2) }} </td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">No Waste Managment</th>
                                 </td>
@@ -129,7 +134,7 @@
                                 <td>
                                     <th style="border-top:1px solid #606060; border-left:1px solid #606060;border-right:1px solid #606060; border-bottom:1px solid #606060; color:#303030;">RATE PAYABLE 2024</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe&nbsp;{!! number_format($assessment->getPropertyTaxPayable()) !!}</td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe&nbsp;{!! number_format($assessment->getPropertyTaxPayable(), 2, '.', ',') !!}</td>
                             </tr>
                             <tr>
                                 <td>
@@ -155,14 +160,14 @@
                             <tr>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Wall Material</th>
-                                </td>
-                                <td style="border:1px solid #606060; color: #484848;">NLe {{ strtoupper(number_format(optional(optional($assessment)->wallMaterial)->value)) }} {{($assessment->wall_material_type)? '('.strtoupper($assessment->wall_material_type).')': ''}}</td>
+                                {{-- </td>                                                                                             $assessment->wall_material_percentage                                                   --}}
+                                <td style="border:1px solid #606060; color: #484848;">NLe {{ $assessment->wall_material_percentage }} {{($assessment->wall_material_type)? '('.strtoupper($assessment->wall_material_type).')': ''}}</td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Hazardous Location</th>
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->hazardous_precentage.'%' }}</td>
                                 <td>
-                                    <th style="border-top:1px solid #606060; border-left:1px solid #606060;border-right:1px solid #606060; border-bottom:1px solid #606060; color:#303030;" colspan="2" scope="col">COUNCIL DISCOUNT</th>
+                                    <th style="border-top:1px solid #606060; border-left:1px solid #606060;border-right:1px solid #606060; border-bottom:1px solid #606060; color:#303030;" colspan="2" scope="col">COUNCIL DISCOUNTS</th>
                                 </td>
                                 {{--  <td style="border:0px solid #606060;"></td>  --}}
 
@@ -171,7 +176,7 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Roof Type</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">NLe {{ strtoupper(number_format(optional(optional($assessment)->roofMaterial)->value)) }} {{($assessment->roof_material_type)? '('.strtoupper($assessment->roof_material_type).')': ''}}</td>
+                                <td style="border:1px solid #606060; color: #484848;">NLe {{ $assessment->roof_material_percentage }} {{($assessment->roof_material_type)? '('.strtoupper($assessment->roof_material_type).')': ''}}</td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">INF. Settlement</th>
                                 </td>
@@ -179,7 +184,8 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Disability (10%)</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->disability_discount ? 'Yes' : 'No') !!}</td>
+                                {{--  <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->disability_discount ? 'Yes' : 'No') !!}</td>  --}}
+                                <td style="border:1px solid #606060; color: #484848;">NLe {!! $assessment->disability_discount ? number_format($assessment->getDisabilityDiscount(), 2, '.', ',') : number_format(0, 2, '.', ',') !!}</td>
                                 <!-- <td style="border-top:1px solid #606060; border-right:1px solid #606060; border-bottom:1px solid #606060; font-weight: bold;text-align: left; color:#303030;" >2021</td> -->
                             </tr>
                             <tr>
@@ -192,9 +198,10 @@
                                 </td>
                                 <td style="border:1px solid #606060;color: #484848;">{{ $assessment->easy_street_access_percentage.'%' }}</td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Pensioners (10%)</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Pensioner (10%)</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->pensioner_discount ? 'Yes' : 'No') !!}</td>
+                                {{--  <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->pensioner_discount ? 'Yes' : 'No') !!}</td>  --}}
+                                <td style="border:1px solid #606060; color: #484848;">NLe {!! $assessment->pensioner_discount ? number_format($assessment->getPensionerDiscount(), 2, '.', ',') : number_format(0, 2, '.', ',') !!}</td>
                                  {{--  <td style="border-left:1px solid  #606060; border-bottom:1px solid  #606060; border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px;width:15%; color:#303030;">VALUE (LE)</td>   --}}
                             </tr>
                             <tr>
@@ -213,12 +220,12 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Swimming Pool</th>
-                                </td>
-                                <td style="border:1px solid #606060; color: #484848;">
-                                    {!! strtoupper(optional(optional($assessment)->swimming)->label ? optional(optional($assessment)->swimming)->label : 'NO') !!}
-                                    ({!! strtoupper(optional(optional($assessment)->swimming)->value ? optional(optional($assessment)->swimming)->value : 0) !!})
-                                </td>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Sanitation</th>
+                                    </td>
+                                    <td style="border:1px solid #606060; color: #484848;">
+                                        {{ strtoupper(optional($sanitation = App\Models\PropertySanitationType::find($assessment->sanitation))->label) == 'NOT APPLICABLE' ? 'NA' : strtoupper(optional($sanitation)->label) }}
+                                        ({{ strtoupper(optional($sanitation)->value) }})
+                                    </td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">No Drainage</th>
                                 </td>
@@ -226,17 +233,17 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">DISCOUNTED RATE</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getPensionerDisabilityDiscountActual())!!}</td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getPensionerDisabilityDiscountActual(), 2, '.', ',')!!}</td>
                                 <!-- <td style="border-top:1px solid #606060; border-right:1px solid #606060; border-bottom:1px solid #606060; font-weight: bold;text-align: left;color:#303030;">DISCOUNT</td> -->
                                
                             </tr>
                             <tr>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Zone</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Property Use</th>
                                 </td>
                                 <td style="border:1px solid #606060; color: #484848;">
-                                    {{ strtoupper(optional(App\Models\PropertyZones::find($assessment->zone))->label) }}
-                                    ({{ strtoupper(optional(App\Models\PropertyZones::find($assessment->zone))->value) }})
+                                    {{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->label) }}
+                                    ({{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->value) }})
                                 </td>
                                 <td>
                                     <th style="border:0px solid #606060;text-align: left;" scope="col"></th>
@@ -250,11 +257,11 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Property Use</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Swimming Pool</th>
                                 </td>
                                 <td style="border:1px solid #606060; color: #484848;">
-                                    {{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->label) }}
-                                    ({{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->value) }})
+                                    {!! strtoupper(optional(optional($assessment)->swimming)->label ? optional(optional($assessment)->swimming)->label : 'NO') !!}
+                                    ({!! strtoupper(optional(optional($assessment)->swimming)->value ? optional(optional($assessment)->swimming)->value : 0) !!})
                                 </td>
                                 <td>
                                     <th style="border:0px solid #606060;text-align: left;" scope="col"></th>
@@ -263,46 +270,54 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">ARREARS</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;">NLe {!! number_format($assessment->getPastPayableDue()) !!}</td>
+                                <td style="border:1px solid #606060; color:#303030;">NLe {!! number_format($assessment->getPastPayableDue(), 2, '.', ',') !!}</td>
                             </tr>
                             <tr>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Gated Community</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(optional($assessment)->gated_community ? 'Yes' : 'No') }}</td>
+                                <td style="border:1px solid #606060; color: #484848;">
+                                    {{ strtoupper(optional($assessment)->gated_community ? 'Yes' : 'No') }}
+                                    ({{ strtoupper(optional($assessment)->gated_community ? optional($assessment)->gated_community : 0) }})
+                                </td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">TOTAL DEDUCTABLE</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getCouncilAdjustments()) !!}</td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe  {!! number_format($assessment->getCouncilAdjustments(), 2, '.', ',') !!}</td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">PENALTY</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;">NLe {!! number_format($assessment->getPenalty()) !!}</td>
+                                <td style="border:1px solid #606060; color:#303030;">NLe {!! number_format($assessment->getPenalty(), 2, '.', ',') !!}</td>
                               
                             </tr>
                             <tr>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Dilapidated</th>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Beach Front</th>
                                 </td>
-                                <!-- <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->label) }}</td> -->
-                                <td style="border:1px solid #606060; color: #484848;">{{ str_contains(strtoupper($assessment->categories->pluck('label')->implode(', ')), 'Dilapidated House') ? 'YES' : 'NO' }}</td>
-                                <td>
+                                <td style="border:1px solid #606060; color: #484848;">
+                                    {{ strtoupper(optional($property)->beach_front ? 'Yes' : 'No') }}
+                                    ({{ strtoupper(optional($property)->beach_front ? 1 : 0) }})
+                                </td>
+                               
+                               <td>
                                     <th style="border:0px solid #606060;text-align: left;" scope="col"></th>
                                 </td>
                                 <td style="border:0px solid #606060;"></td>
                                 <td>
                                     <th style="border:1px solid #606060;color:#303030;text-align: left;font-weight:bold;" scope="col">Amount paid</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getCurrentYearTotalPayment()) !!}</td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getCurrentYearTotalPayment(), 2, '.', ',') !!}</td>
                             </tr>
                             <tr>
-                            <td>
-                                <th style="border:1px solid #606060;text-align: left;" scope="col">Sanitation</th>
+                                <td>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Dilapidated</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">
-                                    {{ strtoupper(optional($sanitation = App\Models\PropertySanitationType::find($assessment->sanitation))->label) == 'NOT APPLICABLE' ? 'NA' : strtoupper(optional($sanitation)->label) }}
-                                    ({{ strtoupper(optional($sanitation)->value) }})
+                                <!-- <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->label) }}</td> -->
+                                <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(optional($property->isDilapidatedProperty) ? 'YES' : 'NO') }}
+                                    ({!! strtoupper(optional($property->isDilapidatedProperty) ? 1 : 0) !!})
+                                
                                 </td>
+                                
                                 <td>
                                     <th style="border:0px solid #606060;text-align: left;" scope="col"></th>
                                 </td>
@@ -316,15 +331,15 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">ASSESSED VALUE</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getCurrentYearAssessmentAmount()) !!}</td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getCurrentYearAssessmentAmount(), 2, '.', ',') !!}</td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">NET ASSESSED VALUE</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getNetPropertyAssessedValue()) !!}</td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getNetPropertyAssessedValue(), 2, '.', ',') !!}</td>
                                 <td>
-                                    <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">TOTAL DUE 2024</th>
+                                    <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">BALANCE DUE 2024</th>
                                 </td>
-                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getCurrentYearTotalDue()) !!}</td>
+                                <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format((float) $assessment->getCurrentYearTotalDue(), 2, '.', ',') !!}</td>
                             </tr>
                             
                         </tbody>

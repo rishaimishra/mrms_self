@@ -14,7 +14,7 @@
     <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW"/>
 
     <!-- Favicon-->
-    <link rel="icon" href="{{ url('images/dpm-favicon.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url('images/mrms.ico') }}" type="image/x-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet"

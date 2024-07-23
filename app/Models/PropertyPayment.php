@@ -32,7 +32,8 @@ class PropertyPayment extends Model
         'disability_discount_image',
         'pensioner_discount_approve',
         'disability_discount_approve',
-        'payment_made_year'
+        'payment_made_year',
+        'payment_fulfilment'
     ];
 
     protected static $logAttributes = ['*'];

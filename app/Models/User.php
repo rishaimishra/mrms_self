@@ -97,4 +97,8 @@ class User extends Authenticatable
     {
         return $this->belongTo(District::class, 'name');
     }
+    public function payments()
+    {
+        return $this->hasMany(PropertyPayment::class);
+    }
 }

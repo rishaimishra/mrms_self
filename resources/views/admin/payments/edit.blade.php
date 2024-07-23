@@ -21,12 +21,21 @@
                                     <label for="amount">Assessment Amount</label>
                                     <div class="form-group">
                                         <div class="form-line">
-                                            <input type="text" id="assessment"
+                                            {{--  <input type="text" id="assessment"
                                                    value="{{ old('assessment') ? old('assessment') : number_format($payment->assessment,0,'',',') }}"
                                                    name="assessment" class="form-control"
                                                    placeholder="Enter assessment Amount"
+                                                   @if($payment->reverse == 0)
+                                                   disabled
+                                                   @endif
                                                    onkeyup = "javascript:this.value=Comma(this.value);"
-                                            >
+                                            >  --}}
+                                            <input type="text" id="assessment"
+                                                    value="{{ old('assessment') ? old('assessment') : number_format($payment->assessment, 0, '', ',') }}"
+                                                    name="assessment" class="form-control"
+                                                    placeholder="Enter assessment Amount"
+                                                    @if($payment->reverse == 1) disabled @endif
+                                                    onkeyup="javascript:this.value=Comma(this.value);">
                                         </div>
                                         {!! $errors->first('assessment', '<span class="error">:message</span>') !!}
                                     </div>
@@ -40,6 +49,7 @@
                                                    value="{{ old('amount') ? old('amount') : number_format($payment->amount,0,'',',') }}"
                                                    name="amount" class="form-control"
                                                    placeholder="Enter Amount Paying"
+                                                   @if($payment->reverse == 1) disabled @endif
                                                    onkeyup = "javascript:this.value=Comma(this.value);"
                                             >
                                         </div>
@@ -55,6 +65,7 @@
                                             <input type="text" id="penalty"
                                                    value="{{ old('amount') ? old('amount') : number_format($payment->penalty,0,'',',') }}"
                                                    name="penalty" class="form-control"
+                                                   @if($payment->reverse == 1) disabled @endif
                                                    placeholder="Enter Amount Paying"  onkeyup = "javascript:this.value=Comma(this.value);">
                                         </div>
                                         {!! $errors->first('penalty', '<span class="error">:message</span>') !!}
@@ -94,6 +105,7 @@
                                         <div class="form-line">
                                             <input type="text" id="cheque_number" value="{{ old('cheque_number', $payment->cheque_number) }}"
                                                    name="cheque_number" class="form-control"
+                                                   @if($payment->reverse == 1) disabled @endif
                                                    placeholder="Cheque Number">
                                         </div>
                                         {!! $errors->first('cheque_number', '<span class="error">:message</span>') !!}
@@ -106,7 +118,9 @@
                             <label for="email_address">Payee Name</label>
                             <div class="form-group">
                                 <div class="form-line" id="payee_name">
-                                    <input type="text" id="payee_name" value="{{ old('payee_name', $payment->payee_name) }}"
+                                    <input type="text" id="payee_name"
+                                    @if($payment->reverse == 1) disabled @endif
+                                     value="{{ old('payee_name', $payment->payee_name) }}"
                                            name="payee_name" class="form-control"
                                            placeholder="Payee Name">
                                 </div>
@@ -218,8 +232,12 @@
                         </div>
                         <div class="clearfix"></div>
 
-
                         <div class="col-sm-6 text-left">
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            @if($payment->reverse == 0)
+                            <a href="{{route('admin.reverse', $payment->id)}}" class="btn btn-primary m-t-15 waves-effect btn-lg">Reverse Payment</a>
+                            @endif
                             <!-- <button type="submit" class="btn btn-primary m-t-15 waves-effect btn-lg">Save</button> -->
                         </div>
                     </div>
