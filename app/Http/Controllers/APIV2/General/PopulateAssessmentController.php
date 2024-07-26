@@ -56,7 +56,7 @@ class PopulateAssessmentController extends ApiController
 
         // for()
 
-        $result['property_categories']      = PropertyCategory::select('id', 'label', 'value')->where('is_active', 1)->get();
+        $result['property_categories']      = PropertyCategory::select('id', 'label', 'value','good_value','avg_value','bad_value')->where('is_active', 1)->get();
         $result['property_wall_materials']  = PropertyWallMaterials::select('id', 'label', 'value','good_value','avg_value','bad_value')->where('is_active', 1)->get();
         $result['property_roofs_materials'] = PropertyRoofsMaterials::select('id', 'label', 'value','good_value','avg_value','bad_value')->where('is_active', 1)->get();
         $result['property_value_added']     = PropertyValueAdded::select('id', 'label', 'value','good_value','avg_value','bad_value')->where('is_active', 1)->get();

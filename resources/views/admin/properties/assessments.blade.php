@@ -47,6 +47,8 @@
                         <th>Year</th>
                         <th>Delivery Status</th>
                         <th>Recipient Name</th>
+                        <th>Recipient Middle Name</th>
+                        <th>Recipient Surname</th>
                         <th>Recipient Contact Number</th>
                         <th>Proof of Delivery</th>
                         <th>Last Printed</th>
@@ -64,6 +66,8 @@
                                     @if($assessment->isDelivered())
                                         
                                     <td>   <p>{{ $assessment->demand_note_recipient_name }}</p> </td>
+                                    <td>   <p>{{ $assessment->delivered_middle_name }}</p> </td>
+                                    <td>   <p>{{ $assessment->delivered_middle_surname }}</p> </td>
                                        
                                             <td>    <p>{{ $assessment->demand_note_recipient_mobile }}</p></td>
                                            

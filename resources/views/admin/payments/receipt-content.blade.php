@@ -140,7 +140,15 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <td style="border:1px solid lightgray;">{{ strtoupper($assessment->valuesAdded->pluck('label')->implode(', ')) }} , {{ strtoupper(optional($assessment)->gated_community ? 'GATED COMMUNITY' : ' ') }} , {{ strtoupper(optional($property->beach_front)  ? 'BEACH FRONT' : ' ') }} </td>
+                            <td style="border:1px solid lightgray;">
+                                {{ strtoupper($assessment->valuesAdded->pluck('label')->implode(', ')) }}
+                                {{--  @if(optional($assessment)->gated_community)
+                                    , GATED COMMUNITY
+                                @endif
+                                @if(optional($property)->beach_front)
+                                    , BEACH FRONT
+                                @endif  --}}
+                            </td>
                             <td style="border:1px solid lightgray; ">{{ strtoupper(optional(App\Models\PropertySanitationType::find($assessment->sanitation))->label) }}</td> 
                             <td style="border:1px solid lightgray; ">{{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->label) }}</td>
                             

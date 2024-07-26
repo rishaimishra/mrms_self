@@ -80,7 +80,9 @@ class PropertyAssessmentDetail extends Model
         'property_assessed_value',
         'property_tax_payable_2024',
         'discounted_rate_payable',
-        'council_adjustments'
+        'council_adjustments',
+        'property_category_percentage',
+        'property_category_type'
     ];
 
     protected $appends = [
@@ -684,19 +686,19 @@ class PropertyAssessmentDetail extends Model
     }
     public function getArrearDueAttribute()
     {
-        return $this->getPastPayableDue();
+        return number_format($this->getPastPayableDue(), 2, '.', '');
     }
     public function getPenaltyAttribute()
     {
-        return $this->getPenalty();
+        return number_format($this->getPenalty(), 2, '.', '');
     }
     public function getAmountPaidAttribute()
     {
-        return $this->getCurrentYearTotalPayment();
+        return number_format($this->getCurrentYearTotalPayment(), 2, '.', '');
     }
     public function getBalanceAttribute()
     {
-        return $this->getCurrentYearTotalDue();
+        return number_format($this->getCurrentYearTotalDue(), 2, '.', '');
         // return 2000;
     }
     public function getAssessmentYearAttribute()

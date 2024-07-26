@@ -12,6 +12,8 @@ use App\Models\EmergencyAndServiceImages;
 use App\Models\Headlines;
 use App\Models\HeadlineImages;
 use App\Models\GarbageCollection;
+use App\Models\GarbageDate;
+use App\Models\GarbageDateSlot;
 
 class EcpController extends Controller
 {
@@ -67,7 +69,12 @@ class EcpController extends Controller
     }
     public function get_newsletter(){
         // return "newsleter";
-       return $news_letter = Headlines::where('status',1)->with('HeadingImages')->get();
+        $news_letter = Headlines::where('status',1)->with('HeadingImages')->get();
+       return response()->json([
+        'status' => 'success',
+        'message' => 'Form and Resourses get successfully',
+        'data' => $news_letter
+    ]);
     }
     public function garbage_collection(Request $request){
         // return $request;
@@ -77,12 +84,42 @@ class EcpController extends Controller
         $gc->latlng = $request->latlng;
         $gc->request = 0;
         $gc->user_id = $request->user_id;
+        if ($request->hasFile('garbage_image_1')) {
+            $file = $request->file('garbage_image_1');
+            $path = $file->store('garbage_images', 'public');
+            $gc->garbage_image_1 = $path;
+        }
+        if ($request->hasFile('garbage_image_2')) {
+            $file = $request->file('garbage_image_2');
+            $path = $file->store('garbage_images', 'public');
+            $gc->garbage_image_2 = $path;
+        }
+        $gc->garbage_date_id = $request->garbage_date_id;
+        $gc->garbage_date_slot_id = $request->garbage_date_slot_id;
         $gc->save();
         return response()->json([
             'status' => 'success',
             'message' => 'Garbage collection slot added successfully',
         ]);
     }
-  
+    public function get_admin_dates(){
+        // return "called";
+       return  $dates = GarbageDate::select('id','date')->where('date','>',now())->with(['get_slot'=> function($query){
+            $query->select('id','garbage_date_id','slots');
+        }])->get();
+        if ($dates) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Garbage collection dates and slots found successfully',
+                'data' => $dates
+            ]);
+        }
+        else{
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No dates found'
+            ]);
+        }
+    }
 }
 

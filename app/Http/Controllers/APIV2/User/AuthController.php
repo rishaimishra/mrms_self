@@ -19,6 +19,7 @@ class AuthController extends ApiController
 
     public function login(Request $request)
     {
+        // return $request;
 
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email',

@@ -208,7 +208,10 @@
     <div class="row">
         <div class="col-sm-3">
             <h6>Property Category</h6>
-            <p>{{ $assessment->categories->pluck('label')->implode(', ') }}</p>
+            <p>{{ $assessment->categories->pluck('label')->implode(', ') }}
+                ({{ $assessment->property_category_type }})&nbsp;({{ number_format($assessment->property_category_percentage, 2) }})
+            </p>
+            
             {{--  <p>{{ $assessment->categories->pluck('value')->implode(', ') }}</p>  --}}
         </div>
         <div class="col-sm-3">
@@ -457,12 +460,15 @@
         <div class="col-sm-3">
             <h6>Property Category</h6>
             <p>
-                {!! Form::select('property_categories[]', $categories, old('property_categories', $assessment->categories()->pluck('id')), ['class' => 'form-control', 'data-live-search' => 'true', 'id' => 'property_categories']) !!}
+                {!! Form::select('property_categories[]', $categories, old('property_categories', $assessment->categories()->pluck('id')), ['class' => 'form-control', 'data-live-search' => 'true', 'id' => 'property_categories','onchange' => 'handleSelectChange3(this)']) !!}
 
             </p>
             @if ($errors->has('property_categories'))
                 <label class="error">{{ $errors->first('property_categories') }}</label>
             @endif
+            <span id="append_property_category"></span>
+            <input type="hidden" name="property_category_percentage" value="{{ $assessment->property_category_percentage }}">
+            <input type="hidden" name="property_category_type" value="{{ $assessment->property_category_type }}">
         </div>
             <div class="col-sm-3">
                 <h6>Total No. of Floors</h6>
@@ -803,6 +809,27 @@
             }
         });
     }
+    function handleSelectChange3(selectElement) {
+        
+        const selectedValue = selectElement.value;
+         // Make an AJAX request
+         $.ajax({
+            url: "{{ route('admin.get_property_category') }}", // Replace with your endpoint URL
+            type: 'POST',
+            data: {
+                value: selectedValue,
+                _token: '{{ csrf_token() }}' // Include CSRF token if needed
+            },
+            success: function(response) {
+                console.log('Server response:', response);
+              $("#models").html(response);
+              $('#categorymyModal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+            }
+        });
+    }
 
     let previousValues = [];
 
@@ -842,6 +869,16 @@
         $('input[name="property_window_materials_type"]').val(val);
           const content = `${val},${per}`;
         $("#append_selected_window").html(content)
+    }
+    function get_property_category(select){
+        $select = $(select)
+        let val =$select.val()
+        const selectedOption = $select.find('option:selected');
+        let per =selectedOption.data('percentage')
+        $('input[name="property_category_percentage"]').val(per);
+        $('input[name="property_category_type"]').val(val);
+          const content = `${val},${per}`;
+        $("#append_property_category").html(content)
     }
     existing='{{ json_encode($existingarray) }}';
     existing = existing.replace(/&quot;/g, '"');

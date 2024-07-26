@@ -1117,10 +1117,11 @@ class PropertyController extends Controller
         $persquare = $onetownlotincat / $onetownlot;
         $floorarea = $request->length * $request->breadth;
         $floorareavalue = $persquare * $floorarea;
-        $category = PropertyCategory::find($request->property_categories[0]??0);
-       if ($category) {
-        $cat_value = $category->value;
-       }
+    //     $category = PropertyCategory::find($request->property_categories[0]??0);
+    //    if ($category) {
+    //     $cat_value = $category->value;
+    //    }
+       $cat_value = $request->property_category_percentage;
        $wall_value = $request->property_wall_materials_percentage;
        $roof_value = $request->property_roof_materials_percentage;
        $window_type_value = $request->property_window_materials_percentage;
@@ -1272,6 +1273,8 @@ class PropertyController extends Controller
         $data['wall_material_percentage']=$request->property_wall_materials_percentage;
         $data['roof_material_percentage']=$request->property_roof_materials_percentage;
         $data['window_type_percentage']=$request->property_window_materials_percentage;
+        $data['property_category_percentage']=$request->property_category_percentage;
+        $data['property_category_type']=$request->property_category_type;
         $data['property_assessed_value']= $assessmentValue['newassessmentvalue'];
         $data['property_rate_without_gst']= $assessmentValue['newassessmentvalue'];
         $data['net_property_assessed_value']=$assessmentValue['newnetassessedvalue'];
@@ -1614,6 +1617,12 @@ class PropertyController extends Controller
         $window_material = PropertyWindowType::where('id',$request->value)->first();
 
        return view('admin.properties.window_material_dropdown',compact('window_material'));
+    }
+    public function get_property_category(Request $request){
+        // return $request;
+        $property_category = PropertyCategory::where('id',$request->value)->first();
+
+       return view('admin.properties.property_category_dropdown',compact('property_category'));
     }
     public function get_value_added(Request $request){
         // return $request;

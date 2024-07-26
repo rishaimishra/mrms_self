@@ -36,6 +36,7 @@ class PaymentController extends Controller
 
     public function show(Request $request)
     {
+        // return $request;
         $property = [];
         $last_payment = null;
         $paymentInQuarter = [];
@@ -45,7 +46,7 @@ class PaymentController extends Controller
         $landlord = $request->user('landlord-api');
 
 
-        $property = Property::with([
+          $property = Property::with([
             'landlord',
             'landlord.titles',
             'occupancy',
@@ -84,8 +85,8 @@ class PaymentController extends Controller
         foreach( $property as $pr)
         {
                 $propertyId = $pr->id; 
-                $pensioner_discount = 0;
-                $disability_discount = 0;
+                // $pensioner_discount = 0;
+                // $disability_discount = 0;
                 $property_tax_payable = (float)$pr->assessment->getPropertyTaxPayable();
                
                 // dd($pr->assessment->discounted_value);
@@ -93,10 +94,14 @@ class PaymentController extends Controller
                
                 $pr->assessment->property_rate_without_gst = number_format((float)$pr->assessment->property_rate_without_gst, 2, '.', '');
                 // $pr->assessment->{"discounted_value"} = number_format($discounted_value,2,'.','');
-                $pr->assessment->{"pensioner_discount"} = number_format($pensioner_discount,2,'.','');
-                $pr->assessment->{"disability_discount"} = number_format($disability_discount,2,'.','');
+                $pr->assessment->{"pensioner_discount"} = number_format($pr->assessment->pensioner_discount);
+                $pr->assessment->{"disability_discount"} = number_format($pr->assessment->disability_discount);
                 $pr->assessment->{"rate_payable"} = number_format((float)$pr->assessment->getPropertyTaxPayable(),2,'.','');
                 $pr->assessment->{"property_net_assessed_vaue"} = number_format($pr->assessment->getNetPropertyAssessedValue(),2,'.',',');
+                $pr->assessment->{"discounted_rate_payable"} = number_format($pr->assessment->getPensionerDisabilityDiscountActual(),2,'.',',');
+                $pr->assessment->{"penalty_due"} = number_format($pr->assessment->getPenalty(),2,'.','');
+                $pr->assessment->{"prop_arrear"} = number_format($pr->assessment->getPastPayableDue(),2,'.','');
+                $pr->assessment->{"paid_amount"} = number_format($pr->assessment->getCurrentYearTotalPayment(),2,'.','');
                 $council_adjusment_labels = array();
         
                 // dd($pr->assessment->water_percentage);

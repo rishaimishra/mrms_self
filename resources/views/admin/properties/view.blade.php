@@ -52,7 +52,7 @@
                                         @else
                                             <td>{!! $assessmentHistory->pensioner_discount ? number_format(floatval($assessmentHistory->getPensionerDiscount()), 2, '.', ',') : 0 !!}</td>
                                         @endif
-                                        <td>{!! $assessmentHistory->getPensionerDisabilityDiscountActual() ? number_format(floatval($assessmentHistory->getPensionerDisabilityDiscountActual()), 0, '.', ',') : 0 !!}</td>
+                                        <td>{!! $assessmentHistory->getPensionerDisabilityDiscountActual() ? number_format(floatval($assessmentHistory->getPensionerDisabilityDiscountActual()),2,'.',',') : 0 !!}</td>
                                         <td>{{ number_format(floatval($assessmentHistory->getPastPayableDue()), 2, '.', ',') }}</td>
                                         <td>{{ number_format(floatval($assessmentHistory->getPenalty()), 2, '.', ',') }}</td>
                                         <td>{{ number_format(floatval($assessmentHistory->getCurrentYearTotalPayment()), 2, '.', ',') }}</td>
@@ -820,6 +820,20 @@
                             <p>{!! Form::text('delivered_name',$property->delivered_name,['class'=>'form-control']) !!}</p>
                             @if ($errors->has('delivered_name'))
                                 <label class="error">{{ $errors->first('delivered_name') }}</label>
+                            @endif
+                        </div>
+                        <div class="col-sm-3">
+                            <h6>Recipient Middle Name</h6>
+                            <p>{!! Form::text('delivered_name',$property->delivered_middle_name,['class'=>'form-control']) !!}</p>
+                            @if ($errors->has('delivered_middle_name'))
+                                <label class="error">{{ $errors->first('delivered_middle_name') }}</label>
+                            @endif
+                        </div>
+                        <div class="col-sm-3">
+                            <h6>Recipient Sur Name</h6>
+                            <p>{!! Form::text('delivered_name',$property->delivered_middle_surname,['class'=>'form-control']) !!}</p>
+                            @if ($errors->has('delivered_middle_surname'))
+                                <label class="error">{{ $errors->first('delivered_middle_surname') }}</label>
                             @endif
                         </div>
 

@@ -276,9 +276,9 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Gated Community</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(optional($assessment)->gated_community ? 'Yes' : 'No') }}
-                                    ({!! strtoupper(optional($assessment)->gated_community ? optional($assessment)->gated_community : 0) !!})
-                                
+                                <td style="border:1px solid #606060; color: #484848;">
+                                    {{ strtoupper(optional($assessment)->gated_community ? 'Yes' : 'No') }}
+                                    ({{ strtoupper(optional($assessment)->gated_community ? optional($assessment)->gated_community : 0) }})
                                 </td>
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">TOTAL DEDUCTABLE</th>
@@ -294,9 +294,9 @@
                                 <td>
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Beach Front</th>
                                 </td>
-                                <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(optional($property->beach_front) ? 'Yes' : 'No') }}
-                                    ({!! strtoupper(optional($property->beach_front) ? 1 : 0) !!})
-                                
+                                <td style="border:1px solid #606060; color: #484848;">
+                                    {{ strtoupper(optional($property)->beach_front ? 'Yes' : 'No') }}
+                                    ({{ strtoupper(optional($property)->beach_front ? 1000 : 0) }})
                                 </td>
                                
                                <td>
@@ -313,9 +313,9 @@
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Dilapidated</th>
                                 </td>
                                 <!-- <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->label) }}</td> -->
-                                <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(optional($property->isDilapidatedProperty) ? 'YES' : 'NO') }}
-                                    ({!! strtoupper(optional($property->isDilapidatedProperty) ? 1 : 0) !!})
-                                
+                                <td style="border:1px solid #606060; color: #484848;">
+                                    {{ strtoupper(optional($property)->isDilapidatedProperty ? 'YES' : 'NO') }}
+                                    ({{ strtoupper(optional($property)->isDilapidatedProperty ? '0.5' : '0') }})
                                 </td>
                                 
                                 <td>
