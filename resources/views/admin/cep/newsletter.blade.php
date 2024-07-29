@@ -139,6 +139,9 @@
             </div>
         </form>
     </div>
+    <div>
+        {!! $grid !!}
+    </div>
 @stop
 <script>
     document.addEventListener('DOMContentLoaded', function() {

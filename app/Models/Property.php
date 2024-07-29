@@ -52,6 +52,8 @@ class Property extends Model
         'is_property_inaccessible',
         'is_draft_delivered',
         'delivered_name',
+        'delivered_middle_name',
+        'delivered_middle_surname',
         'delivered_number',
         'delivered_image',
         'created_from',

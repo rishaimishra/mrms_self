@@ -51,9 +51,11 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::get('cep/forms_resourses', 'FormAndResourseController@index')->name('forms-resourses');
         Route::get('cep/information_tips', 'FormAndResourseController@information_tips_index')->name('information-tips');
         Route::get('cep/newsletter', 'FormAndResourseController@newsletter')->name('newsletter');
+        Route::get('cep/newsletter_show', 'FormAndResourseController@newsletter_show')->name('newsletter_show');
+        Route::get('cep/newsletter_delete', 'FormAndResourseController@newsletter_delete')->name('newsletter-delete');
         Route::get('cep/garbage_collection_listing', 'FormAndResourseController@garbage_collection_list')->name('garbage-collection-list');
         Route::get('cep/garbage_collection', 'FormAndResourseController@garbage_collection')->name('garbage-collection');
-        Route::post('cep/change_garbage_collection/{id}', 'FormAndResourseController@change_garbage_collection')->name('change-garbage-collection');
+        Route::post('cep/change_garbage_collection', 'FormAndResourseController@change_garbage_collection')->name('change-garbage-collection');
         Route::get('cep/complaint_listing', 'FormAndResourseController@complaint_listing')->name('complaint-listing');
         Route::get('cep/complaint_listing_show', 'FormAndResourseController@complaint_listing_show')->name('complaint-listing-show');
         Route::get('cep/complaint_listing_delete', 'FormAndResourseController@complaint_listing_delete')->name('complaint-listing-delete');
@@ -85,6 +87,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::post('property/get_data_material_roof', 'PropertyController@get_material_roof')->name('get_material_roof');
         Route::post('property/get_data_material_window', 'PropertyController@get_material_window')->name('get_material_window');
         Route::post('property/get_data_value_added', 'PropertyController@get_value_added')->name('get_value_added');
+        Route::post('property/get_data_property_category', 'PropertyController@get_property_category')->name('get_property_category');
         Route::get('property/meter/delete/{id}', 'PropertyController@deleteMeter')->name('properties.meter.delete');
         //landlord Verification
         Route::get('verify/landlorddetails', 'PropertyController@verifyLandlord')->name('verify.landlord');

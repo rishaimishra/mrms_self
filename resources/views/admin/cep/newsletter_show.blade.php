@@ -24,37 +24,38 @@
     <div class="body">
         <div class="row">
             <div class="col-sm-12">
-                <label for="">Date</label>
-                <p>{{ $gc->date }}</p>
+                <label for="">Headline</label>
+                <p>{{ $hd->headline }}</p>
             </div>
             <div class="col-sm-12">
-                <label for="">Slot</label>
-                <p>{{ $gc->slot }}</p>
+                <label for="">Headline Image</label>
+                <br>
+                @if ($hd->headline_img)
+                    
+               
+                <img style="width:100px;height:100px;" src="{{ asset('storage/'.$hd->headline_img) }}" alt="">
+                @endif
             </div>
             <div class="col-sm-12">
-                <label for="">Lat Long</label>
-                <p>{{ $gc->latlng }}</p>
+                <label for="">Story</label>
+                <p>{{ $hd->story }}</p>
             </div>
-            <div class="col-sm-4">
+            {{--  <div class="col-sm-4">
                 <label for="">User</label>
-                <p>{{ $gc->get_user ? $gc->get_user->first_name : 'No user found' }}</p>
+                <p>{{ $hd->user_id ? $hd->user_id->first_name : 'No user found' }}</p>
+            </div>  --}}
+          
+        </div>
+        <div class="row">
+            <p style="margin-left: 15px;"><label for="">Story Images</label></p>
+            
+            @foreach ($hd['HeadingImages'] as $s_images)
+            <div class="col-md-4">
+                <img style="width:100px;height:100px;" src="{{ asset('storage/'.$s_images->images) }}" alt="">
             </div>
-            <div class="col-sm-4">
-                <label for="">Garbage Image 1</label>
-                @if ($gc->garbage_image_1)
-                    
-               
-                <img style="width:100px;height:100px;" src="{{ asset('storage/'.$gc->garbage_image_1) }}" alt="">
-                @endif
-            </div>
-            <div class="col-sm-4">
-                <label for="">Garbage Image 2</label>
-                @if ($gc->garbage_image_2)
-                    
-               
-                <img style="width:100px;height:100px;" src="{{ asset('storage/'.$gc->garbage_image_2) }}" alt="">
-                @endif
-            </div>
+            @endforeach
+            
+            
         </div>
     
     </div>

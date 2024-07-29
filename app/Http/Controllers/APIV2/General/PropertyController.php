@@ -122,6 +122,8 @@ class PropertyController extends ApiController
             'is_property_inaccessible' => $request->input('is_property_inaccessible', false),
             'is_draft_delivered' => $request->input('is_draft_delivered', false),
             'delivered_name' => $request->input('delivered_name'),
+            'delivered_middle_name' => $request->input('delivered_middle_name'),
+            'delivered_middle_surname' => $request->input('delivered_middle_surname'),
             'delivered_number' => $request->input('delivered_number'),
             'occupancy_other_organization_type' => $request->occupancy_other_organization_type,
             'occupancy_organization_type'=>$request->occupancy_organization_type,
@@ -321,7 +323,8 @@ class PropertyController extends ApiController
 
             'window_type_percentage' =>($request->windowPer)? $request->windowPer : 0,
             'window_type_type' =>($request->windowType)? $request->windowType : 'A',
-
+            'property_category_percentage'=>$request->property_category_percentage,
+            'property_category_type'=>$request->property_category_type,
             'water_percentage' => $water_percentage,
             'electricity_percentage' => $electrical_percentage,
             'waste_management_percentage'=> $waster_precentage,
@@ -365,6 +368,8 @@ class PropertyController extends ApiController
             }
             $assessment_data['demand_note_delivered_at'] = now();
             $assessment_data['demand_note_recipient_name'] = $request->input('delivered_name');
+            $assessment_data['delivered_middle_name'] = $request->input('delivered_middle_name');
+            $assessment_data['delivered_middle_surname'] = $request->input('delivered_middle_surname');
             $assessment_data['demand_note_recipient_mobile'] = $request->input('delivered_number');
             $assessment_data['demand_note_recipient_photo'] = $recipient_photo;
         }
@@ -1567,6 +1572,8 @@ public function createInAccessibleProperties(Request $request)
                 'is_property_inaccessible' => $request->input('is_property_inaccessible', false),
                 'is_draft_delivered' => $request->input('is_draft_delivered', false),
                 'delivered_name' => $request->input('delivered_name'),
+                'delivered_middle_name' => $request->input('delivered_middle_name'),
+                'delivered_middle_surname' => $request->input('delivered_middle_surname'),
                 'delivered_number' => $request->input('delivered_number'),
                 'random_id' => $request->input('random_id'),
                 'occupancy_other_organization_type' => $request->occupancy_other_organization_type,
@@ -1790,6 +1797,33 @@ public function createInAccessibleProperties(Request $request)
          return response()->json([
              'status' => 'success',
              'message' => 'Password updated successfully',
+         ]);
+    }
+    public function change_passkey_status(Request $request){
+        // return $request;
+          // Validate the request
+          $validator = Validator::make($request->all(), [
+            'passkey_value' => 'required',
+            'passkey_status' => 'required',
+        ]);
+         // Check if validation fails
+         if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors(),
+            ], 422);
+        }
+         // Retrieve the user by ID
+         $user = User::find($request->user_id);
+
+         // Update the user's password
+         $user->passkey_value = $request->passkey_value;
+         $user->passkey_status = $request->passkey_status;
+         $user->save();
+ 
+         return response()->json([
+             'status' => 'success',
+             'message' => 'Pass key and status updated successfully',
          ]);
     }
 }

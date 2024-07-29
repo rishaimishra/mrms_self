@@ -108,20 +108,28 @@ class PaymentController extends Controller
        
     //    @$property->assessment->{"discounted_value"} = number_format($discounted_value,2,'.','');
 
-       if ( $property->assessment->pensioner_discount && $property->assessment->disability_discount){
-        @$property->assessment->{"discounted_value"} = number_format($property->assessment->getPensionerDiscount()) + number_format($property->assessment->getDisabilityDiscount());
-       }
-        else{
-            @$property->assessment->{"discounted_value"} =$property->assessment->pensioner_discount ? number_format($property->assessment->getPensionerDiscount(),0,'',',') : 0;
-
-        }
+    if ($property->assessment->pensioner_discount && $property->assessment->disability_discount) {
+        $property->assessment->discounted_value = number_format(
+            $property->assessment->getPensionerDiscount() + $property->assessment->getDisabilityDiscount(),
+            2,
+            '.',
+            ','
+        );
+    } else {
+        $property->assessment->discounted_value = number_format(
+            $property->assessment->pensioner_discount ? $property->assessment->getPensionerDiscount() : 0.00,
+            2,
+            '.',
+            ','
+        );
+    }
         $property->assessment->{"balance_due"} = number_format($property->assessment->getCurrentYearTotalDue(),2,'.',',');
 
                
        $property->assessment->{"pensioner_discount"} = number_format($pensioner_discount,2,'.','');
        $property->assessment->{"disability_discount"} = number_format($disability_discount,2,'.','');
 
-       $discounted_value = number_format($property->assessment->getPensionerDisabilityDiscountActual());
+       $discounted_value = number_format($property->assessment->getPensionerDisabilityDiscountActual(),2,'.',',');
       
        $property_taxable_value = number_format($property->assessment->geTaxablePropertyValue(),2,'.',',');
 
@@ -205,7 +213,7 @@ $property->assessment->{"council_adjustments_parameters"}  = number_format($prop
         //$property['penalty'] = $property->assessment->getPenalty();
         //$property['amountPaid'] = $property->assessment->getCurrentYearTotalPayment();
         //$property['balance'] = $property->assessment->getCurrentYearTotalDue();
-               
+                        
 
          
 

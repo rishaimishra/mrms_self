@@ -81,7 +81,7 @@
                         <tr>
                             <th style="border:1px solid #ccc; text-align: center;" scope="col" width="16%">PROPERTY TYPE</th>
                              <th style="border:1px solid #ccc;" scope="col" width="15%">HABITABLE FLOOR(S)</th> 
-                            <th style="border:1px solid #ccc;white-space: pre" scope="col" width="15%">FLOOR AREA (Ft<sup>2</sup>)</th>
+                            <th style="border:1px solid #ccc;white-space: pre" scope="col" width="15%">FLOOR AREA (SQ. FT.)</th>
                             <th style="border:1px solid #ccc;" scope="col" width="18%">WALL MATERIAL</th>
                             <th style="border:1px solid #ccc;" scope="col">ROOF MATERIAL</th>
                             <th style="border:1px solid #ccc;" scope="col" width="16%">WINDOW TYPE</th>
@@ -142,12 +142,12 @@
                         <tr>
                             <td style="border:1px solid lightgray;">
                                 {{ strtoupper($assessment->valuesAdded->pluck('label')->implode(', ')) }}
-                                @if(optional($assessment)->gated_community)
+                                {{--  @if(optional($assessment)->gated_community)
                                     , GATED COMMUNITY
                                 @endif
                                 @if(optional($property)->beach_front)
                                     , BEACH FRONT
-                                @endif
+                                @endif  --}}
                             </td>
                             <td style="border:1px solid lightgray; ">{{ strtoupper(optional(App\Models\PropertySanitationType::find($assessment->sanitation))->label) }}</td> 
                             <td style="border:1px solid lightgray; ">{{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->label) }}</td>

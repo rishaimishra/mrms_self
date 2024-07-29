@@ -182,12 +182,11 @@
                             <div class="row">
                                 <div class="col-sm-3">
                                     <label
-                                        for="email_address">{{ \Carbon\Carbon::parse($property->assessment->created_at)->format('Y') }}
-                                        Assessment</label>
+                                        for="email_address">Discounted Rate payable {{ \Carbon\Carbon::parse($property->assessment->created_at)->format('Y') }}</label>
                                     <div class="form-group">
                                         <div class="form-line">
                                             <input type="text" id="assessment"
-                                                   value="{{ old('assessment', number_format($property->assessment->getCurrentYearAssessmentAmount(),0,'',',')) }}"
+                                                   value="{{ old('assessment', number_format($property->assessment->getPensionerDisabilityDiscountActual(),0,'',',')) }}"
                                                    disabled class="form-control" placeholder="Assessment"
                                                    style="background-color: #eee;padding-left: 5px;">
                                         </div>
@@ -416,7 +415,7 @@
                                     <thead>
                                     <th>Property ID</th>
                                     <th>Transaction ID</th>
-                                    <th>Payment Made</th>
+                                    <th>Payment Fulfillment</th>
                                     <th>Cashier Name</th>
                                     <th>Amount Due</th>
                                     {{-- <th>Paying Amount</th>
@@ -438,7 +437,7 @@
                                         <tr>
                                             <td>{{ $payment->property_id }}</td>
                                             <td>{{ $payment->id }}</td>
-                                            <td>{{ $payment->payment_made_year == null ? '---' :  $payment->payment_made_year }}</td>
+                                            <td>{{ $payment->payment_fulfilment }}</td>
                                             <td>{{ $payment->admin->getName() }}</td>
                                             <td>{{ number_format($payment->assessment) }}</td>
                                             {{-- <td>{{ number_format($payment->amount) }}</td>
@@ -516,6 +515,11 @@
                                     <thead>
                                     <th>Assessment Year</th>
                                     <th>Assessment amount</th>
+                                    <th>Council Adjustments</th>
+                                    <th>Net Assessed Value</th>
+                                    <th>Rate Payable</th>
+                                    <th>Council Discounts</th>
+                                    <th>Discounted rate payable</th>
                                     <th>Arrears</th>
                                     <th>Penalty</th>
                                     <th>Amount Paid</th>
@@ -525,10 +529,19 @@
                                     @foreach($property->assessmentHistory as $assessmentHistory)
                                         <tr>
                                             <td>{{ $assessmentHistory->created_at->format('Y') }}</td>
-                                            <td>{{ number_format($assessmentHistory->getCurrentYearAssessmentAmount()) }}</td>
-                                            <td>{{ number_format($assessmentHistory->getPastPayableDue()) }}</td>
-                                            <td>{{ number_format($assessmentHistory->getPenalty()) }}</td>
-                                            <td>{{ number_format($assessmentHistory->getCurrentYearTotalPayment()) }}</td>
+                                            <td>{{ number_format($assessmentHistory->getCurrentYearAssessmentAmount(), 2, '.', ',') }}</td>
+                                            <td>{{ number_format(floatval($assessmentHistory->getCouncilAdjustments()), 2, '.', ',') }}</td>
+                                            <td>{{ number_format(floatval($assessmentHistory->getNetPropertyAssessedValue()), 2, '.', ',') }}</td>
+                                            <td>{{ number_format(floatval($assessmentHistory->getPropertyTaxPayable()), 2, '.', ',') }}</td>
+                                            @if ($assessmentHistory->pensioner_discount && $assessmentHistory->disability_discount)
+                                            <td>{{ number_format(floatval($assessmentHistory->getPensionerDiscount()), 2, '.', ',') + number_format(floatval($assessmentHistory->getDisabilityDiscount()), 2, '.', ',') }}</td>
+                                        @else
+                                            <td>{!! $assessmentHistory->pensioner_discount ? number_format(floatval($assessmentHistory->getPensionerDiscount()), 2, '.', ',') : 0 !!}</td>
+                                        @endif
+                                        <td>{!! $assessmentHistory->getPensionerDisabilityDiscountActual() ? number_format(floatval($assessmentHistory->getPensionerDisabilityDiscountActual()),2,'.',',') : 0 !!}</td>
+                                            <td>{{ number_format($assessmentHistory->getPastPayableDue(), 2, '.', ',') }}</td>
+                                            <td>{{ number_format($assessmentHistory->getPenalty(), 2, '.', ',') }}</td>
+                                            <td>{{ number_format($assessmentHistory->getCurrentYearTotalPayment(), 2, '.', ',') }}</td>
                                             <td>{{ number_format((float)$assessmentHistory->getCurrentYearTotalDue(), 2, '.', ',') }}</td>
                                         </tr>
                                     @endforeach

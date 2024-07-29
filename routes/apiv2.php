@@ -4,8 +4,11 @@ use Illuminate\Http\Request;
 
 Route::get('get_form_resources', 'APIV2\General\EcpController@get_formresources');
 Route::get('get_complaints', 'APIV2\General\EcpController@get_complaints');
+Route::get('get_admin_garbage_dates', 'APIV2\General\EcpController@get_admin_dates');
+Route::get('get_newsletter', 'APIV2\General\EcpController@get_newsletter');
 Route::post('add_complain', 'APIV2\General\EcpController@add_complain');
 Route::post('change_password', 'APIV2\General\PropertyController@change_password');
+Route::post('change_passkey_status', 'APIV2\General\PropertyController@change_passkey_status');
 Route::post('add_garbage_collection', 'APIV2\General\EcpController@garbage_collection');
 Route::get('update/assessments', 'APIV2\General\PropertyController@updatePropertyAssessmentDetail');
 Route::post('update/pensiondiscount', 'APIV2\General\PropertyController@updatePropertyAssessmentPensionDiscount');

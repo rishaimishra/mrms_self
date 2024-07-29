@@ -6,10 +6,11 @@ use App\Grids\AdminUsersGrid;
 use App\Grids\DistrictsGrid;
 use App\Grids\ComplaintGrid;
 use App\Grids\GarbageGrid;
+use App\Grids\NewsletterGrid;
 use App\Models\AdminUser;
 use App\Models\District;
 use App\Models\Property;
-use App\Models\Headline;
+use App\Models\Headlines;
 use App\Models\HeadlineImages;
 use App\Models\Complaint;
 use App\Models\EmergencyAndService;
@@ -20,6 +21,9 @@ use App\Rules\Name;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use App\Models\GarbageDate;
+use App\Models\GarbageDateSlot;
+use DateTime;
 
 class FormAndResourseController extends Controller
 {
@@ -48,8 +52,30 @@ class FormAndResourseController extends Controller
     public function information_tips_index(){
         return view('admin.cep.informationandtips');
     }
-    public function newsletter(){
-        return view('admin.cep.newsletter');
+    public function newsletter(NewsletterGrid $newsGrid, Request $request){
+        // return "hello";
+        $this->headlines = Headlines::with('HeadingImages');
+
+        $data['title'] = 'Details';
+
+        $data['request'] = $request;
+        // return view('admin.cep.newsletter');
+        return $newsGrid->create(['query' => $this->headlines, 'request' => $request])->renderOn('admin.cep.newsletter', $data);
+    }
+    public function newsletter_show(Request $request){
+        // return $request->newsletter_collection;
+         $hd = Headlines::where('id',$request->newsletter_collection)->with('HeadingImages')->first();
+        
+        return view('admin.cep.newsletter_show',compact('hd'));
+    }
+    public function newsletter_delete(Request $request){
+        // return $request->newsletter_collection;
+        $newsletter = Headlines::where('id',$request->newsletter_collection)->first();
+        if ($newsletter->id) {
+            $newsletter_images = HeadlineImages::where('headline_id',$newsletter->id)->delete();
+        }
+        $newsletter->delete();
+        return redirect()->back()->with($this->setMessage('Newsletter successfully deleted', true));
     }
     public function garbage_collection(Request $request){
         // return $request->garbage_collection;
@@ -68,6 +94,17 @@ class FormAndResourseController extends Controller
         // return "sdf";
         return $complainGrid->create(['query' => $this->complaints, 'request' => $request])->renderOn('admin.cep.complaintListing', $data);
     }
+    public function newsletter_listing(NewsletterGrid $newsGrid, Request $request){
+        // $this->complaints = Complaint::paginate(15);
+        return "hello";
+         $this->headlines = Headline::with('get_user');
+
+        $data['title'] = 'Details';
+
+        $data['request'] = $request;
+        // return "sdf";
+        return $newsGrid->create(['query' => $this->headlines, 'request' => $request])->renderOn('admin.cep.newsletter', $data);
+    }
     public function headline_store(Request $request){
         // return $request;
         $validatedData = $request->validate([
@@ -76,7 +113,7 @@ class FormAndResourseController extends Controller
             'headline_image' => 'required',
             'headlineimg' => 'required',
         ]);
-         $headline = new Headline();
+         $headline = new Headlines();
         $headline->headline = $request->headline;
         if ($request->hasFile('headline_image')) {
             $file = $request->file('headline_image');
@@ -144,6 +181,9 @@ class FormAndResourseController extends Controller
             return redirect()->route('admin.forms-resourses')->with('success', 'form updated successfully.');
     }
     public function garbage_collection_list(GarbageGrid $garbageGrid, Request $request){
+        // $gc = GarbageCollection::where('id',$request->garbage_collection)->first();
+        // $gc_date = $gc->date;
+        // $formatted_date = date('D M d Y', strtotime($gc_date));
         $this->gc = GarbageCollection::with('get_user');
 
         $data['title'] = 'Garbage Collection Detail';
@@ -152,11 +192,37 @@ class FormAndResourseController extends Controller
         // return "sdf";
         return $garbageGrid->create(['query' => $this->gc, 'request' => $request])->renderOn('admin.cep.garbagetListing', $data);
     }
-    public function change_garbage_collection(Request $request , $id){
+    public function change_garbage_collection(Request $request){
         // return $request;
-        $gc = GarbageCollection::where('id',$id)->first();
-            $gc->request = $request->status_bit;
-            $gc->save();
-            return redirect()->back()->with('success', 'status change successfully.');
+        $selectedDatesTimes = $request->input('selectedDatesTimes');
+
+        foreach ($selectedDatesTimes as $dateTime) {
+            $date = DateTime::createFromFormat('m/d/Y', $dateTime['date'])->format('Y-m-d');
+            $times = $dateTime['times'];
+    
+            // Check if the date already exists in the GarbageDate model for the current user
+            $existingGarbageDate = GarbageDate::where('date', $date)
+                                              ->where('user_id', $request->user()->id)
+                                              ->first();
+    
+            if (!$existingGarbageDate) {
+                // Store the date in the GarbageDate model
+                $garbageDate = new GarbageDate();
+                $garbageDate->date = $date;
+                $garbageDate->user_id = $request->user()->id;
+                $garbageDate->status = 1;
+                $garbageDate->save();
+    
+                // Store each time slot in the GarbageDateSlot model with the date ID
+                foreach ($times as $time) {
+                    $garbageDateSlot = new GarbageDateSlot();
+                    $garbageDateSlot->garbage_date_id = $garbageDate->id;
+                    $garbageDateSlot->slots = $time;
+                    $garbageDateSlot->user_id = $request->user()->id;
+                    $garbageDateSlot->status = 1;
+                    $garbageDateSlot->save();
+                }
+            }
+        }
     }
 }

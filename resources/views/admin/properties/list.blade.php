@@ -765,7 +765,7 @@
                     <label for="select-all">Select All</label>
                     <button type="button" class="btn btn-success" id="send-sms" style="margin-left: 8px">Send SMS</button>
                     <input type="hidden" name="send_sms" id="send_sms" value="0">                    
-                    <button type="button" class="btn btn-danger pull-right" id="delete-property">Delete</button>
+                    <button type="button" class="btn btn-danger pull-right" id="delete-property">Quarantine</button>
                     <input type="hidden" name="delete_property" id="delete_property" value="0">
                     <!-- <a class="btn-outline-danger">Delete</a> -->
                 </div>

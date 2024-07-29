@@ -99,6 +99,9 @@ class PaymentController extends Controller
                 $pr->assessment->{"rate_payable"} = number_format((float)$pr->assessment->getPropertyTaxPayable(),2,'.','');
                 $pr->assessment->{"property_net_assessed_vaue"} = number_format($pr->assessment->getNetPropertyAssessedValue(),2,'.',',');
                 $pr->assessment->{"discounted_rate_payable"} = number_format($pr->assessment->getPensionerDisabilityDiscountActual(),2,'.',',');
+                $pr->assessment->{"penalty_due"} = number_format($pr->assessment->getPenalty(),2,'.','');
+                $pr->assessment->{"prop_arrear"} = number_format($pr->assessment->getPastPayableDue(),2,'.','');
+                $pr->assessment->{"paid_amount"} = number_format($pr->assessment->getCurrentYearTotalPayment(),2,'.','');
                 $council_adjusment_labels = array();
         
                 // dd($pr->assessment->water_percentage);
