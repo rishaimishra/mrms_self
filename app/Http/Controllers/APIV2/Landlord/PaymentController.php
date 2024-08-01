@@ -72,14 +72,7 @@ class PaymentController extends Controller
         })->get();
         // dd($property[0]->assessmentHistory);
         
-        if ( $property[0]->assessment->pensioner_discount && $property[0]->assessment->disability_discount){
-            @$property[0]->assessment->{"discounted_value"} = number_format($property[0]->assessment->getPensionerDiscount(),2,'.',',') + number_format($property[0]->assessment->getDisabilityDiscount(),2,'.',',');
-           }
-            else{
-                @$property[0]->assessment->{"discounted_value"} =$property[0]->assessment->pensioner_discount ? number_format($property[0]->assessment->getPensionerDiscount(),2,'.',',') : 0;
-    
-            }
-            $property[0]->assessment->{"balance_due"} = number_format($property[0]->assessment->getCurrentYearTotalDue(),2,'.',',');
+        
     
         $properties_discount_pensioner_images = [];
         foreach( $property as $pr)
@@ -102,6 +95,20 @@ class PaymentController extends Controller
                 $pr->assessment->{"penalty_due"} = number_format($pr->assessment->getPenalty(),2,'.','');
                 $pr->assessment->{"prop_arrear"} = number_format($pr->assessment->getPastPayableDue(),2,'.','');
                 $pr->assessment->{"paid_amount"} = number_format($pr->assessment->getCurrentYearTotalPayment(),2,'.','');
+                
+                if ( $pr->assessment->pensioner_discount && $pr->assessment->disability_discount){
+                    @$pr->assessment->{"discounted_value"} = number_format($pr->assessment->getPensionerDiscount(),2,'.',',') + number_format($pr->assessment->getDisabilityDiscount(),2,'.',',');
+                   }
+                    elseif($pr->assessment->pensioner_discount){
+                        @$pr->assessment->{"discounted_value"} =$pr->assessment->pensioner_discount ? number_format($pr->assessment->getPensionerDiscount(),2,'.',',') : 0;
+                    }
+                    elseif($pr->assessment->disability_discount){
+                        @$pr->assessment->{"discounted_value"} =$pr->assessment->disability_discount ? number_format($pr->assessment->getDisabilityDiscount(),2,'.',',') : 0;
+                    }
+                    else{
+                        @$pr->assessment->{"discounted_value"} =$pr->assessment->pensioner_discount ? number_format($pr->assessment->getPensionerDiscount(),2,'.',',') : 0;
+                    }
+                    $pr->assessment->{"balance_due"} = number_format($pr->assessment->getCurrentYearTotalDue(),2,'.','');
                 $council_adjusment_labels = array();
         
                 // dd($pr->assessment->water_percentage);
@@ -311,7 +318,7 @@ class PaymentController extends Controller
         $property = Property::with('assessment', 'occupancy', 'types', 'geoRegistry', 'user')->findOrFail($id);
         // dd($property);
         $assessment = $property->assessments->first();
-        return response()->json(['recipient_name' => $assessment->demand_note_recipient_name]);
+        return response()->json(['recipient_name' => $assessment->demand_note_recipient_name.' '.$assessment->delivered_middle_name.' '.$assessment->delivered_middle_surname]);
         
 
     }

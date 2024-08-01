@@ -104,12 +104,12 @@ class PaymentController extends Controller
             'payee_name' => 'required|max:250'
         ]);
 
-        $t_amount = intval(str_replace(',', '', $request->amount));
+         $t_amount = $request->amount;
         //$t_penalty = intval(str_replace(',', '', $request->input('penalty', 0)));
 
         $t_penalty = 0;
 
-        $balance = number_format($property->getBalance(), 0, '.', '');
+         $balance = $property->getBalance();
 
         //        if ($property->payments()->count() >= 3) {
         //            $amount = $t_amount;
@@ -134,9 +134,9 @@ class PaymentController extends Controller
         if (!is_numeric($value)) {
             $value = 0;
         }
-        
+      
         // Format the value
-        $data['assessment'] = number_format((float) $value, 2, '.', ',');
+        $data['assessment'] = $value;
         $data['admin_user_id'] = $admin->id;
         $data['total'] = $t_amount + $t_penalty;
         $data['amount'] = $t_amount;
@@ -146,11 +146,11 @@ class PaymentController extends Controller
     //   return $data;
         $payment = $property->payments()->create($data);
         $payment->save();
+        // return $payment;
+         $property2 = Property::with('landlord')->findOrFail($id);
+         $t_balance = $property2->assessment->getCurrentYearTotalDue();
 
-        $property2 = Property::with('landlord')->findOrFail($id);
-        $t_balance = number_format($property2->assessment->getCurrentYearTotalDue(), 2, '.', ',');
-
-        $payment->balance = $t_balance;
+         $payment->balance = $t_balance;
 
         $payment->save();
 
@@ -265,8 +265,8 @@ class PaymentController extends Controller
             'geoRegistry',
             'landlord'
         ]);
-
-        return view('admin.payments.pos-receipt', compact('property', 'paymentInQuarter', 'payment'));
+        $district = District::where('name', $property->district)->first();
+        return view('admin.payments.pos-receipt', compact('property', 'paymentInQuarter', 'payment','district'));
     }
 
     public function edit($id)

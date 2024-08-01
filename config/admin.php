@@ -446,17 +446,12 @@ return [
             'role' => 'Super Admin',
             'children' => [
                 [
-                    'label' => 'CEP collapsed',
-                    'route' => '',
-
-                ],
-                [
-                    'label' => 'Complaints listing',
+                    'label' => 'Complaints',
                     'route' => 'admin.complaint-listing',
 
                 ],
                 [
-                    'label' => 'Forms resources upload',
+                    'label' => 'Service Forms & Resources',
                     'route' => 'admin.forms-resourses',
 
                 ],
@@ -471,7 +466,7 @@ return [
 
                 ],
                 [
-                    'label' => 'garbage collection',
+                    'label' => 'Garbage Collection',
                     'route' => 'admin.garbage-collection-list',
 
                 ],
@@ -480,7 +475,18 @@ return [
                     'route' => '',
 
                 ],
+                [
+                    'label' => 'Users',
+                    'route' => 'admin.cep-user.list',
+
+                ]
             ]
         ],
+        [
+            'label' => 'NOTIFICATIONS',
+            'icon' => 'textsms',
+            'route' => '',
+            'role' => 'Super Admin|Admin|manager|cashiers|supervisor',
+        ]
     ]
 ];

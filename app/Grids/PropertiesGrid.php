@@ -161,7 +161,10 @@ class PropertiesGrid extends Grid implements PropertiesGridInterface
     public function configureButtons()
     {
 
-
+            // editing the view button
+            $this->editRowButton('delete', [
+                'name' => 'Quarantine',
+            ]);
 
         // call `addRowButton` to add a row button
         // call `addToolbarButton` to add a toolbar button

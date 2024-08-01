@@ -181,14 +181,23 @@ class FormAndResourseController extends Controller
             return redirect()->route('admin.forms-resourses')->with('success', 'form updated successfully.');
     }
     public function garbage_collection_list(GarbageGrid $garbageGrid, Request $request){
-        // $gc = GarbageCollection::where('id',$request->garbage_collection)->first();
-        // $gc_date = $gc->date;
-        // $formatted_date = date('D M d Y', strtotime($gc_date));
+         
+        $garbage_dates = GarbageDate::select('date')->distinct()->get();
+        $formatted_date = [];
+        
+        foreach ($garbage_dates as $date) {
+            // Access the 'date' property and format it
+            $gc_date = $date->date;
+            $formatted_date[] = date('D M d Y', strtotime($gc_date));
+        }
+        
+        // return $formatted_date;
         $this->gc = GarbageCollection::with('get_user');
 
         $data['title'] = 'Garbage Collection Detail';
 
         $data['request'] = $request;
+        $data['formatted_date'] = $formatted_date ;
         // return "sdf";
         return $garbageGrid->create(['query' => $this->gc, 'request' => $request])->renderOn('admin.cep.garbagetListing', $data);
     }
@@ -223,6 +232,37 @@ class FormAndResourseController extends Controller
                     $garbageDateSlot->save();
                 }
             }
+            else{
+                GarbageDateSlot::where('garbage_date_id',$existingGarbageDate->id)->delete();
+                foreach ($times as $time) {
+                    $garbageDateSlot = new GarbageDateSlot();
+                    $garbageDateSlot->garbage_date_id = $existingGarbageDate->id;
+                    $garbageDateSlot->slots = $time;
+                    $garbageDateSlot->user_id = $request->user()->id;
+                    $garbageDateSlot->status = 1;
+                    $garbageDateSlot->save();
+                }
+            }
         }
+    }
+    public function check_garbage_collection(Request $request){
+        // return $request;
+        // $selectedDate = $request->input('date');
+        $response = [];
+        $date = DateTime::createFromFormat('m/d/Y', $request->input('date'))->format('Y-m-d');
+       $existingGarbageDate = GarbageDate::where('date', $date)->with('get_slot')
+       ->where('user_id', $request->user()->id)
+       ->first();
+       if($existingGarbageDate){
+        $response['status'] = 'success';
+        $response['data'] = $existingGarbageDate;
+       }else{
+        $response['status'] = 'error';
+        $response['msg'] = 'No slot found.';
+       }
+
+
+       return $response;
+
     }
 }

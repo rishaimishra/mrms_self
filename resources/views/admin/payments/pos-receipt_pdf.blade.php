@@ -350,7 +350,7 @@
                                     </tr>
                                     <tr>
                                         <th>Rate Payable 2024:</th>
-                                        <th>{{ number_format((float) $property->assessment->getPropertyTaxPayable()) }}
+                                        <th>{{ number_format((float) $property->assessment->getPropertyTaxPayable(), 2, '.', ',') }}
                                         </th>
                                     </tr>
                                     @php
@@ -397,20 +397,20 @@
 
                                     <tr>
                                         <th>Discount(s) Applicable:</th>
-                                        <th>NLe {{ number_format((float) $discounted_value) }}</th>
+                                        <th>NLe {{ number_format((float) $discounted_value, 2, '.', ',') }}</th>
                                     </tr>
                                     <tr>
                                         <th>Discounted Rate Payable:</th>
-                                        <th>{{ number_format((float) $discounted_rate_payable) }}</th>
+                                        <th>{{ number_format((float) $discounted_rate_payable, 2, '.', ',') }}</th>
                                     </tr>
                                     <tr>
                                         <th>Arrears:</th>
-                                        <th>{{ number_format((float) $property->assessment->getArrearDueAttribute()) }}
+                                        <th>{{ number_format((float) $property->assessment->getArrearDueAttribute(), 2, '.', ',') }}
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>Penalty:</th>
-                                        <th>{{ number_format((float) $property->assessment->getPenaltyAttribute()) }}
+                                        <th>{{ number_format((float) $property->assessment->getPenaltyAttribute(), 2, '.', ',') }}
                                         </th>
                                     </tr>
                                     <tr>
@@ -424,7 +424,7 @@
                                     <tr>
                                         <th>Balance Due:</th>
                                         <th>NLe
-                                            {{ number_format((float) $property->assessment->getCurrentYearTotalDue()) }}
+                                            {{ number_format((float) $property->assessment->getCurrentYearTotalDue(), 2, '.', ',') }}
                                         </th>
                                     </tr>
                                     <tr>

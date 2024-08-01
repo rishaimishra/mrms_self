@@ -22,8 +22,8 @@
                 <div class="h6">{{ $property->district  }}</div>
             </div>
             <div class="col-3">
-                <img class="t-logo" src="{{ asset('images/logo23.png') }}" alt="Image" />
-                {{--  <img class="t-logo" src="{{ $district->getPrimaryLogoUrl() }}" alt="Image" />  --}}
+                {{--  <img class="t-logo" src="{{ asset('images/logo23.png') }}" alt="Image" />  --}}
+                <img class="t-logo" src="{{ $district->getPrimaryLogoUrl() }}" alt="Image" />
                 {{-- <img class="t-logo" src="./logo1.png" alt="logo 1" /> --}}
             </div>
         </div>
@@ -63,7 +63,7 @@
                 </tr>
                 <tr>
                     <td>Rate Payable 2024:</td>
-                    <td colspan="3">{{ number_format((float) $property->assessment->getPropertyTaxPayable()) }}</td>
+                    <td colspan="3">{{ number_format((float) $property->assessment->getPropertyTaxPayable(), 2, '.', ',') }}</td>
 
                 </tr>
 
@@ -106,22 +106,22 @@
 
                 <tr>
                     <td>Discount(s) Applicable:</td>
-                    <td colspan="3">NLe {{ number_format((float) $discounted_value) }}</td>
+                    <td colspan="3">NLe {{ number_format((float) $discounted_value , 2, '.', ',') }}</td>
                 </tr>
                 <tr>
 
                     <td class="wide-column">Discounted Rate Payable:</td>
-                    <td colspan="3">{{ number_format((float) $discounted_rate_payable) }}</td>
+                    <td colspan="3">{{ number_format((float) $discounted_rate_payable , 2, '.', ',') }}</td>
                 </tr>
                 <tr>
 
                     <td>Arrears:</td>
-                    <td colspan="3">{{ number_format((float) $property->assessment->getArrearDueAttribute()) }}</td>
+                    <td colspan="3">{{ number_format((float) $property->assessment->getArrearDueAttribute(), 2, '.', ',') }}</td>
                 </tr>
                 <tr>
 
                     <td>Penalty:</td>
-                    <td colspan="3">{{ number_format((float) $property->assessment->getPenaltyAttribute()) }}</td>
+                    <td colspan="3">{{ number_format((float) $property->assessment->getPenaltyAttribute(), 2, '.', ',') }}</td>
                 </tr>
                 <tr>
                     <td>Amount Due 2024:</td>
@@ -133,7 +133,7 @@
                 </tr>
                 <tr>
                     <td>Balance Due:</td>
-                    <td colspan="3">NLe {{ number_format((float) $property->assessment->getCurrentYearTotalDue()) }}
+                    <td colspan="3">NLe {{ number_format((float) $property->assessment->getCurrentYearTotalDue(), 2, '.', ',') }}
                     </td>
                 </tr>
 

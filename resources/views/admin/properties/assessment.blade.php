@@ -187,9 +187,9 @@
     @hasanyrole('Super Admin|Admin|manager')
     {{-- <p>{{ $assessment->sanitation }}</p> --}}
     <div class="pull-right">
-        <button type="button" id="assessment-button" class="btn btn-primary">
+        {{--  <button type="button" id="assessment-button" class="btn btn-primary">
             Edit
-        </button>
+        </button>  --}}
         @if($assessment->getBalanceAttribute() < 1)
         <a class="btn btn-default sticker-btn" id="sticker-btn"
             data-content="{{ route('admin.stickers', [$property->id,$assessment->created_at->format('Y')]) }}"
@@ -405,7 +405,7 @@
         <div class="col-sm-3">
             <h6>Pensioner Discount</h6>
            <p>
-              <input type="checkbox" class="pensioner_disc_check" id="pensioner_disc_check_{{$assessment->created_at->format('Y')}}" data-year="{{$assessment->created_at->format('Y')}}" style="position:relative;left: 0px;opacity: 1;" @if($assessment->pensioner_discount == 1) checked @endif />
+              <input type="checkbox" disabled class="pensioner_disc_check" id="pensioner_disc_check_{{$assessment->created_at->format('Y')}}" data-year="{{$assessment->created_at->format('Y')}}" style="position:relative;left: 0px;opacity: 1;" @if($assessment->pensioner_discount == 1) checked @endif />
 
               <!-- Pensioner -->
             </p>
@@ -413,7 +413,7 @@
         </div>
         <div class="col-sm-3">
             <h6>Disability Discount</h6>
-            <p><input type="checkbox" class="disability_disc_check" id="disability_disc_check_{{$assessment->created_at->format('Y')}}" data-year="{{$assessment->created_at->format('Y')}}" style="position:relative;left: 0px;opacity: 1;" @if($assessment->disability_discount == 1) checked @endif /></p>
+            <p><input type="checkbox" disabled class="disability_disc_check" id="disability_disc_check_{{$assessment->created_at->format('Y')}}" data-year="{{$assessment->created_at->format('Y')}}" style="position:relative;left: 0px;opacity: 1;" @if($assessment->disability_discount == 1) checked @endif /></p>
             <p id="disability__discount_{{$assessment->created_at->format('Y')}}" class="discountedamount__{{$assessment->created_at->format('Y')}}">NLe {!! $assessment->disability_discount ? number_format($assessment->getDisabilityDiscount(),2,'.',',') : 0 !!}</p>
         </div>
 

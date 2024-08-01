@@ -82,7 +82,9 @@ class PropertyAssessmentDetail extends Model
         'discounted_rate_payable',
         'council_adjustments',
         'property_category_percentage',
-        'property_category_type'
+        'property_category_type',
+        'delivered_middle_name',
+        'delivered_middle_surname'
     ];
 
     protected $appends = [
@@ -597,8 +599,10 @@ class PropertyAssessmentDetail extends Model
                 //   return $this->getCurrentYearTotalPayment();
                 $discounted_rate_payable = $this->getPropertyTaxPayable() -  $this->pensioner_discount - $this->disability_discount ;
             }else{
+            //    return $this->getCurrentYearTotalPayment();
                 //   return 200;
-                $discounted_rate_payable = $this->getPensionerDisabilityDiscountActual() -  $this->pensioner_discount - $this->disability_discount ;
+                // $discounted_rate_payable = $this->getPensionerDisabilityDiscountActual() -  $this->pensioner_discount - $this->disability_discount ;
+                $discounted_rate_payable = $this->getPensionerDisabilityDiscountActual();
             }
             // amount due modification
 

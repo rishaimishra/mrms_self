@@ -117,11 +117,11 @@
                                         <td>{{ $payment->property_id }}</td>
                                         <td>{{ $payment->id }}</td>
                                         <td>{{ $payment->admin->getName() }}</td>
-                                        <td>{{ number_format($payment->assessment), 2, '.', ',' }}</td>
+                                        <td>{{ number_format($payment->assessment, 2, '.', '') }}</td>
                                         {{-- <td>{{ number_format($payment->amount) }}</td>
                                         <td>{{ number_format($payment->penalty) }}</td> --}}
-                                        <td>{{ number_format($payment->total), 2, '.', ',' }}</td>
-                                        <td>{{ number_format($payment->balance < 0 ? 0 : $payment->balance) }}</td>
+                                        <td>{{ number_format($payment->total, 2, '.', ',') }}</td>
+                                        <td>{{ number_format($payment->balance < 0 ? 0 : $payment->balance , 2, '.', '') }}</td>
                                         <td>{{ ucwords($payment->payment_type)}}</td>
                                         <td>{{ $payment->cheque_number }}</td>
                                         <td>{{ $payment->payee_name }}</td>
@@ -173,7 +173,7 @@
                         <div class="col-md-9 text-right">
                             @hasanyrole('Super Admin|Admin|manager')
                             <button type="button" class="btn btn-large btn-success" id="send-sms"> Send SMS</button>
-                            <button type="button" id="landloard-button" class="btn btn-large btn-primary"> Edit</button>
+                            {{--  <button type="button" id="landloard-button" class="btn btn-large btn-primary"> Edit</button>  --}}
                             <button style="display: none" type="submit" id="landloard-save"
                                     class="btn btn-large btn-primary">Save
                             </button>
@@ -588,7 +588,7 @@
                         </div>
                         <div class="col-md-4 text-right">
                             @hasanyrole('Super Admin|Admin|manager')
-                            <button type="button" id="property-button" class="btn btn-large btn-primary">Edit</button>
+                            {{--  <button type="button" id="property-button" class="btn btn-large btn-primary">Edit</button>  --}}
                             <button style="display: none" type="submit" id="property-save"
                                     class="btn btn-large btn-primary">Save
                             </button>
@@ -876,8 +876,8 @@
                             </div>
                             <div class="col-md-4 text-right">
                                 @hasanyrole('Super Admin|Admin|manager')
-                                <button type="button" id="occupancy-button" class="btn btn-large btn-primary">Edit
-                                </button>
+                                {{--  <button type="button" id="occupancy-button" class="btn btn-large btn-primary">Edit  --}}
+                                {{--  </button>  --}}
                                 <button style="display: none" type="submit" id="occupancy-save"
                                         class="btn btn-large btn-primary">Save
                                 </button>
@@ -1016,8 +1016,8 @@
                             </div>
                             <div class="col-md-4 text-right">
                                 @hasanyrole('Super Admin|Admin|manager')
-                                <button type="button" id="geo-registry-button" class="btn btn-large btn-primary">Edit
-                                </button>
+                                {{--  <button type="button" id="geo-registry-button" class="btn btn-large btn-primary">Edit
+                                </button>  --}}
                                 <button style="display: none" type="submit" id="geo-registry-save"
                                         class="btn btn-large btn-primary">Save
                                 </button>

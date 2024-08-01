@@ -759,26 +759,16 @@
         <input type="hidden" id="download-property" name="properties" />
 
         <div class="row" id="properties">
-            <div class="col-md-3">
-                <div class="demo-checkbox1">
+           
+                <div class="col-md-4 demo-checkbox1">
                     <input type="checkbox" class="filled-in" id="select-all"/>
                     <label for="select-all">Select All</label>
                     <button type="button" class="btn btn-success" id="send-sms" style="margin-left: 8px">Send SMS</button>
                     <input type="hidden" name="send_sms" id="send_sms" value="0">                    
-                    <button type="button" class="btn btn-danger pull-right" id="delete-property">Delete</button>
+                    <button type="button" class="btn btn-danger" id="delete-property">Quarantine</button>
                     <input type="hidden" name="delete_property" id="delete_property" value="0">
-                    <!-- <a class="btn-outline-danger">Delete</a> -->
                 </div>
-                 {!! $errors->first('properties', '<p class="error">:message</p>') !!}
-            </div>
-            <!-- <div class="col-md-1">
-                <button type="submit" name="delete_property" value="1"  class="btn btn-danger pull-right" id="delete-property">Delete</button>
-            </div> -->
-            <div class="col-md-9">
-<!--                 <div class="col-md-1">
-                    <button type="button" class="btn btn-success pull-right" id="send-sms">Send SMS</button>
-                    <input type="hidden" name="send_sms" id="send_sms" value="0">
-                </div> -->
+                 {!! $errors->first('properties', '<p class="error">:message</p>') !!}           
                 <div class="col-md-1">
                     <label style="font-size: 12px;"> Year</label>
                 </div>
@@ -793,15 +783,17 @@
                 <div class="col-md-2">
                     <button type="submit" name="download_excel" value="1" class="btn btn-info waves-effect" id="filter-excel">Download Excel</button>
                 </div>
+        </div>
+        <div class="row">
                 <div class="col-md-2">
                     <button type="submit" name="download_envelope" value="1" class="btn btn-info waves-effect" id="filter-envelope">Download Envelope</button>
                 </div>                
                 <div class="col-md-3">
                     <button type="submit" name="download_pdf" value="1"  class="btn btn-primary waves-effect pull-right" id="filter-downloads">Download Demand Note (PDF) </button>
                 </div>
-
-            </div>
-             <div class="col-md-12">
+        </div>
+        <div class="row" style="margin-top:10px;">
+              <div class="col-md-12">
                 <p><label style="font-size: 12px;">Total Assessment :</label> Le <span id="total_amount"></span></p>
              </div>
         </div>

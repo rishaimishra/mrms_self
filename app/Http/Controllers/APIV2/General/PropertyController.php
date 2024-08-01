@@ -48,6 +48,8 @@ class PropertyController extends ApiController
 
     public function save(Request $request)
     {
+        // return $request->gated_community;
+        // return getSystemConfig(SystemConfig::OPTION_GATED_COMMUNITY);
         // return $request;
       
     //   die;
@@ -123,7 +125,7 @@ class PropertyController extends ApiController
             'is_draft_delivered' => $request->input('is_draft_delivered', false),
             'delivered_name' => $request->input('delivered_name'),
             'delivered_middle_name' => $request->input('delivered_middle_name'),
-            'delivered_middle_surname' => $request->input('delivered_sur_name'),
+            'delivered_middle_surname' => $request->input('delivered_middle_surname'),
             'delivered_number' => $request->input('delivered_number'),
             'occupancy_other_organization_type' => $request->occupancy_other_organization_type,
             'occupancy_organization_type'=>$request->occupancy_organization_type,
@@ -369,7 +371,7 @@ class PropertyController extends ApiController
             $assessment_data['demand_note_delivered_at'] = now();
             $assessment_data['demand_note_recipient_name'] = $request->input('delivered_name');
             $assessment_data['delivered_middle_name'] = $request->input('delivered_middle_name');
-            $assessment_data['delivered_middle_surname'] = $request->input('delivered_sur_name');
+            $assessment_data['delivered_middle_surname'] = $request->input('delivered_middle_surname');
             $assessment_data['demand_note_recipient_mobile'] = $request->input('delivered_number');
             $assessment_data['demand_note_recipient_photo'] = $recipient_photo;
         }
@@ -969,7 +971,7 @@ class PropertyController extends ApiController
         $step6 = 0;
         $swimming_pool = optional(Swimming::find($request->swimming_pool))->value;
 
-        $gated_community = $request->gated_community ? getSystemConfig(SystemConfig::OPTION_GATED_COMMUNITY) : 1;
+        $gated_community = $request->gated_community ? getSystemConfig(SystemConfig::OPTION_GATED_COMMUNITY) : 0;
 
         if (count($property_categories) && $property_categories->count()) {
             $step6 = 1;
@@ -1113,7 +1115,7 @@ class PropertyController extends ApiController
         $step6 = 0;
 
 
-        $gated_community = $request->gated_community ? getSystemConfig(SystemConfig::OPTION_GATED_COMMUNITY) : 1;
+        $gated_community = $request->gated_community ? getSystemConfig(SystemConfig::OPTION_GATED_COMMUNITY) : 0;
 
         if (count($property_categories) && $property_categories->count()) {
             $step6 = 1;
@@ -1572,6 +1574,8 @@ public function createInAccessibleProperties(Request $request)
                 'is_property_inaccessible' => $request->input('is_property_inaccessible', false),
                 'is_draft_delivered' => $request->input('is_draft_delivered', false),
                 'delivered_name' => $request->input('delivered_name'),
+                'delivered_middle_name' => $request->input('delivered_middle_name'),
+                'delivered_middle_surname' => $request->input('delivered_middle_surname'),
                 'delivered_number' => $request->input('delivered_number'),
                 'random_id' => $request->input('random_id'),
                 'occupancy_other_organization_type' => $request->occupancy_other_organization_type,

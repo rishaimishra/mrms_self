@@ -123,7 +123,7 @@ class PaymentController extends Controller
             ','
         );
     }
-        $property->assessment->{"balance_due"} = number_format($property->assessment->getCurrentYearTotalDue(),2,'.',',');
+        $property->assessment->{"balance_due"} = number_format($property->assessment->getCurrentYearTotalDue(),2,'.','');
 
                
        $property->assessment->{"pensioner_discount"} = number_format($pensioner_discount,2,'.','');
@@ -241,30 +241,32 @@ $property->assessment->{"council_adjustments_parameters"}  = number_format($prop
             $assessment = $property->assessment()->first();
 
         
-            $pensioner_discount_image = null;
+           
 
             if ($request->hasFile('pensioner_discount_image')) {
+                $pensioner_discount_image = null;
                 $pensioner_discount_image = $request->pensioner_discount_image->store(PropertyPayment::PENSIONER_DISCOUNT_IMAGE);
                 $data['pensioner_discount_image'] = $pensioner_discount_image;
             
                 $assessment_data = [
                     'is_rejected_pensioner' => 0,
-                    'pensioner_discount' => 1,
+                    'pensioner_discount' => 0,
                 ];
 
                 $assessment->fill($assessment_data);
                 $assessment->save();
             }
 
-            $disability_discount_image = null;
+         
 
             if ($request->hasFile('disability_discount_image')) {
+                $disability_discount_image = null;
                 $disability_discount_image = $request->disability_discount_image->store(PropertyPayment::DISABILITY_DISCOUNT_IMAGE);
                 $data['disability_discount_image'] = $disability_discount_image;
                 
                 $assessment_data = [
                     'is_rejected_disability' => 0,
-                    'disability_discount' => 1,
+                    'disability_discount' => 0,
                 ];
 
                 $assessment->fill($assessment_data);
@@ -282,20 +284,32 @@ $property->assessment->{"council_adjustments_parameters"}  = number_format($prop
             ])->find($id);
     
             $paymentInQuarter = $property->getPaymentsInQuarter();
+               // Check for latest payment with discount image
+                $latestPayment = $property->payments()->latest()->first();
+                if( $latestPayment){
+                    if ($latestPayment->pensioner_discount_image != null || $latestPayment->disability_discount_image != null) {
+                        // Update existing payment with new discount image data
+                        $latestPayment->update($data);
+                    }
+                }
+                 else {
+                    // Create a new payment
+                    $payment = $property->payments()->create($data);
+                }
             // return $data;
             // $payment = $property->payments()->create($data);
-            // $payment->save();
+            // $payment->save($data);
             return response()->json(compact('property', 'paymentInQuarter', 'history'));
         }
         //when only discount is booked new code
         // return $request->amount;
 
-        $t_amount = intval(str_replace(',', '', $request->amount));
+        $t_amount = $request->amount;
 
 
         $t_penalty = 0;
 
-        $balance = number_format($property->getBalance(), 0, '.', '');
+        $balance = $property->getBalance();
 
 
         $admin = $request->user('admin-api');
@@ -306,7 +320,7 @@ $property->assessment->{"council_adjustments_parameters"}  = number_format($prop
             'payee_name'
         ]);
 
-        $data['assessment'] = number_format($property->assessment->getCurrentYearTotalDue(), 0, '.', '');
+        $data['assessment'] = $property->assessment->getCurrentYearTotalDue();
         $data['admin_user_id'] = $admin->id;
         $data['total'] = $t_amount + $t_penalty;
         $data['amount'] = $t_amount;
@@ -358,10 +372,10 @@ $property->assessment->{"council_adjustments_parameters"}  = number_format($prop
         // return $property->payments();
         $payment = $property->payments()->create($data);
         $property2 = Property::with('landlord')->findOrFail($id);
-        $t_balance = number_format($property2->assessment->getCurrentYearTotalDue(), 0, '.', '');
+        $t_balance = $property2->assessment->getCurrentYearTotalDue();
 
         $payment->balance = $t_balance;
-
+        $payment->payment_fulfilment = $request->payment_fulfilment;
         $payment->save();
 
         if ($mobile_number = $property->landlord->mobile_1) {
@@ -379,7 +393,7 @@ $property->assessment->{"council_adjustments_parameters"}  = number_format($prop
             'payments',
             'assessmentHistory'
         ])->find($id);
-
+      
         $paymentInQuarter = $property->getPaymentsInQuarter();
         return response()->json(compact('property', 'paymentInQuarter', 'history'));
     }

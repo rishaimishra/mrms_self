@@ -439,11 +439,11 @@
                                             <td>{{ $payment->id }}</td>
                                             <td>{{ $payment->payment_fulfilment }}</td>
                                             <td>{{ $payment->admin->getName() }}</td>
-                                            <td>{{ number_format($payment->assessment) }}</td>
-                                            {{-- <td>{{ number_format($payment->amount) }}</td>
+                                            <td>{{ number_format($payment->assessment, 2, '.', '') }}</td>
+                                            {{-- <td>{{ number_format($payment->amount, 2, '.', ',') }}</td>
                                             <td>{{ number_format($payment->penalty) }}</td> --}}
-                                            <td>{{ number_format($payment->total) }}</td>
-                                            <td>{{ number_format($payment->balance < 0 ? 0 : $payment->balance) }}</td>
+                                            <td>{{ number_format($payment->total , 2, '.', ',') }}</td>
+                                            <td>{{ number_format($payment->balance < 0 ? 0 : $payment->balance , 2, '.', '') }}</td>
                                             <td>{{ ucwords($payment->payment_type) }}</td>
                                             <!-- <td>{{ $payment->cheque_number }}</td> -->
                                             <td>{{ $payment->payee_name }}</td>

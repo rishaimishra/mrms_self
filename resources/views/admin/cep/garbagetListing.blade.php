@@ -159,6 +159,13 @@
         margin-bottom: 10px;
     }
 </style>
+{{--  {{ $formatted_date  }}  --}}
+{{--  @foreach ($formatted_date as $date)
+    <p>{{ $date }}</p>
+@endforeach  --}}
+<div id="successAlert" class="alert alert-success" style="display: none;">
+    Availability successfully submitted!
+</div>
 <div class="card p_2">
     <form action="{{ route('admin.change-garbage-collection') }}" method="POST" enctype="multipart/form-data">
         @csrf
@@ -200,7 +207,7 @@
                         <tr>
                             <th colspan="2">Indicate availability here</th>
                             <th>
-                                <input class="slot_checkbox" type="checkbox" onclick="toggleAll(this)" id="selectAll"> All
+                                <input class="slot_checkbox" type="checkbox" id="selectAll"> All
                             </th>
                         </tr>
                         <tr>
@@ -254,122 +261,215 @@
                             <td class="time-slot"><input class="slot_checkbox" type="checkbox" name="timeSlot" value="5:00 PM - 6:00 PM"></td>
                         </tr>
                     </table>
-                    <button type="button" style="margin-top: 30px;" onclick="addSelectedDate()" class="btn btn-primary ecp_publish">Confirm (Pickup)</button>
-                    {{--  <button type="button" onclick="addSelectedTimes()" class="btn btn-primary ecp_submit">Add Selected Times</button>  --}}
+                    <button type="button" style="margin-top: 30px;" disabled onclick="addSelectedDate()" class="btn btn-primary ecp_publish">Confirm (Pickup)</button>
                 </div>
             </div>
-           
         </div>
-       
     </form>
+
 </div>
 {!! $grid !!}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const calendarElement = document.querySelector('.calendar');
-    const daysElement = calendarElement.querySelector('.days');
-    const displayElement = calendarElement.querySelector('.display');
-    const leftButton = calendarElement.querySelector('.left');
-    const rightButton = calendarElement.querySelector('.right');
-    const selectedElement = document.querySelector('.selected');
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarElement = document.querySelector('.calendar');
+        const daysElement = calendarElement.querySelector('.days');
+        const displayElement = calendarElement.querySelector('.display');
+        const leftButton = calendarElement.querySelector('.left');
+        const rightButton = calendarElement.querySelector('.right');
+    
+        let currentDate = new Date();
+        let year = currentDate.getFullYear();
+        let month = currentDate.getMonth();
+        
+        let selectedDatesTimes = {};
+    
+        $('#selectAll').on('change', (e) => {
+            const checkboxes = document.querySelectorAll('.slot_checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = e.target.checked;
+                checkbox.dispatchEvent(new Event('change'));
+            });
+        }); 
+    
+        function selectDate(day) {
+            const date = new Date(year, month, day).toLocaleDateString('en-US');
+            currentDate.setDate(day);
 
-    let currentDate = new Date();
-
-    function updateCalendar() {
-        daysElement.innerHTML = '';
-        displayElement.textContent = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-
-        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-
-        const firstDayOfWeek = firstDayOfMonth.getDay();
-        const lastDayOfWeek = lastDayOfMonth.getDay();
-
-        for (let i = 0; i < firstDayOfWeek; i++) {
-            const emptyCell = document.createElement('div');
-            daysElement.appendChild(emptyCell);
+            // Check all checkboxes when a date is selected
+            const checkboxes = document.querySelectorAll('input[name="timeSlot"]');
+    
+            updateSelectedDateTime(date);
+            if (date) {
+                $.ajax({
+                    url: '{{ route('admin.check-garbage-collection') }}', // Adjust this route to your needs
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        date: date
+                    },
+                    success: function (res) {
+                        if(res.status == 'success'){
+                            var getSlots = res.data?.get_slot;
+                            checkboxes.forEach(checkbox => {
+                                var matchingSlot = getSlots.find(slot => slot.slots === checkbox.value);
+                                checkbox.checked = !!matchingSlot;
+                                checkbox.dispatchEvent(new Event('change'));
+                            });
+                        } else if(res.status == 'error'){
+                            checkboxes.forEach(checkbox => {
+                                checkbox.checked = true;
+                                checkbox.dispatchEvent(new Event('change'));
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        alert('An error occurred while submitting availability.');
+                    }
+                });
+            }
         }
-
-        for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
-            const dayCell = document.createElement('div');
-            dayCell.textContent = day;
-            dayCell.onclick = () => {
-                selectedElement.textContent = new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toLocaleDateString('en-US');
-                document.querySelectorAll('.days div').forEach(div => div.classList.remove('current-date'));
-                dayCell.classList.add('current-date');
-            };
-            daysElement.appendChild(dayCell);
+    
+        function updateCheckboxes(date) {
+            const checkboxes = document.querySelectorAll('input[name="timeSlot"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectedDatesTimes[date] && selectedDatesTimes[date].includes(checkbox.value);
+            });
         }
+    
+        function updateCalendar() {
+            daysElement.innerHTML = '';
+            displayElement.textContent = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
-        for (let i = lastDayOfWeek + 1; i < 7; i++) {
-            const emptyCell = document.createElement('div');
-            daysElement.appendChild(emptyCell);
+            const firstDayOfMonth = new Date(year, month, 1);
+            const lastDayOfMonth = new Date(year, month + 1, 0);
+
+            const firstDayOfWeek = firstDayOfMonth.getDay();
+            const lastDayOfWeek = lastDayOfMonth.getDay();
+    
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                const emptyCell = document.createElement('div');
+                daysElement.appendChild(emptyCell);
+            }
+
+            let formatted_dates = '{{ json_encode($formatted_date) }}';
+            formatted_dates = JSON.parse(formatted_dates.replace(/&quot;/g, '"'));
+
+            for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
+                const dayCell = document.createElement('div');
+                const dayDate = new Date(year, month, day);
+
+                dayCell.dataset.date = dayDate.toDateString();
+                dayCell.textContent = day;
+                dayCell.onclick = () => {
+                    selectDate(day);
+                    document.querySelectorAll('.days div').forEach(div => div.classList.remove('current-date'));
+                    dayCell.classList.add('current-date');
+                };
+                daysElement.appendChild(dayCell);
+            }
+    
+            for (let i = lastDayOfWeek + 1; i < 7; i++) {
+                const emptyCell = document.createElement('div');
+                daysElement.appendChild(emptyCell);
+            }
+
+            // Mark selected dates
+            const dateSet = new Set(formatted_dates.map(date => new Date(date).toDateString()));
+            const divs = document.querySelectorAll('div[data-date]');
+            divs.forEach(div => {
+                const date = div.getAttribute('data-date');
+                if (dateSet.has(date)) {
+                    div.classList.add('current-date');
+                }
+            });
         }
-    }
-
-    leftButton.onclick = () => {
-        currentDate.setMonth(currentDate.getMonth() - 1);
+    
+        leftButton.onclick = () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            year = currentDate.getFullYear();
+            month = currentDate.getMonth();
+            updateCalendar();
+        };
+    
+        rightButton.onclick = () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            year = currentDate.getFullYear();
+            month = currentDate.getMonth();
+            updateCalendar();
+        };
+    
         updateCalendar();
-    };
-
-    rightButton.onclick = () => {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        updateCalendar();
-    };
-
-    updateCalendar();
-});
-
-function toggleAll(source) {
-    const checkboxes = document.querySelectorAll('.slot_checkbox');
-    checkboxes.forEach(checkbox => checkbox.checked = source.checked);
-}
-
-function addSelectedDate() {
-    const selectedDate = document.querySelector('.selected').textContent;
-    const selectedTimes = Array.from(document.querySelectorAll('input[name="timeSlot"]:checked')).map(input => input.value);
-    if (selectedDate && selectedTimes.length) {
-        const selectedDatesTimesContainer = document.getElementById('selectedDatesTimes');
-        const selectedDateDiv = document.createElement('div');
-        selectedDateDiv.classList.add('selected-date');
-        selectedDateDiv.textContent = `Date: ${selectedDate}, Times: ${selectedTimes.join(', ')}`;
-        selectedDatesTimesContainer.appendChild(selectedDateDiv);
-        document.querySelector('.selected').textContent = '';
-        document.querySelectorAll('input[name="timeSlot"]').forEach(input => input.checked = false);
-    } else {
-        alert('Please select a date and at least one time slot.');
-    }
-}
-
-
-document.querySelector('.ecp_submit').addEventListener('click', function() {
-   
-    const selectedDatesTimes = [];
-    document.querySelectorAll('#selectedDatesTimes .selected-date').forEach(div => {
-        const [datePart, timesPart] = div.textContent.split(', Times: ');
-        const date = datePart.replace('Date: ', '').trim();
-        const times = timesPart.split(', ').map(time => time.trim());
-        selectedDatesTimes.push({ date, times });
-    });
-
-    if (selectedDatesTimes.length > 0) {
-        $.ajax({
-            url: '{{ route('admin.change-garbage-collection') }}', // Adjust this route to your needs
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                selectedDatesTimes: selectedDatesTimes
-            },
-            success: function(response) {
-                location.reload();
-            },
-            error: function(xhr) {
-                alert('An error occurred while submitting availability.');
+    
+        document.querySelectorAll('.slot_checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const currentDateStr = new Date(year, month, currentDate.getDate()).toLocaleDateString('en-US');
+                updateSelectedDateTime(currentDateStr);
+            });
+        });
+    
+        document.querySelector('.ecp_submit').addEventListener('click', function () {
+            const selectedDatesTimesArray = Object.keys(selectedDatesTimes).map(date => ({
+                date: date,
+                times: selectedDatesTimes[date]
+            }));
+    
+            if (selectedDatesTimesArray.length > 0) {
+                $.ajax({
+                    url: '{{ route('admin.change-garbage-collection') }}', // Adjust this route to your needs
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        selectedDatesTimes: selectedDatesTimesArray
+                    },
+                    success: function (response) {
+                        const successAlert = document.getElementById('successAlert');
+                        successAlert.style.display = 'block';
+                        
+                        setTimeout(() => {
+                            successAlert.style.display = 'none';
+                            location.reload();
+                        }, 1000);
+                    },
+                    error: function (xhr) {
+                        alert('An error occurred while submitting availability.');
+                    }
+                });
+            } else {
+                alert('Please select at least one date and time slot.');
             }
         });
-    } else {
-        alert('Please select at least one date and time slot.');
-    }
-});
+    
+        function updateSelectedDateTime(date) {
+            const checkboxes = document.querySelectorAll('input[name="timeSlot"]');
+            const selectedTimes = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(input => input.value);
+    
+            if (selectedTimes.length > 0) {
+                selectedDatesTimes[date] = selectedTimes;
+            } else {
+                delete selectedDatesTimes[date];
+            }
+    
+            const selectedDatesTimesContainer = document.getElementById('selectedDatesTimes');
+            let selectedDateDiv = selectedDatesTimesContainer.querySelector(`.selected-date[data-date="${date}"]`);
+    
+            if (!selectedDateDiv) {
+                selectedDateDiv = document.createElement('div');
+                selectedDateDiv.classList.add('selected-date');
+                selectedDateDiv.setAttribute('data-date', date);
+                selectedDatesTimesContainer.appendChild(selectedDateDiv);
+            }
+    
+            selectedDateDiv.innerHTML = `Date: ${date}, Times: ${selectedTimes.join(', ')}`;
+        }
+    
+        function removeSelectedDate(button) {
+            const selectedDateDiv = button.parentElement;
+            const date = selectedDateDiv.getAttribute('data-date');
+            selectedDateDiv.remove();
+            delete selectedDatesTimes[date];
+        }
+    });
 </script>
+
+
 @endsection

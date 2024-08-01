@@ -67,11 +67,26 @@ class AppUserController extends Controller
 
     public function list(UsersGrid $usersGrid, Request $request)
     {
-        $query = User::query();
-        if (request()->user()->hasRole('Super Admin')) {
-        } else {
+        $query = User::where('ward', '!=', 'NA')
+            ->where('section', '!=', 'NA');
+    
+        if (!request()->user()->hasRole('Super Admin')) {
             $query->where('assign_district', request()->user()->assign_district);
         }
+    
+        return $usersGrid
+            ->create(['query' => $query->latest(), 'request' => $request])
+            ->renderOn('admin.users.app_user_list');
+    }
+    public function cep_user_list(UsersGrid $usersGrid, Request $request)
+    {
+        $query = User::where('ward', '=', 'NA')
+            ->where('section', '=', 'NA');
+    
+        if (!request()->user()->hasRole('Super Admin')) {
+            $query->where('assign_district', request()->user()->assign_district);
+        }
+    
         return $usersGrid
             ->create(['query' => $query->latest(), 'request' => $request])
             ->renderOn('admin.users.app_user_list');

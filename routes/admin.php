@@ -56,6 +56,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::get('cep/garbage_collection_listing', 'FormAndResourseController@garbage_collection_list')->name('garbage-collection-list');
         Route::get('cep/garbage_collection', 'FormAndResourseController@garbage_collection')->name('garbage-collection');
         Route::post('cep/change_garbage_collection', 'FormAndResourseController@change_garbage_collection')->name('change-garbage-collection');
+        Route::post('cep/check_garbage_collection', 'FormAndResourseController@check_garbage_collection')->name('check-garbage-collection');
         Route::get('cep/complaint_listing', 'FormAndResourseController@complaint_listing')->name('complaint-listing');
         Route::get('cep/complaint_listing_show', 'FormAndResourseController@complaint_listing_show')->name('complaint-listing-show');
         Route::get('cep/complaint_listing_delete', 'FormAndResourseController@complaint_listing_delete')->name('complaint-listing-delete');
@@ -128,6 +129,9 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::post('app-user/update', 'AppUserController@update')->name('app-user.update');
         Route::get('app-user/delete', 'AppUserController@destroy')->name('app-user.delete');
         Route::post('app-user/create', 'AppUserController@store');
+        // Cep user routes
+        Route::get('app-cep-user/list', 'AppUserController@cep_user_list')->name('cep-user.list');
+
 
         //Guest user routes
         Route::get('guest-user/create', 'GuestUserController@create')->name('guest-user.create');

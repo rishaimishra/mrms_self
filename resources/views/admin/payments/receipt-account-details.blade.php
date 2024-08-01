@@ -192,13 +192,13 @@
                     <td style=" width: 33%;">
                         <table style="width: 100%;   ">
                             <tr>
-                                <td align="center" style=" text-align: right; padding-right: 65px;">
+                                <td align="center" style=" text-align: right; padding-right: 25px;">
                                     <img src="{{  $district->getCeoSignUrl(0,0,true) }}" alt="" style="height: 70px; width: 80px;">
                                 </td>
                             </tr>
                             <tr>
                                 <td style=" text-align: right; padding-right: 5px;">
-                                    ...............................................
+                                    .....................................
                                 </td>
                             </tr>
                             <tr>

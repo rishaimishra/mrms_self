@@ -329,6 +329,27 @@
                             </tr>
                             <tr>
                                 <td>
+                                    <th style="border:1px solid #606060;text-align: left;" scope="col">Shops</th>
+                                </td>
+                                <!-- <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->label) }}</td> -->
+                                <td style="border:1px solid #606060; color: #484848;">
+                                    {{ $assessment->valuesAdded->pluck('label')->contains('Shop') ? 'YES' : 'NO' }}
+                                    @if($assessment->valuesAdded->pluck('label')->contains('Shop'))
+                                    ({{ strtoupper($assessment->no_of_shop) }})
+                                @endif
+                                </td>
+                                
+                                <td>
+                                    <th style="border:0px solid #606060;text-align: left;" scope="col"></th>
+                                </td>
+                                <td style="border:0px solid #606060;"></td>
+                                <td>
+                                    <th style="border:0px solid #606060;text-align: left; color:#303030;" scope="col"></th>
+                                </td>
+                                <td style="border:0px solid #606060; color:#303030;"></td>
+                            </tr>
+                            <tr>
+                                <td>
                                     <th style="border:1px solid #606060;text-align: left; color:#303030;" scope="col">ASSESSED VALUE</th>
                                 </td>
                                 <td style="border:1px solid #606060; color:#303030;font-weight:bold;">NLe {!! number_format($assessment->getCurrentYearAssessmentAmount(), 2, '.', ',') !!}</td>
