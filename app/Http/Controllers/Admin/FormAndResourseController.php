@@ -7,6 +7,7 @@ use App\Grids\DistrictsGrid;
 use App\Grids\ComplaintGrid;
 use App\Grids\GarbageGrid;
 use App\Grids\NewsletterGrid;
+use App\Grids\InformationGrid;
 use App\Models\AdminUser;
 use App\Models\District;
 use App\Models\Property;
@@ -23,6 +24,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Models\GarbageDate;
 use App\Models\GarbageDateSlot;
+use App\Models\InformationTip;
 use DateTime;
 
 class FormAndResourseController extends Controller
@@ -49,8 +51,35 @@ class FormAndResourseController extends Controller
          $form_data->save();
          return back()->with('success', 'form added successfully.');
     }
-    public function information_tips_index(){
-        return view('admin.cep.informationandtips');
+    public function information_tips_index(InformationGrid $informationGrid,Request $request){
+        $this->information = InformationTip::with('get_user');
+
+        $data['title'] = 'Information and tips';
+
+        $data['request'] = $request;
+        return $informationGrid->create(['query' => $this->information, 'request' => $request])->renderOn('admin.cep.informationandtips', $data);
+        // return view('admin.cep.informationandtips');
+    }
+    public function add_information_tips(Request $request){
+        // return $request;
+        $tip = new InformationTip();
+        $tip->tip = $request->information_tip;
+        $tip->user_id=request()->user()->id;
+        $tip->status=1;
+        $tip->save();
+        return back()->with('success', 'information and tips added successfully.');
+    }
+    public function information_tips_show(Request $request){
+        // return $request->information_collection;
+        $information = InformationTip::where('id',$request->information_collection)->with('get_user')->first();
+      return view('admin.cep.information_and_tips_show',compact('information'));
+    }
+    public function information_tips_delete(Request $request){
+         $information = InformationTip::where('id',$request->information_collection)->with('get_user')->first();
+        $information = InformationTip::where('id',$request->information_collection)->first();
+       
+        $information->delete();
+        return redirect()->back()->with($this->setMessage('Information and tips successfully deleted', true));
     }
     public function newsletter(NewsletterGrid $newsGrid, Request $request){
         // return "hello";
@@ -109,12 +138,14 @@ class FormAndResourseController extends Controller
         // return $request;
         $validatedData = $request->validate([
             'headline' => 'required|string|max:255',
-            'story_board' => 'required|string|max:255',
+            'story_board' => 'required',
             'headline_image' => 'required',
             'headlineimg' => 'required',
+            'editor_name' => 'required'
         ]);
          $headline = new Headlines();
         $headline->headline = $request->headline;
+        $headline->editor = $request->editor_name;
         if ($request->hasFile('headline_image')) {
             $file = $request->file('headline_image');
             $path = $file->store('form_images', 'public');
@@ -264,5 +295,16 @@ class FormAndResourseController extends Controller
 
        return $response;
 
+    }
+    function upload(Request $request)
+    {
+        $image = $request->upload;
+        $imagename = str_replace(' ', '', 'tuorial' . time() . $image->getClientOriginalName());
+        $image->move(public_path('uploads/post/'), $imagename);
+        $url = asset('uploads/post/' . $imagename);
+        $CKEditorFuncNum = $request->input('CKEditorFuncNum');
+        $response = "<script>window.parent.CKEDITOR.tools.callFunction( $CKEditorFuncNum  ,  '$url' ,'uploaded')</script>";
+        @header('Content-Type:text/html;charset-utf-8');
+        echo $response;
     }
 }

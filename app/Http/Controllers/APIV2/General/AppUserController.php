@@ -74,7 +74,7 @@ class AppUserController extends ApiController
     }
 
     public function getallrecipt($id){
-        $data=PropertyPayment::where('property_id',$id)->orderBy('id','desc')->pluck('id')->toArray();
+        $data=PropertyPayment::where('property_id',$id)->where('assessment','!=',0.0000)->where('amount','!=',0.0000)->orderBy('id','desc')->pluck('id')->toArray();
         $unique=[];
         foreach($data as $val){
             $url['url']="http://3.134.197.245/apiv2/payment/pos/receipt/".$id."/".$val;

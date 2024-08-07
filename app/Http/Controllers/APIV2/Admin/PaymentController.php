@@ -291,6 +291,10 @@ $property->assessment->{"council_adjustments_parameters"}  = number_format($prop
                         // Update existing payment with new discount image data
                         $latestPayment->update($data);
                     }
+                    else {
+                        // Create a new payment
+                        $payment = $property->payments()->create($data);
+                    }
                 }
                  else {
                     // Create a new payment

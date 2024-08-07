@@ -174,7 +174,7 @@
         <!-- Footer -->
         <div class="legal">
             <div class="copyright">
-                Sigma Ventures Ltd &copy; {{ date('Y') }} <br> Digital Property Management System.
+                Sigma Ventures Ltd &copy; {{ date('Y') }} <br> Municipal Rate Management System.
             </div>
         </div>
         <!-- #Footer -->

@@ -6,6 +6,7 @@ use App\Exports\PropertyExport;
 use App\Imports\ExcelImport;
 use App\Imports\AddressImport;
 use App\Grids\PropertiesGrid;
+use App\Grids\QuarantineGrid;
 use App\Grids\AssignPropertiesGrid;
 use App\Http\Controllers\Controller;
 use App\Jobs\PropertyInBulk;
@@ -407,7 +408,103 @@ class PropertyController extends Controller
         //return view('admin.properties.list',$data);
 
     }
+    public function quarantine_list(QuarantineGrid $usersGrid, Request $request)
+    {
+        // return "sas";
+        
 
+        $organizationTypes = collect(json_decode(file_get_contents(storage_path('data/organizationTypes.json')), true))->pluck('label', 'value');
+        $schoolTypes = collect(json_decode(file_get_contents(storage_path('data/schoolTypes.json')), true))->pluck('label', 'value');
+        $this->properties = Property::onlyTrashed()->with([
+            'user',
+            'landlord',
+            'assessment' => function ($query) use ($request) {
+                if ($request->filled('demand_draft_year')) {
+                    $query->whereYear('created_at', $request->demand_draft_year);
+                }
+            },
+            'geoRegistry',
+            'user',
+            'occupancies',
+            'propertyInaccessible',
+            'payments',
+            'districts',
+            'assessmentHistory'
+        ])
+            ->whereHas('assessment', function ($query) use ($request) {
+
+                if ($request->filled('demand_draft_year')) {
+                    $query->whereYear('created_at', $request->demand_draft_year);
+                }
+
+                if ($request->filled('is_printed')) {
+
+                    if ($request->input('is_printed') === '1') {
+                        $query->whereNotNull('last_printed_at');
+                    }
+
+                    if ($request->input('is_printed') === '0') {
+                        $query->whereNull('last_printed_at');
+                    }
+                }
+
+                if ($request->is_gated_community) {
+                    $query->where('gated_community', $request->gated_community);
+                }
+
+            });
+           
+       
+        
+
+        $data['types'] = PropertyCategory::pluck('label', 'id')->prepend('Select', '');
+
+        $data['categories'] = PropertyType::pluck('label', 'id')->prepend('Select', '');
+        $data['windowtype'] = PropertyWindowType::pluck('label', 'id')->prepend('Select Window Type', '');
+        $data['wallMaterial'] = PropertyWallMaterials::pluck('label', 'id')->prepend('Wall Material', '')->prepend('Select wall material', '');
+        $data['roofMaterial'] = PropertyRoofsMaterials::pluck('label', 'id')->prepend('Roof Material', '')->prepend('Select roof material', '');
+        $data['propertyDimension'] = PropertyDimension::pluck('label', 'id')->prepend('Dimensions', '');
+        $data['valueAdded'] = PropertyValueAdded::where('is_active', true)->pluck('label', 'id')->prepend('Value Added', '');
+        $data['town'] = BoundaryDelimitation::distinct()->orderBy('section')->pluck('section', 'section')->prepend('Select Town', '');;
+
+        if (request()->user()->hasRole('Super Admin')) {
+            $data['district'] = BoundaryDelimitation::distinct()->orderBy('district')->pluck('district', 'district')->sort()->prepend('Select District', '');
+            $data['province'] = BoundaryDelimitation::distinct()->orderBy('province')->pluck('province', 'province')->sort()->prepend('Select Province', '');;
+            $data['ward'] = BoundaryDelimitation::distinct()->orderBy('ward')->pluck('ward', 'ward')->sort()->prepend('Select Ward', '');
+            $data['chiefdom'] = BoundaryDelimitation::distinct()->orderBy('chiefdom')->pluck('chiefdom', 'chiefdom')->sort()->prepend('Select Chiefdom', '');
+            $data['constituency'] = BoundaryDelimitation::distinct()->orderBy('constituency')->pluck('constituency', 'constituency')->sort()->prepend('Select Constituency', '');
+        } else {
+            $data['district'] = BoundaryDelimitation::where('district', request()->user()->assign_district)->distinct()->orderBy('district')->pluck('district', 'district')->sort()->prepend('Select District', '');
+            $data['province'] = BoundaryDelimitation::where('district', request()->user()->assign_district)->distinct()->orderBy('province')->pluck('province', 'province')->sort()->prepend('Select Province', '');;
+            $data['ward'] = BoundaryDelimitation::where('district', request()->user()->assign_district)->distinct()->orderBy('ward')->pluck('ward', 'ward')->sort()->prepend('Select Ward', '');
+            $data['chiefdom'] = BoundaryDelimitation::where('district', request()->user()->assign_district)->distinct()->orderBy('chiefdom')->pluck('chiefdom', 'chiefdom')->sort()->prepend('Select Chiefdom', '');
+            $data['constituency'] = BoundaryDelimitation::where('district', request()->user()->assign_district)->distinct()->orderBy('constituency')->pluck('constituency', 'constituency')->sort()->prepend('Select Constituency', '');
+        }
+        $data['digital_address'] = PropertyGeoRegistry::distinct()->orderBy('property_id')->pluck('digital_address', 'digital_address')->sort()->prepend('Select Digital Address', '');
+
+        $data['request'] = $request;
+
+        $data['property_inaccessibles'] = PropertyInaccessible::where('is_active', 1)->pluck('label', 'id')->prepend('Select Property Inaccessible');
+
+        $data['street_names'] = Property::distinct('street_name')->orderBy('street_name')->pluck('street_name', 'street_name')->sort()->prepend('Select street name', '');
+        $data['street_numbers'] = Property::distinct('street_number')->orderBy('street_number')->pluck('street_number', 'street_number')->sort()->prepend('Select street number', '');
+        $data['additional_address'] = Property::distinct('additional_address_id')->orderBy('additional_address_id')->pluck('additional_address_id', 'additional_address_id')->sort()->prepend('Select additional address', '');
+        $data['propertyArea'] = Property::distinct('propertyArea')->orderBy('propertyArea')->pluck('propertyArea', 'propertyArea')->sort()->prepend('Select area', '');
+        $data['postcodes'] = Property::distinct('postcode')->orderBy('postcode')->pluck('postcode', 'postcode')->sort()->prepend('Select post code', '');
+        $data['organizationTypes'] = $organizationTypes;
+        $data['schoolTypes'] = $schoolTypes;
+        $data['first_name'] = LandlordDetail::distinct('first_name')->orderBy('first_name')->pluck('first_name', 'first_name')->sort()->prepend('Select owner name', '');
+        $data['middle_name'] = LandlordDetail::distinct('middle_name')->orderBy('middle_name')->pluck('middle_name', 'middle_name')->sort()->prepend('Select owner middle name', '');
+        $data['surname'] = LandlordDetail::distinct('surname')->orderBy('surname')->pluck('surname', 'surname')->sort()->prepend('Select owner last name', '');
+        //return view('admin.payments.bulk-receipt')->with(['properties' => $this->properties->latest()->get()]);
+
+        return $usersGrid
+            ->create(['query' => $this->properties, 'request' => $request])
+            ->withoutSearchForm()
+            ->renderOn('admin.properties.quarantine_view', $data);
+        //return view('admin.properties.list',$data);
+
+    }
     public function listInaccessibleProperties()
     {
         $property = InaccessibleProperty::where('id','>',0)->get();
@@ -577,8 +674,82 @@ class PropertyController extends Controller
 
     public function show(Request $request)
     {
+        // return "sad";
         /* @var $property Property */
         $property = Property::findOrFail($request->property);
+
+        // Generate current year assessment if missing
+         $property->generateAssessments();
+
+        // load sub modals
+        $property->load([
+            'images',
+            'occupancy',
+            'assessments' => function ($query) {
+                $query->with('types', 'categories', 'valuesAdded')->latest();
+            },
+            'geoRegistry',
+            'payments',
+            'landlord',
+            'propertyInaccessible'
+        ]);
+
+        // return $property;
+        if (request()->user()->hasRole('Super Admin')) {
+            $data['town'] = BoundaryDelimitation::distinct()->orderBy('section')->pluck('section', 'section');
+            $data['chiefdom'] = BoundaryDelimitation::distinct()->orderBy('chiefdom')->pluck('chiefdom', 'chiefdom')->sort();
+            $data['district'] = BoundaryDelimitation::distinct()->orderBy('district')->pluck('district', 'district')->sort();
+            $data['province'] = BoundaryDelimitation::distinct()->orderBy('province')->pluck('province', 'province')->sort();
+            $data['ward'] = BoundaryDelimitation::distinct()->orderBy('ward')->pluck('ward', 'ward')->sort();
+            $data['constituency'] = BoundaryDelimitation::distinct()->orderBy('constituency')->pluck('constituency', 'constituency')->sort();
+        } else {
+            $data['town'] = BoundaryDelimitation::distinct()->where('district', request()->user()->assign_district)->orderBy('section')->pluck('section', 'section');
+            $data['chiefdom'] = BoundaryDelimitation::distinct()->where('district', request()->user()->assign_district)->orderBy('chiefdom')->pluck('chiefdom', 'chiefdom')->sort();
+            $data['district'] = BoundaryDelimitation::distinct()->where('district', request()->user()->assign_district)->orderBy('district')->pluck('district', 'district')->sort();
+            $data['province'] = BoundaryDelimitation::distinct()->where('district', request()->user()->assign_district)->orderBy('province')->pluck('province', 'province')->sort();
+            $data['ward'] = BoundaryDelimitation::distinct()->where('district', request()->user()->assign_district)->orderBy('ward')->pluck('ward', 'ward')->sort();
+            $data['constituency'] = BoundaryDelimitation::distinct()->where('district', request()->user()->assign_district)->orderBy('constituency')->pluck('constituency', 'constituency')->sort();
+        }
+        //  $get_cat = PropertyCategory::where('is_active', 1)->get();
+        // $options = [];
+        // foreach ($get_cat as $key => $value) {
+        //     $options[$value->value]=$value->label;
+        // }
+        // return $options;
+         $data['categories'] = PropertyCategory::distinct()->where('is_active', 1)->pluck('label', 'id');
+        $data['types'] = PropertyType::distinct()->where('is_active', 1)->pluck('label', 'id');
+        $data['window_types'] = PropertyWindowType::distinct()->where('is_active', 1)->pluck('label', 'id');
+        //$data['window_types_values'] = PropertyWindowType::distinct()->where('is_active', 1)->pluck('value', 'id');
+        $data['wall_materials'] = PropertyWallMaterials::distinct()->where('is_active', 1)->pluck('label','id');
+        $data['sanitation'] = PropertySanitationType::pluck('label','id');
+        $data['adjustment_values'] = Adjustment::pluck('name','id');
+        //$data['wall_material_values'] = PropertyWallMaterials::distinct()->where('is_active', 1)->pluck('value', 'id');
+        $data['roofs_materials'] = PropertyRoofsMaterials::distinct()->where('is_active', 1)->pluck('label', 'id');
+        //$data['roofs_material_values'] = PropertyRoofsMaterials::distinct()->where('is_active', 1)->pluck('value', 'id');
+        $data['property_dimension'] = PropertyDimension::distinct()->where('is_active', 1)->pluck('label', 'id');
+        $data['value_added'] = PropertyValueAdded::distinct()->where('is_active', 1)->pluck('label', 'id');
+        $data['property_use'] = PropertyUse::distinct()->where('is_active', 1)->pluck('label', 'id');
+        $data['zone'] = PropertyZones::distinct()->where('is_active', 1)->pluck('label', 'id');
+        $data['occupancy_type'] = ['Owned Tenancy' => 'Owned Tenancy', 'Rented House' => 'Rented House', 'Unoccupied House' => 'Unoccupied House'];
+        $data['id_type'] = ['National ID' => 'National ID', 'Passport' => 'Passport', 'Driver’s License' => 'Driver’s License', 'Voter ID' => 'Voter ID', 'other' => 'Other'];
+        $data['org_type'] = ['Government' => 'Government', 'NGO' => 'NGO', 'Business' => 'Business', 'School' => 'School', 'Religious' => 'Religious', 'Diplomatic Mission' => 'Diplomatic Mission', 'Hospital' => 'Hospital', 'Other' => 'Other'];
+        $data['gender'] = ['m' => 'Male', 'f' => 'Female'];
+        $data['title'] = 'Details';
+        $data['property'] = $property;
+        $data['usertitles'] = UserTitleTypes::distinct()->where('is_active', 1)->pluck('label', 'id');
+        $data['selected_occupancies'] = $property->occupancies->pluck('occupancy_type')->toArray();
+
+        $data['property_inaccessable'] = PropertyInaccessible::where('is_active', 1)->pluck('label', 'id')->toArray();
+        $data['selected_property_inaccessable'] = $property->propertyInaccessible()->pluck('id')->toArray();
+        $data['swimmings'] = Swimming::where('is_active', 1)->pluck('label', 'id')->prepend('Select', '')->toArray();
+
+        return view('admin.properties.view', $data);
+    }
+    public function quarantine_show(Request $request)
+    {
+        // return $request;
+        /* @var $property Property */
+        $property = Property::onlyTrashed()->where('id',$request->quarantine_property)->first();;
 
         // Generate current year assessment if missing
          $property->generateAssessments();
@@ -1299,7 +1470,22 @@ class PropertyController extends Controller
         $assessment->typesTotal()->sync($typesTotal);
 
         /* Property value added multiple value */
-        $valuesAdded = getSyncArray($request->input('property_value_added'), ['property_id' => $property->id]);
+        $propertyValueAddedPercentage = json_decode($request->input('property_value_added_percentage'), true);
+
+    // Construct the data array
+    $valuesAdded = [];
+    foreach ($propertyValueAddedPercentage as $item) {
+        // Split the string by comma to get property ID, type, and percentage
+        list($valueAddedId, $type, $percentage) = explode(',', $item);
+
+        // Construct the data array
+        $valuesAdded[$valueAddedId] = [
+            'type' => $type,
+            'percentage' => $percentage,
+            'property_id' => $property->id
+        ];
+    }
+        // $valuesAdded = getSyncArray($request->input('property_value_added'), ['property_id' => $property->id]);
         $assessment->valuesAdded()->sync($valuesAdded);
 
         return redirect()->back()->with('success', 'Assessment details Updated Successfully!');

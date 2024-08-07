@@ -185,7 +185,7 @@
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Disability (10%)</th>
                                 </td>
                                 {{--  <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->disability_discount ? 'Yes' : 'No') !!}</td>  --}}
-                                <td style="border:1px solid #606060; color: #484848;">NLe {!! $assessment->disability_discount ? number_format($assessment->getDisabilityDiscount(), 2, '.', ',') : number_format(0, 2, '.', ',') !!}</td>
+                                <td style="border:1px solid #606060; color: #484848;">NLe {!! $assessment->disability_discount ? number_format($assessment->getDisabilityDiscount(), 3, '.', ',') : number_format(0, 3, '.', ',') !!}</td>
                                 <!-- <td style="border-top:1px solid #606060; border-right:1px solid #606060; border-bottom:1px solid #606060; font-weight: bold;text-align: left; color:#303030;" >2021</td> -->
                             </tr>
                             <tr>
@@ -201,7 +201,7 @@
                                     <th style="border:1px solid #606060;text-align: left;" scope="col">Pensioner (10%)</th>
                                 </td>
                                 {{--  <td style="border:1px solid #606060; color: #484848;">{!! strtoupper($assessment->pensioner_discount ? 'Yes' : 'No') !!}</td>  --}}
-                                <td style="border:1px solid #606060; color: #484848;">NLe {!! $assessment->pensioner_discount ? number_format($assessment->getPensionerDiscount(), 2, '.', ',') : number_format(0, 2, '.', ',') !!}</td>
+                                <td style="border:1px solid #606060; color: #484848;">NLe {!! $assessment->pensioner_discount ? number_format($assessment->getPensionerDiscount(), 3, '.', ',') : number_format(0, 3, '.', ',') !!}</td>
                                  {{--  <td style="border-left:1px solid  #606060; border-bottom:1px solid  #606060; border-top:1px solid  #606060; border-right:1px solid  #606060; font-weight: bold;text-align: left; font-size: 10px;width:15%; color:#303030;">VALUE (LE)</td>   --}}
                             </tr>
                             <tr>
@@ -333,9 +333,9 @@
                                 </td>
                                 <!-- <td style="border:1px solid #606060; color: #484848;">{{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->label) }}</td> -->
                                 <td style="border:1px solid #606060; color: #484848;">
-                                    {{ $assessment->valuesAdded->pluck('label')->contains('Shop') ? 'YES' : 'NO' }}
+                                    {{ $assessment->valuesAdded->pluck('label')->contains('Shop') ? 'YES' : 'NO (0)' }}
                                     @if($assessment->valuesAdded->pluck('label')->contains('Shop'))
-                                    ({{ strtoupper($assessment->no_of_shop) }})
+                                    ({{ (int) $assessment->no_of_shop * 250 }})
                                 @endif
                                 </td>
                                 

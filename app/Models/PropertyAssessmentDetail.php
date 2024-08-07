@@ -222,9 +222,9 @@ class PropertyAssessmentDetail extends Model
             'property_property_value_added',
             'assessment_id',
             'property_value_added_id'
-        )->withPivot(['property_id']);
+        )->withPivot(['property_id','type','percentage']);
     }
-
+   
     public function getSwimmingPoolAttribute()
     {
         return $this->swimming_id;

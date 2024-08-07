@@ -50,6 +50,9 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
         Route::get('cep/forms_resourses', 'FormAndResourseController@index')->name('forms-resourses');
         Route::get('cep/information_tips', 'FormAndResourseController@information_tips_index')->name('information-tips');
+        Route::get('cep/information_show', 'FormAndResourseController@information_tips_show')->name('information_show');
+        Route::get('cep/information_delete', 'FormAndResourseController@information_tips_delete')->name('information-delete');
+        Route::post('cep/add_information_tips', 'FormAndResourseController@add_information_tips')->name('add-information-tips');
         Route::get('cep/newsletter', 'FormAndResourseController@newsletter')->name('newsletter');
         Route::get('cep/newsletter_show', 'FormAndResourseController@newsletter_show')->name('newsletter_show');
         Route::get('cep/newsletter_delete', 'FormAndResourseController@newsletter_delete')->name('newsletter-delete');
@@ -65,7 +68,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::get('cep/form_resources/{id}', 'FormAndResourseController@delete_form_resources')->name('delete-form-resources');
         Route::get('cep/edit_form_resources/{id}', 'FormAndResourseController@edit_form_resources')->name('edit-form-resources');
         Route::post('cep/update_form_resources', 'FormAndResourseController@update_form_resources')->name('update-form-resources');
-
+        Route::post('cep/ckeditor/upload','FormAndResourseController@upload')->name('ckeditor.upload');
         ////////////////////////////////////////////////////////////
 
         Route::get('meta', 'MetaValueController')->name('meta.value');
@@ -78,7 +81,9 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::post('meta', 'MetaValueController@store')->name('store.meta.value');
         Route::get('forgot-request', 'DashboardController@forgotRequest')->name('forgot.request');
         Route::get('properties', 'PropertyController@list')->name('properties');
+        Route::get('quarantine_properties', 'PropertyController@quarantine_list')->name('quarantine-properties');
         Route::get('property/details', 'PropertyController@show')->name('properties.show');
+        Route::get('quarantine/details', 'PropertyController@quarantine_show')->name('quarantine.show');
         Route::get('property/create', 'PropertyController@create')->name('properties.create');
         Route::get('property/destroy', 'PropertyController@destroy')->name('properties.destroy');
         Route::get('assign/property', 'PropertyController@assignProperty')->name('assign.property');

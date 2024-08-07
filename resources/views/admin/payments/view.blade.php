@@ -433,7 +433,7 @@
                                     @endhasanyrole
                                     </thead>
                                     <tbody>
-                                    @foreach($property->payments()->latest()->get() as $payment)
+                                    @foreach($property->payments()->where('assessment','!=',0.0000)->where('amount','!=',0.0000)->latest()->get() as $payment)
                                         <tr>
                                             <td>{{ $payment->property_id }}</td>
                                             <td>{{ $payment->id }}</td>

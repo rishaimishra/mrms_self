@@ -187,9 +187,9 @@
     @hasanyrole('Super Admin|Admin|manager')
     {{-- <p>{{ $assessment->sanitation }}</p> --}}
     <div class="pull-right">
-        {{--  <button type="button" id="assessment-button" class="btn btn-primary">
+        <button type="button" id="assessment-button" class="btn btn-primary">
             Edit
-        </button>  --}}
+        </button>
         @if($assessment->getBalanceAttribute() < 1)
         <a class="btn btn-default sticker-btn" id="sticker-btn"
             data-content="{{ route('admin.stickers', [$property->id,$assessment->created_at->format('Y')]) }}"

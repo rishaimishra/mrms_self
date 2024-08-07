@@ -63,8 +63,8 @@
             padding: 7px 40px !important;
         }
     </style>
-    <div class="card p_2" style="height: 100vh;">
-        <form action="#" method="POST" enctype="multipart/form-data">
+    <div class="card p_2">
+        <form action="{{ route('admin.add-information-tips') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="border_cus">
                 <div class="row">
@@ -74,12 +74,13 @@
                     </div>
                 </div>
                 <div class="row" style="margin-top: 30px;text-align:end;margin-right:30px;">
-                    <button type="button" class="btn btn-primary ecp_submit">SUBMIT</button>
+                    <button type="submit" class="btn btn-primary ecp_submit">SUBMIT</button>
                     <button type="button" class="btn btn-success ecp_publish">Publish</button>
                 </div>
             </div>
 
         </form>
     </div>
+    {!! $grid !!}
 @stop
 

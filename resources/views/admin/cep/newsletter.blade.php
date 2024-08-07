@@ -73,7 +73,7 @@
             padding: 7px 40px !important;
         }
     </style>
-    <div class="card p_2" style="height: 100vh;">
+    <div class="card p_2">
         <form action="{{ route('admin.head-line-store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="border_cus">
@@ -82,6 +82,14 @@
                     <div class="col-md-10">
                         <input type="text" class="form-control" name="headline" placeholder="enter headline here .......">
                         {!! $errors->first('headline', '<span class="error">:message</span>') !!}
+                    </div>
+                </div>
+                <div class="row"style="margin-top:10px;">
+                    <div class="col-md-2"><label for="">Editor name</label></div>
+                    <div class="col-md-10">
+                        {{--  <input type="text" class="form-control" name="story_board" placeholder="enter news story here .......">  --}}
+                        <input type="text" class="form-control" name="editor_name" placeholder="enter editor name here .......">
+                        {!! $errors->first('editor_name', '<span class="error">:message</span>') !!}
                     </div>
                 </div>
                 <div class="row">
@@ -105,7 +113,8 @@
                 <div class="row">
                     <div class="col-md-2"><label for="">STORYBOARD</label></div>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" name="story_board" placeholder="enter news story here .......">
+                        {{--  <input type="text" class="form-control" name="story_board" placeholder="enter news story here .......">  --}}
+                        <textarea name="story_board" id="editor"></textarea>
                         {!! $errors->first('story_board', '<span class="error">:message</span>') !!}
                     </div>
                 </div>
@@ -143,6 +152,16 @@
         {!! $grid !!}
     </div>
 @stop
+<script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Initialize CKEditor after the DOM is fully loaded
+        CKEDITOR.replace('editor', {
+            filebrowserUploadUrl: "{{ route('admin.ckeditor.upload', ['_token' => csrf_token()]) }}",
+            filebrowserUploadMethod: 'form'
+        });
+    });
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
 

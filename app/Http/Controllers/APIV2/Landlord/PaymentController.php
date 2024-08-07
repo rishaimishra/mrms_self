@@ -36,6 +36,7 @@ class PaymentController extends Controller
 
     public function show(Request $request)
     {
+        // return "sad";
         // return $request;
         $property = [];
         $last_payment = null;
@@ -69,7 +70,11 @@ class PaymentController extends Controller
             'assessmentHistory'
         ])->whereHas('landlord', function ($query) use ($landlord) {
             return $query->where('mobile_1', 'like', '%' . $landlord->mobile . '%')->orWhere('mobile_2', 'like', '%' . $landlord->mobile . '%');
-        })->get();
+        })
+        ->with(['payments'=> function ($query) {
+            $query->where('assessment', '>', 0.0000)
+          ->where('amount', '>', 0.0000);
+        }])->get();
         // dd($property[0]->assessmentHistory);
         
         

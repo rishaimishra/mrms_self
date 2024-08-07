@@ -17,46 +17,31 @@
     <div class="header bg-orange">
         <div class="row">
             <div class="col-md-3">
-                Garbage details
+                Information and tips details
             </div>
         </div>
     </div>
     <div class="body">
         <div class="row">
             <div class="col-sm-12">
-                <label for="">Headline</label>
-                <p>{{ $hd->headline }}</p>
+                <label for="">Tips</label>
+                <p>{{ $information->headline }}</p>
             </div>
+           
             <div class="col-sm-12">
-                <label for="">Headline Image</label>
-                <br>
-                @if ($hd->headline_img)
-                    
-               
-                <img style="width:100px;height:100px;" src="{{ asset('storage/'.$hd->headline_img) }}" alt="">
-                @endif
+                <label for="">Status</label>
+                <p>{{ $information->status }}</p>
             </div>
-            <div class="col-sm-12">
-                <label for="">Story</label>
-                <p>{!! $hd->story !!}</p>
-            </div>
-            {{--  <div class="col-sm-4">
+            <div class="col-sm-4">
                 <label for="">User</label>
-                <p>{{ $hd->user_id ? $hd->user_id->first_name : 'No user found' }}</p>
-            </div>  --}}
+                @if ($information->user_id)
+                <p>{{ $information->user_id ? $information->get_user->first_name : 'No user found' }}</p>
+                @endif
+                
+            </div>
           
         </div>
-        <div class="row">
-            <p style="margin-left: 15px;"><label for="">Story Images</label></p>
-            
-            @foreach ($hd['HeadingImages'] as $s_images)
-            <div class="col-md-4">
-                <img style="width:100px;height:100px;" src="{{ asset('storage/'.$s_images->images) }}" alt="">
-            </div>
-            @endforeach
-            
-            
-        </div>
+       
     
     </div>
 </div>

@@ -41,7 +41,7 @@
                                 @foreach($property->assessmentHistory as $assessmentHistory)
                                     <tr>
                                         <td>{{ $assessmentHistory->created_at->format('Y') }}</td>
-                                        <td>{{ number_format(floatval($assessmentHistory->getCurrentYearAssessmentAmount()), 2, '.', ',') }}</td> 
+                                        <td>{{ number_format(floatval($assessmentHistory->getCurrentYearAssessmentAmount()), 2, '.', '') }}</td> 
                                         {{-- <td>{{ $assessmentHistory->property_assessed_value }}</td> --}}
                                         <td>{{ number_format(floatval($assessmentHistory->getCouncilAdjustments()), 2, '.', ',') }}</td>
                                         <td>{{ number_format(floatval($assessmentHistory->getNetPropertyAssessedValue()), 2, '.', ',') }}</td>
@@ -112,7 +112,7 @@
                                {{-- <th>Action</th> --}}
                                 </thead>
                                 <tbody>
-                                @foreach($property->payments()->latest()->get() as $payment)
+                                @foreach($property->payments()->where('assessment','!=',0.0000)->where('amount','!=',0.0000)->latest()->get() as $payment)
                                     <tr>
                                         <td>{{ $payment->property_id }}</td>
                                         <td>{{ $payment->id }}</td>

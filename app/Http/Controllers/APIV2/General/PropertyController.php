@@ -50,7 +50,7 @@ class PropertyController extends ApiController
     {
         // return $request->gated_community;
         // return getSystemConfig(SystemConfig::OPTION_GATED_COMMUNITY);
-        // return $request;
+        // return $request->propertyArea;
       
     //   die;
         $assessment_images = new PropertyAssessmentDetail();
@@ -399,8 +399,21 @@ class PropertyController extends ApiController
 
 
         /* property value added multiple value */
-        $valuesAdded = getSyncArray($request->input('assessment_value_added_id'), ['property_id' => $property->id]);
-        $assessment->valuesAdded()->sync($valuesAdded);
+        // $valuesAdded = getSyncArray($request->input('assessment_value_added_id'), ['property_id' => $property->id]);
+        // $assessment->valuesAdded()->sync($valuesAdded);
+        $valuesAdded = [];
+        foreach ($request->assessment_value_added_percentage as $key => $item) {
+            // Split the string by comma to get property ID, type, and percentage
+    
+            // Construct the data array
+            $valuesAdded[$request->input('assessment_value_added_id')[$key]] = [
+                'type' => $request->assessment_value_added_type[$key],
+                'percentage' => $item,
+                'property_id' => $property->id
+            ];
+        }
+            // $valuesAdded = getSyncArray($request->input('property_value_added'), ['property_id' => $property->id]);
+            $assessment->valuesAdded()->sync($valuesAdded);
 
         /* Geo Registry Data  */
 
@@ -468,7 +481,7 @@ class PropertyController extends ApiController
                 $registryMetersDelete->delete();
             }
         }
-
+       
         \DB::commit();
 
         $getProperty = $property->with('landlord', 'occupancy', 'assessment', 'geoRegistry', 'registryMeters', 'occupancies', 'categories', 'propertyInaccessible')->where('id', $property->id)->get();
@@ -505,6 +518,7 @@ class PropertyController extends ApiController
                 ]
 
              ];
+            //  return $request->propertyArea;
              if (!empty($request->property_additional_address_id)) {
                 $check_additional_address = \DB::table('additional_address')->where('title',$request->property_additional_address_id)->first();
                 if (!$check_additional_address) {
@@ -519,6 +533,19 @@ class PropertyController extends ApiController
               DB::table('meta_values')->insert([
                     'name'=>'first_name',
                     'value' => $request->landlord_first_name
+              ]);
+          }
+           }
+           if (!empty($request->propertyArea)) {
+            // return gettype($request->propertyArea);
+           $check_propertyarea = \DB::table('meta_values')->where('name','area')->where('value',$request->propertyArea)->first();
+        //    echo gettype($check_propertyarea);
+        //    die;
+           if (!$check_propertyarea) {
+                // return $request->propertyArea;
+            DB::table('meta_values')->insert([
+                    'name'=>'area',
+                    'value' => $request->propertyArea
               ]);
           }
            }

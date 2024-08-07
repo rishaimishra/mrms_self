@@ -9,11 +9,14 @@ use App\Models\FormAndResourse;
 use App\Models\Complaint;
 use App\Models\EmergencyAndService;
 use App\Models\EmergencyAndServiceImages;
+use App\Models\Emergency;
+use App\Models\EmergencyImages;
 use App\Models\Headlines;
 use App\Models\HeadlineImages;
 use App\Models\GarbageCollection;
 use App\Models\GarbageDate;
 use App\Models\GarbageDateSlot;
+use App\Models\InformationTip;
 
 class EcpController extends Controller
 {
@@ -121,5 +124,60 @@ class EcpController extends Controller
             ]);
         }
     }
+    public function add_tip(Request $request){
+        // return $request;
+        $tip = new InformationTip();
+        $tip->tip=$request->tip;
+        $tip->user_id=$request->user_id;
+        $tip->status=$request->status;
+        $tip->save();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Information and tip sucessfully save',
+            'data' => $tip
+        ]);
+    }
+    public function get_tip_list(){
+        $tip=InformationTip::all();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Information and tip get sucessfully',
+            'data' => $tip
+        ]); 
+    }
+    public function add_emergency(Request $request){
+        // return $request;
+        $emergency = new Emergency();
+        $emergency->information = $request->additional_desction;
+        $emergency->reason = $request->reason;
+        $emergency->tag = $request->tag;
+        $emergency->user_id = $request->user_id;
+        $emergency->type = $request->type;
+        $emergency->save();
+        if ($request->hasFile('emergency_image')) {
+           
+            foreach ($request->File('emergency_image') as $key => $file) {
+
+                $path = $file->store('emergency_images', 'public');
+                    $emergency_image = new EmergencyImages();
+                    $emergency_image->emergency_image = $path;
+                    $emergency_image->emergency_id = $emergency->id;
+                    $emergency_image->save();
+                }
+         }
+         return response()->json([
+            'status' => 'success',
+            'message' => 'Emergency added successfully',
+        ]);
+    }
+    public function emergency_list(){
+        $emergency = Emergency::with('EmergencyImages')->get();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Emergency list get successfully',
+            'data' => $emergency
+        ]);
+    }
 }
+
 

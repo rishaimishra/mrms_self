@@ -110,7 +110,7 @@
                                             $type  =  $assessment->categories->pluck('label')->count() > 0 ? strtoupper($assessment->categories->pluck('label')[$index]) : '';
                                             $type_val =  $assessment->categories->pluck('value')->count() > 0 ? $assessment->categories->pluck('value')[$index] : '';
                                         @endphp
-                                        {{ $type }}({{ strtoupper($assessment->property_category_type) }})
+                                        {{ $type }} ({{ strtoupper($assessment->property_category_type) }})
                             </td>
                              <td style="border:1px solid lightgray;">{{ strtoupper($assessment->types->pluck('label')->implode(', ')) }} 
                                 {{-- {{$assessment->types->pluck('value')->sum()}} --}}
@@ -141,13 +141,40 @@
                         <tbody>
                         <tr>
                             <td style="border:1px solid lightgray;">
-                                {{ strtoupper($assessment->valuesAdded->pluck('label')->implode(', ')) }}
-                                {{--  @if(optional($assessment)->gated_community)
-                                    , GATED COMMUNITY
-                                @endif
-                                @if(optional($property)->beach_front)
-                                    , BEACH FRONT
-                                @endif  --}}
+                                <?php
+                                $value_added = [];
+                                $abc = strtoupper($assessment['valuesAdded']->pluck('label'));
+                                $abc = json_decode($abc);
+                            
+                                // Loop through the array and construct the $value_added string
+                                foreach ($assessment['valuesAdded'] as $va) {
+                                    $item = strtoupper($va->label);
+                                    if ($item == "SHOP") {
+                                        $value_added[] = $item . " (" . $assessment->no_of_shop . ")". " (" . strtoupper($va->pivot->type) . ")";
+                                    } else {
+                                        $value_added[] = $item . " (" . strtoupper($va->pivot->type) . ")";
+                                    }
+                                }
+                            
+                                // Convert array to string with commas
+                                $value_added_string = implode(", ", $value_added);
+                            
+                                // Append additional parameters if they are present
+                                if (optional($assessment)->gated_community) {
+                                    $value_added_string .= ", GATED COMMUNITY";
+                                }
+                                if (optional($property)->beach_front) {
+                                    $value_added_string .= ", BEACH FRONT";
+                                }
+                                if (optional($property)->isDilapidatedProperty) {
+                                    $value_added_string .= ", DILAPIDATED";
+                                }
+                                     if (optional($assessment)->swimming) {
+                                    $value_added_string .= ", SWIMMING POOL";
+                                }
+                                ?>
+                                     
+                                {{ $value_added_string }}
                             </td>
                             <td style="border:1px solid lightgray; ">{{ strtoupper(optional(App\Models\PropertySanitationType::find($assessment->sanitation))->label) }}</td> 
                             <td style="border:1px solid lightgray; ">{{ strtoupper(optional(App\Models\PropertyUse::find($assessment->property_use))->label) }}</td>

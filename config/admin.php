@@ -15,9 +15,15 @@ return [
                     'role' => 'Super Admin|Admin|manager|cashiers|supervisor',
                 ],
                 [
-                    'label' => 'Properties',
+                    'label' => 'Property Listing',
                     'icon' => 'list',
                     'route' => 'admin.properties',
+                    'role' => 'Super Admin|Admin|manager|supervisor',
+                ],
+                [
+                    'label' => 'Quarantine Properties',
+                    'icon' => 'list',
+                    'route' => 'admin.quarantine-properties',
                     'role' => 'Super Admin|Admin|manager|supervisor',
                 ],
                 [

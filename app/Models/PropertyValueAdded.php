@@ -18,12 +18,21 @@ class PropertyValueAdded extends Model
     protected static $logOnlyDirty = true;
     protected static $logName = 'property-value-added';
 
-    protected $hidden = [
-        'pivot'
-    ];
+    // protected $hidden = [
+    //     'pivot'
+    // ];
 
     public function properties()
     {
         return $this->belongsToMany(Property::class, 'property_property_value_added');
+    }
+    public function assesments()
+    {
+        return $this->belongsToMany(
+            PropertyAssessmentDetail::class,
+            'property_property_value_added',
+            'property_value_added_id',
+            'assessment_id'
+        )->withPivot(['property_id','type','percentage']);
     }
 }

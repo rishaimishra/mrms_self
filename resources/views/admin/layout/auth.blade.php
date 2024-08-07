@@ -30,12 +30,14 @@
     <link href="{{ url('admin/css/style.css') }}" rel="stylesheet">
 </head>
 
-<body class="login-page">
+<body class="login-page" style="background: transparent !important;max-width: 410px;">
+    <h3 style="color: #1f91f3;">Munciple Rates Management System</h3>
 <div class="login-box">
     <div class="logo">
-        <a href="javascript:void(0);">{{ config('app.name')}}</a>
+        <img style="height: 265px;" src="{{ asset('images/logo23.png') }}" alt="">
+        {{--  <a href="javascript:void(0);">{{ config('app.name')}}</a>  --}}
     </div>
-    <div class="card">
+    <div class="card" style="box-shadow: none !important;">
         <div class="body">
             @yield('card-body')
         </div>
