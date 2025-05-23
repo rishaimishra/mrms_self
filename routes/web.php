@@ -16,8 +16,6 @@ use App\Notifications\PaymentSMSNotification;
 use OpenLocationCode\OpenLocationCode;
 
 Route::get('/', function () {
-	 //\DB::statement('');
-	// exit('done');
   return redirect('back-admin/dashboard');
 
 // \Mail::raw('Text to e-mail', function ($message) {
